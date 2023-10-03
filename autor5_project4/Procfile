@@ -1,0 +1,1 @@
+web: gunicorn autor5_project4.wsgi
