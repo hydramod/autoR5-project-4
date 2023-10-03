@@ -1,1 +1,2 @@
 web: gunicorn autor5_project4.wsgi
+heroku ps:scale web=1
