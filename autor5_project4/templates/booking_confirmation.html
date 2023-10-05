@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Booking Confirmation</h1>
+  <p>Booking ID: {{ booking.id }}</p>
+  <p>Car: {{ booking.car }}</p>
+  <p>Rental Date: {{ booking.rental_date }}</p>
+  <p>Return Date: {{ booking.return_date }}</p>
+  <p>Total Cost: ${{ booking.total_cost }}</p>
+{% endblock %}

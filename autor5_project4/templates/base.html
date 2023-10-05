@@ -1,0 +1,106 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AutoR5 car rental">
+    <meta name="keywords" content="AutoR5, BMW, Audi, Mercedes, Ferrari, Lamborghini, Tesla, car rental">
+    <meta name="author" content="Ali Saeid">
+    <title>AutoR5</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+    <!--Nav Bar-->
+    <div class="menu top section" id="menu-top">
+        <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand">
+            <div class="container-fluid">
+                <div class="navbar-brand">
+                    <span class="navbar-caption-wrap">
+                        <a class="navbar-caption text-white nav-text-link font-format-1" href="#menu-top"
+                            aria-label="scrolls to top of page">AutoR5</a>
+                    </span>
+                </div>
+                <div class="navbar-toggler" aria-label="Toggle navigation">
+                    <div class="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav nav-dropdown nav-center">
+                        <li class="nav-item"><a class="nav-link link text-white nav-text-link font-format-2"
+                                href="index.html#home" aria-label="Navigate to home page">HOME</a></li>
+                        <li class="nav-item"><a class="nav-link link text-white nav-text-link font-format-2"
+                                href="showroom.html#showroom-gallery"
+                                aria-label="Navigate to showroom gallery">SHOWROOM</a></li>
+                        <li class="nav-item"><a class="nav-link link text-white nav-text-link font-format-2"
+                                href="contact.html#contact" aria-label="Navigate to contact page">CONTACT</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    {% block content %}
+    <!-- Content Goes here -->
+    {% endblock content %}
+
+    <!--Footer-->
+    <div class="footer section" id="footer">
+        <div class="container">
+            <div class="media-container-row align-center text-white">
+                <div class="container-row footer-links">
+                    <ul class="foot-menu">
+                        <li class="foot-menu-item font-format-1"><a href="index.html#home" class="text-white"
+                                aria-label="Navigate to home page">Home</a>
+                        </li>
+                        <li class="foot-menu-item font-format-1"><a href="showroom.html#showroom-gallery"
+                                aria-label="Navigate to showroom gallery" class="text-white">Showroom</a></li>
+                        <li class="foot-menu-item font-format-1"><a href="contact.html#contact"
+                                aria-label="Navigate to contact page" class="text-white">Contact Us</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="container-row social-row">
+                    <div class="social-list align-right">
+                        <div class="social-items">
+                            <a href="https://twitter.com/" target="_blank" aria-label="Opens twitter in a new tab">
+                                <span class="social-icons"><i class="fa-brands fa-twitter"></i></span>
+                            </a>
+                        </div>
+                        <div class="social-items">
+                            <a href="https://facebook.com/" target="_blank" aria-label="Opens facebook in a new tab">
+                                <span class="social-icons"><i class="fa-brands fa-facebook"></i></span>
+                            </a>
+                        </div>
+                        <div class="social-items">
+                            <a href="https://instagram.com/" target="_blank" aria-label="Opens instagram in a new tab">
+                                <span class="social-icons"><i class="fa-brands fa-instagram"></i></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="container-row copyright">
+                    <p class="bottom-margin-0 align-center">
+                        © Copyright Ali Saeid. All Rights Reserved.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Loading scripts-->
+    <script src="{% static 'js/index.js' %}"></script>
+    <script src="https://kit.fontawesome.com/b48464af7c.js" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

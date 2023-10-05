@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Welcome to Car Rental</h1>
+  <h2>Available Cars</h2>
+  <ul>
+    {% for car in cars %}
+      <li>
+        <a href="{% url 'car_detail' car.id %}">{{ car }}</a>
+      </li>
+    {% empty %}
+      <li>No cars available.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
