@@ -1,15 +1,36 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Welcome to Car Rental</h1>
-  <h2>Available Cars</h2>
-  <ul>
-    {% for car in cars %}
-      <li>
-        <a href="{% url 'car_detail' car.id %}">{{ car }}</a>
-      </li>
-    {% empty %}
-      <li>No cars available.</li>
-    {% endfor %}
-  </ul>
+
+<!--Landing Page-->
+<section class="header-home intro-home fullscreen" id="home">
+  <div class="overlay"></div>
+  <div class="align-center container">
+    <div class="container-row justify-content-center">
+      <div class="container-column container-column2">
+        <h1 class="section-title bottom-margin font-format-3"><strong>Welcome to AutoR5 Car Rentals</strong>
+        </h1>
+        <p class="home-text text font-format-1">Your gateway to an extraordinary driving experience. At AutoR5, we pride
+          ourselves on delivering top-notch car rental solutions that cater to your every need. Whether you're embarking
+          on a weekend getaway, a business trip, or simply need a reliable set of wheels for daily commuting, our
+          diverse fleet of vehicles ensures there's a perfect match for you. With a commitment to exceptional service,
+          competitive rates, and a hassle-free rental process, we're here to transform your journey into an
+          unforgettable adventure. Join us today and discover the road to convenience, comfort, and style with AutoR5
+          Car Rentals.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<h2>Available Cars</h2>
+<ul>
+  {% for car in cars %}
+  <li>
+    <a href="{% url 'car_detail' car.id %}">{{ car }}</a>
+  </li>
+  {% empty %}
+  <li>No cars available.</li>
+  {% endfor %}
+</ul>
 {% endblock %}
