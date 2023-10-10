@@ -4,6 +4,18 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
 from cloudinary.models import CloudinaryField
 
+class FuelType(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+class CarType(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
 class Car(models.Model):
     make = models.CharField(max_length=50)
     model = models.CharField(max_length=50)
@@ -11,9 +23,11 @@ class Car(models.Model):
     license_plate = models.CharField(max_length=20, unique=True)
     daily_rate = models.DecimalField(max_digits=8, decimal_places=2)
     is_available = models.BooleanField(default=True)
-    location = models.CharField(max_length=100)  # Location of the car
-    image = models.ImageField(upload_to='car_images/', blank=True, null=True)
+    location = models.CharField(max_length=100)
+    image = CloudinaryField('car_images', blank=True, null=True)
     features = models.TextField(blank=True, null=True)
+    car_type = models.ForeignKey(CarType, on_delete=models.SET_NULL, blank=True, null=True)
+    fuel_type = models.ForeignKey(FuelType, on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
         return f"{self.year} {self.make} {self.model}"
@@ -38,6 +52,7 @@ class Review(models.Model):
         validators=[MinValueValidator(1), MaxValueValidator(5)]
     )
     comment = models.TextField()
+    approved = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Review for {self.car} by {self.user}"
@@ -45,7 +60,7 @@ class Review(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    profile_picture = CloudinaryField('profile_pictures', blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -87,3 +102,17 @@ class Location(models.Model):
 
     def __str__(self):
         return self.name
+
+# Add car types
+CarType.objects.get_or_create(name='Hatchback')
+CarType.objects.get_or_create(name='Saloon')
+CarType.objects.get_or_create(name='Estate')
+CarType.objects.get_or_create(name='MPV')
+CarType.objects.get_or_create(name='SUV')
+CarType.objects.get_or_create(name='Sports car')
+
+# Add fuel types
+FuelType.objects.get_or_create(name='Petrol')
+FuelType.objects.get_or_create(name='Diesel')
+FuelType.objects.get_or_create(name='Hybrid')
+FuelType.objects.get_or_create(name='Electric')

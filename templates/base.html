@@ -1,105 +1,147 @@
-{% load static %}
+{% load static %} 
+{% load bootstrap5 %}
 
 <!DOCTYPE html>
-<html lang="en-US">
+<html>
 
 <head>
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AutoR5 car rental">
-    <meta name="keywords" content="AutoR5, BMW, Audi, Mercedes, Ferrari, Lamborghini, Tesla, car rental">
-    <meta name="author" content="Ali Saeid">
-    <title>AutoR5</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+    <link rel="shortcut icon" href="{% static 'assets/images/logo.png' %}" type="image/x-icon">
+    <meta name="description" content="">
+
+    <title>Home</title>
+    {% bootstrap_css %} {{ form.media.css }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jarallax/2.1.4/jarallax.min.css" integrity="sha512-7WC5//oz0DF1gX/V0ca+IsJUd+a7aSZLk+kJy6VvdeBqn8sVtVD2xp8Aaxin1GDOoNJPSdV8fpNU/4odjWyeoQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Gloock:400&display=swap">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 </head>
 
 <body>
 
-    <!--Nav Bar-->
-    <div class="menu top section" id="menu-top">
-        <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand">
-            <div class="container-fluid">
-                <div class="navbar-brand">
-                    <span class="navbar-caption-wrap">
-                        <a class="navbar-caption text-white nav-text-link font-format-1" href="#menu-top"
-                            aria-label="scrolls to top of page">AutoR5</a>
+    <section data-bs-version="5.1" class="menu custom-navbar">
+
+        <nav class="navbar navbar-dropdown navbar-expand-lg">
+            <div class="menu_box container-fluid">
+                <div class="navbar-brand d-flex">
+                    <span class="navbar-logo">
+                        <a
+                            href="{% url 'index' %}">
+                            <img src="{% static 'assets/images/logo.png' %}" alt="">
+                        </a>
                     </span>
+                    <span class="navbar-caption-wrap">
+                        <a class="navbar-caption display-5" href="{% url 'index' %}">AutoR5</a>
+                    </span>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <div class="hamburger">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </button>
                 </div>
-                <div class="navbar-toggler" aria-label="Toggle navigation">
-                    <div class="hamburger">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="navbar-nav nav-dropdown nav-center">
-                        <li class="nav-item"><a class="nav-link link text-white nav-text-link font-format-2"
-                                href="index.html#home" aria-label="Navigate to home page">HOME</a></li>
-                        <li class="nav-item"><a class="nav-link link text-white nav-text-link font-format-2"
-                                href="showroom.html#showroom-gallery"
-                                aria-label="Navigate to showroom gallery">SHOWROOM</a></li>
-                        <li class="nav-item"><a class="nav-link link text-white nav-text-link font-format-2"
-                                href="contact.html#contact" aria-label="Navigate to contact page">CONTACT</a></li>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav nav-dropdown" data-app-modern-menu="true">
+                        <li class="nav-item"><a class="nav-link link text-primary display-4" href="{% url 'index' %}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link link text-primary display-4" href="{% url 'cars_list' %}">Our Fleet</a></li>
+                        <li class="nav-item"><a class="nav-link link text-primary display-4" href="{% url 'contact' %}">Contact Us</a></li>
                     </ul>
+                    {% if user.is_authenticated %}
+                    <div class="section-btn-main" role="tablist"><a class="btn btn-primary-outline display-4" href="{% url 'account_logout' %}">Log Out</a>
+                    </div>
+                    <div class="section-btn-main" role="tablist"><a class="btn btn-primary-outline display-4" href="{% url 'customer_dashboard' %}">Dashboard</a>
+                    </div>
+                    {% else %}
+                    <div class="section-btn-main" role="tablist"><a class="btn btn-primary-outline display-4" href="{% url 'account_signup' %}">Sign Up</a>
+                    </div>
+                    <div class="section-btn-main" role="tablist"><a class="btn btn-primary-outline display-4" href="{% url 'account_login' %}">Log In</a>
+                    </div>
+                    {% endif %}
                 </div>
+
             </div>
         </nav>
-    </div>
+
+        <div id="message-container" style="display: none;">
+            {% if messages %} {% for message in messages %}
+            <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %} {% endif %}
+        </div>
+
+    </section>
 
     {% block content %}
     <!-- Content Goes here -->
     {% endblock content %}
 
     <!--Footer-->
-    <div class="footer section" id="footer">
-        <div class="container">
-            <div class="media-container-row align-center text-white">
-                <div class="container-row footer-links">
-                    <ul class="foot-menu">
-                        <li class="foot-menu-item font-format-1"><a href="index.html#home" class="text-white"
-                                aria-label="Navigate to home page">Home</a>
+    <section data-bs-version="5.1" class="footer">
+
+        <div class="container-fluid">
+            <div class="media-container-row">
+                <div class="row row-links">
+                    <ul class="foot-menu fonts-style display-4">
+                        <li class="foot-menu-item fonts-style">
+                            <a href="{% url 'index' %}">Home</a>
                         </li>
-                        <li class="foot-menu-item font-format-1"><a href="showroom.html#showroom-gallery"
-                                aria-label="Navigate to showroom gallery" class="text-white">Showroom</a></li>
-                        <li class="foot-menu-item font-format-1"><a href="contact.html#contact"
-                                aria-label="Navigate to contact page" class="text-white">Contact Us</a>
+                        <li class="foot-menu-item fonts-style">
+                            <a href="{% url 'cars_list' %}">Our Fleet</a>
+                        </li>
+                        <li class="foot-menu-item fonts-style">
+                            <a href="{% url 'contact' %}">Contact Us</a>
                         </li>
                     </ul>
                 </div>
-                <div class="container-row social-row">
-                    <div class="social-list align-right">
-                        <div class="social-items">
-                            <a href="https://twitter.com/" target="_blank" aria-label="Opens twitter in a new tab">
-                                <span class="social-icons"><i class="fa-brands fa-twitter"></i></span>
+
+                <div class="row social-row">
+                    <div class="social-list">
+                        <div class="social-item">
+                            <span>
+                                <a href="https://instagram.com" target="_blank">
+                                    <i class="fa-brands fa-instagram"></i>
+                                </a>
+                            </span>
+                        </div>
+                        <div class="social-item">
+                            <a href="https://facebook.com" target="_blank">
+                                <span>
+                                    <i class="fa-brands fa-facebook-f"></i>
+                                </span>
                             </a>
                         </div>
-                        <div class="social-items">
-                            <a href="https://facebook.com/" target="_blank" aria-label="Opens facebook in a new tab">
-                                <span class="social-icons"><i class="fa-brands fa-facebook"></i></span>
-                            </a>
-                        </div>
-                        <div class="social-items">
-                            <a href="https://instagram.com/" target="_blank" aria-label="Opens instagram in a new tab">
-                                <span class="social-icons"><i class="fa-brands fa-instagram"></i></span>
+                        <div class="social-item">
+                            <a href="https://github.com/" target="_blank">
+                                <span>
+                                    <i class="fa-brands fa-github"></i>
+                                </span>
                             </a>
                         </div>
                     </div>
                 </div>
-                <div class="container-row copyright">
-                    <p class="bottom-margin-0 align-center">
-                        © Copyright Ali Saeid. All Rights Reserved.
-                    </p>
-                </div>
+            </div>
+            <div class="copyright">
+                <p class="text  display-7">
+                    © <strong>Copyright 2023 Ali Saeid.</strong> All Rights Reserved.
+                </p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!--Loading scripts-->
-    <script src="{% static 'js/index.js' %}"></script>
+    {% bootstrap_javascript %} 
+    {{ form.media.js }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jarallax/2.1.4/jarallax.min.js" integrity="sha512-wMKzkL82Stz/9uvNuVDtNa54reXuasH+lngpkCb9D66uU31uRw8UUMEKpqEJkfaXTmV7U13vQuZ3IELMoIgWnA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://kit.fontawesome.com/b48464af7c.js" crossorigin="anonymous"></script>
+    <script src="{% static 'assets/js/script.js' %}"></script>
 
 </body>
 
