@@ -4,8 +4,8 @@ jarallax(document.querySelectorAll('.jarallax'));
 
 //Message alerts
 document.addEventListener("DOMContentLoaded", function () {
-    var messageContainer = document.getElementById("message-container");
-    var alerts = messageContainer.querySelectorAll(".alert");
+    let messageContainer = document.getElementById("message-container");
+    let alerts = messageContainer.querySelectorAll(".alert");
 
     function showMessage() {
         messageContainer.style.display = "block";
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Add click event listener to each close button
     alerts.forEach(function (alert) {
-        var closeButton = alert.querySelector(".btn-close");
+        let closeButton = alert.querySelector(".btn-close");
 
         closeButton.addEventListener("click", function () {
             hideMessage();
