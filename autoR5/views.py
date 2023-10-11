@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
@@ -18,13 +19,33 @@ def cars_list(request):
     cars = Car.objects.all()
     car_types = CarType.objects.all()
     fuel_types = FuelType.objects.all()
-    car_type = request.GET.get('type')
-    fuel_type = request.GET.get('fuel')
+
+    # Get filter values from the request's GET parameters
+    car_make = request.GET.get('make')
+    car_model = request.GET.get('model')
+    car_year = request.GET.get('year')
+    car_location = request.GET.get('location')
+    car_type = request.GET.get('car_type')
+    fuel_type = request.GET.get('fuel_type')
+
+    # Filter the queryset based on the selected filter values
+    if car_make:
+        cars = cars.filter(make=car_make)
+    if car_model:
+        cars = cars.filter(model=car_model)
+    if car_year:
+        cars = cars.filter(year=car_year)
+    if car_location:
+        cars = cars.filter(location=car_location)
     if car_type:
         cars = cars.filter(car_type__name=car_type)
     if fuel_type:
         cars = cars.filter(fuel_type__name=fuel_type)
+
     return render(request, 'cars_list.html', {'cars': cars, 'car_types': car_types, 'fuel_types': fuel_types})
+
+def reset_filter(request):
+    return redirect(reverse('cars_list'))
 
 def car_detail(request, car_id):
     car = get_object_or_404(Car, pk=car_id)
@@ -120,7 +141,3 @@ def cancel_booking(request, booking_id):
             messages.error(request, 'You cannot cancel a past booking.')
 
     return redirect('customer_dashboard')
-
-
-
-

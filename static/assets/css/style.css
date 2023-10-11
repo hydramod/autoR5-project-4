@@ -1299,3 +1299,176 @@ strong {
   font-weight: bold;
 }
 
+/* car_list page*/
+
+.car-list {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+  background-color: #1b1b1b;
+  flex: 1;
+  /* Allow it to expand and fill the available space */
+  padding: 20px;
+  /* Add padding to the main content */
+}
+
+@media (max-width: 992px) {
+  .car-list .container {
+    padding: 0 20px;
+  }
+}
+
+.car-list .row {
+  justify-content: center;
+}
+
+.car-list .title-wrapper .section-title {
+  margin-bottom: 50px;
+}
+
+.car-list .item {
+  margin-bottom: 80px;
+}
+
+@media (max-width: 992px) {
+  .car-list .item {
+    margin-bottom: 50px;
+  }
+}
+
+.car-list .item .item-wrapper a {
+  display: block;
+}
+
+.car-list .item .item-wrapper a .item-img {
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.car-list .item .item-wrapper a .item-img img {
+  height: 340px;
+  object-fit: cover;
+}
+
+@media (max-width: 992px) {
+  .car-list .item .item-wrapper a .item-img img {
+    height: 300px;
+  }
+}
+
+.car-list .item .item-wrapper a .item-img .iconfont {
+  /*this one for icons*/
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  font-size: 16px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f2f2f2;
+  color: #1b1b1b;
+  border-radius: 50%;
+  transition: all 0.3s ease-in-out;
+}
+
+.car-list .item .item-wrapper a .item-img .iconfont:hover {
+  background-color: #9c8c73;
+}
+
+.car-list .item .item-wrapper a .item-content .card-title {
+  margin-bottom: 0;
+}
+
+.car-list .item .item-wrapper a .item-content .date {
+  margin-bottom: 16px;
+}
+
+.car-list .section-title,
+.car-list .card-title,
+.car-list .date {
+  color: #c2b299;
+  text-align: center;
+}
+
+.car-list a {
+  text-decoration: none;
+}
+
+.car-list .item-content .card-title,
+.car-list .item-content .card-date {
+  color: #c2b299;
+  /* Initially, hide the text color */
+  position: relative;
+  /* Needed for pseudo-element positioning */
+}
+
+.car-list .item-content .card-title::after,
+.car-list .item-content .card-date::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  /* Start from the left */
+  width: 0;
+  /* Initially, the line has no width */
+  height: 2px;
+  background: #f2f2f2;
+  transition: width 0.3s ease-in-out;
+  /* Smooth width transition */
+}
+
+.car-list .item-content:hover .card-title,
+.car-list .item-content:hover .card-date {
+  opacity: 1;
+  /* Make the text visible */
+  color: #f2f2f2;
+  /* Show the text color */
+}
+
+.car-list .item-content:hover .card-title::after,
+.car-list .item-content:hover .card-date::after {
+  width: 100%;
+  /* Draw the line from left to right on hover */
+}
+
+/* Style for the page container */
+.side-container {
+  display: flex;
+  flex-direction: row-reverse;
+  /* Reverse the order to put the sidebar on the right */
+  align-items: stretch;
+  /* Stretch the items vertically */
+}
+
+/* Style for the sidebar container */
+.sidebar-container {
+  width: 255px;
+  /* Adjust the width as needed */
+  background-color: transparent;
+  /* Set your desired background color */
+  z-index: 999;
+  /* Ensure it's above other content */
+  margin-left: 30px;
+}
+
+/* Style for the form inside the sidebar */
+.sidebar-container form {
+  padding: 20px;
+  /* Add padding to the form content */
+}
+
+.side-container form label {
+  color: #c2b299;
+}
+
+@media (max-width: 768px) {
+  .side-container {
+    flex-direction: column;
+  }
+
+  .sidebar-container {
+    width: 100%;
+    margin: 0;
+  }
+}
