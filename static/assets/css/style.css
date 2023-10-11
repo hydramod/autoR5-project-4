@@ -1435,8 +1435,6 @@ strong {
 /* Style for the page container */
 .side-container {
   display: flex;
-  flex-direction: row-reverse;
-  /* Reverse the order to put the sidebar on the right */
   align-items: stretch;
   /* Stretch the items vertically */
 }
