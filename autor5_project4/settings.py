@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'autoR5',
     'bootstrap5',
     'bootstrap_datepicker_plus',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
 
 SITE_ID = 1
@@ -95,6 +97,18 @@ TEMPLATES = [
         },
     },
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+BOOTSTRAP_DATEPICKER_PLUS = {
+    "variant_options": {
+        "date": {
+            "format": "DD/MM/YYYY",
+        },
+    }
+}
 
 WSGI_APPLICATION = 'autor5_project4.wsgi.application'
 

@@ -5,15 +5,12 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Q
 from .models import Car, CarType, FuelType, Booking, Review, CancellationRequest
-from .forms import BookingForm, ReviewForm
+from .forms import BookingForm, ReviewForm, ContactForm
 from datetime import date
 
 def index(request):
     #cars = Car.objects.filter(is_available=True)
     return render(request, 'index.html')
-
-def contact(request):
-    return render(request, 'contact.html')
 
 def cars_list(request):
     cars = Car.objects.all()
@@ -141,3 +138,23 @@ def cancel_booking(request, booking_id):
             messages.error(request, 'You cannot cancel a past booking.')
 
     return redirect('customer_dashboard')
+
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            # Form data is valid, you can now process the data
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            email = form.cleaned_data['email']
+
+            # Trigger a success message
+            messages.success(request, 'Thanks for getting touch, One of our representatives will contact you soon')
+        else:
+            # Form data is not valid, trigger an error message
+            messages.error(request, 'Oops...! There was a probolem submitting your request.')
+
+    else:
+        form = ContactForm()
+
+    return render(request, 'contact.html', {'form': form})

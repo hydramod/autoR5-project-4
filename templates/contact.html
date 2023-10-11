@@ -1,5 +1,52 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags%}
 
 {% block content %}
+
+<section class="contact-section fullscreen">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-lg-4">
+                <div class="title-wrapper">
+                    <h2 class="section-title fonts-style display-5">
+                        Contact us
+                    </h2>
+                    <p class="text fonts-style display-7">
+                        Feel free to reach out to us for the most <br> current and comprehensive details on our <br>
+                        products, services, and catalogs. We're <br> here to keep you informed and assist you <br> in
+                        any way we can. Your satisfaction is <br> our top priority.
+                    </p>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4">
+                <form action="" method="POST">
+                    <div hidden="hidden" class="alert alert-success col-12">
+                        {% if messages %}
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    
+                    <div hidden="hidden" class="alert alert-danger col-12">
+                        {% if messages %}
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        {% endif %}
+                    </div>                    
+                    <div class="form-area row">
+                        {% crispy form %}
+                        <div class="col-md-auto col section-btn">
+                            <button type="submit" class="btn btn-primary-outline display-4">Send Message</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</section>
 
 {% endblock %}
