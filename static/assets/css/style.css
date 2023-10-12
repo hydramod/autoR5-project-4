@@ -1435,6 +1435,8 @@ strong {
 /* Style for the page container */
 .side-container {
   display: flex;
+  flex-direction: row-reverse;
+  /* Reverse the order to put the sidebar on the right */
   align-items: stretch;
   /* Stretch the items vertically */
 }
@@ -1480,32 +1482,39 @@ strong {
 .contact-section .container-fluid {
   padding: 0 40px;
 }
+
 @media (max-width: 992px) {
   .contact-section .container-fluid {
     padding: 0 20px;
   }
 }
+
 @media (max-width: 992px) {
   .contact-section .container {
     padding: 0 20px;
   }
 }
+
 .contact-section .row {
   justify-content: center;
 }
+
 @media (max-width: 992px) {
   .contact-section .title-wrapper {
     margin-bottom: 24px;
   }
 }
+
 .contact-section .title-wrapper .section-title {
   margin-bottom: 30px;
 }
+
 @media (max-width: 992px) {
   .contact-section .title-wrapper .section-title {
     margin-bottom: 20px;
   }
 }
+
 .contact-section .title-wrapper .text {
   margin-bottom: 0;
 }
@@ -1513,15 +1522,19 @@ strong {
 .contact-section .form-area.row .section-btn {
   width: 100%;
 }
+
 .contact-section .form-area.row .section-btn .btn {
   display: inline-flex;
 }
+
 .contact-section .section-title {
   color: #c2b299;
 }
+
 .contact-section .text {
   color: #e4dfd4;
 }
+
 .contact-section label {
   color: #c2b299;
 }
@@ -1533,58 +1546,333 @@ strong {
   padding-bottom: 5rem;
   background-image: url("{{ car.image.url }}");
 }
+
 .booking-section .container-fluid {
   padding: 0 40px;
 }
+
 @media (max-width: 992px) {
   .booking-section .container-fluid {
     padding: 0 20px;
   }
 }
+
 .booking-section .row {
   justify-content: center;
 }
+
 .booking-section .title-wrapper {
   padding: 40px 78px;
   background-color: #1b1b1b;
 }
+
 @media (max-width: 1200px) {
   .booking-section .title-wrapper {
     padding: 40px;
   }
 }
+
 @media (max-width: 992px) {
   .booking-section .title-wrapper {
     padding: 50px 25px;
   }
 }
+
 .booking-section .title-wrapper .section-title {
   margin-bottom: 16px;
 }
+
 .booking-section .form-area.row {
   padding: 80px 78px;
   background-color: #000000;
   margin: 0;
 }
+
 @media (max-width: 1200px) {
   .booking-section .form-area.row {
     padding: 80px 40px;
   }
 }
+
 @media (max-width: 992px) {
   .booking-section .form-area.row {
     padding: 50px 25px;
   }
 }
+
 .booking-section .form-area.row .section-btn {
   width: 100%;
 }
+
 .booking-section .section-title {
   color: #c2b299;
 }
+
 .booking-section .text {
   color: #e4dfd4;
 }
+
 .booking-section label {
   color: #c2b299;
+}
+
+/* car_details page */
+
+.car-details-section {
+  background-color: #dbd4c5;
+}
+
+.car-details-section .container-fluid {
+  padding: 0;
+}
+
+@media (max-width: 992px) {
+  .car-details-section .container-fluid {
+    padding: 0;
+  }
+}
+
+.car-details-section .row {
+  margin: 0;
+}
+
+.car-details-section .card {
+  padding: 0;
+  background-color: #dbd4c5;
+  border: none;
+}
+
+.car-details-section .image-wrapper img {
+  height: 800px;
+  object-fit: cover;
+}
+
+@media (max-width: 992px) {
+  .car-details-section .image-wrapper img {
+    height: 450px;
+  }
+}
+
+.car-details-section .title-wrapper {
+  height: 100%;
+  margin-bottom: 10%;
+  background-color: #1b1b1b;
+  display: flex;
+  align-items: center;
+  padding: 24px 115px;
+}
+
+@media (max-width: 992px) {
+  .car-details-section .title-wrapper {
+    padding: 50px 20px;
+  }
+}
+
+.car-details-section .title-wrapper .title-wrap {
+  width: 100%;
+}
+
+.car-details-section .title-wrapper .title-wrap .section-title {
+  margin-bottom: 50px;
+}
+
+@media (max-width: 992px) {
+  .car-details-section .title-wrapper .title-wrap .section-title {
+    margin-bottom: 24px;
+  }
+}
+
+.car-details-section .title-wrapper .title-wrap .text {
+  margin-bottom: 50px;
+  line-height: 1.78;
+}
+
+@media (max-width: 992px) {
+  .car-details-section .title-wrapper .title-wrap .text {
+    margin-bottom: 24px;
+  }
+}
+
+.car-details-section .section-title {
+  color: #c2b299;
+}
+
+.car-details-section .text {
+  color: #e4dfd4;
+}
+
+/* car reviews section */
+
+.car-reviews-section {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+  background-color: #1b1b1b;
+}
+
+.car-reviews-section .container-fluid {
+  padding: 0 40px;
+}
+
+@media (max-width: 992px) {
+  .car-reviews-section .container-fluid {
+    padding: 0 20px;
+  }
+}
+
+.car-reviews-section .row {
+  justify-content: center;
+}
+
+.car-reviews-section .title-wrapper .section-title {
+  margin-bottom: 50px;
+}
+
+.car-reviews-section .card {
+  margin-bottom: 50px;
+  background-color: #1b1b1b;
+}
+
+.car-reviews-section .card .card-wrap {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 24px;
+  border-top: 1px solid #ffffff;
+}
+
+.car-reviews-section .card .card-wrap .date {
+  margin-bottom: 24px;
+}
+
+.car-reviews-section .card .card-wrap a {
+  display: block;
+}
+
+.car-reviews-section .card .card-wrap a:hover .text {
+  text-decoration: underline;
+}
+
+.car-reviews-section .card .card-wrap a .text {
+  margin-bottom: 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.car-reviews-section .section-title {
+  color: #ffffff;
+}
+
+.car-reviews-section .date {
+  color: #ffffff;
+}
+
+.car-reviews-section .text {
+  color: #ffffff;
+}
+
+.car-reviews-section .section-title,
+.car-reviews-section .section-btn {
+  text-align: center;
+}
+
+/* booking confimation page*/
+
+.book-confirm-section {
+  background-color: #1b1b1b;
+}
+
+.book-confirm-section .container-fluid {
+  padding: 0 40px;
+}
+
+@media (max-width: 992px) {
+  .book-confirm-section .container-fluid {
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 992px) {
+  .book-confirm-section .container {
+    padding: 0 20px;
+  }
+}
+
+.book-confirm-section .row {
+  justify-content: center;
+}
+
+@media (max-width: 992px) {
+  .book-confirm-section .title-wrapper {
+    margin-bottom: 24px;
+  }
+}
+
+.book-confirm-section .title-wrapper .section-title {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 992px) {
+  .book-confirm-section .title-wrapper .section-title {
+    margin-bottom: 24px;
+  }
+}
+
+.book-confirm-section .title-wrapper .text {
+  margin-bottom: 5px;
+}
+
+@media (max-width: 992px) {
+  .book-confirm-section .title-wrapper .text {
+    margin-bottom: 24px;
+  }
+}
+
+.book-confirm-section .image-wrapper {
+  height: 100%;
+  align-items: center;
+  margin: auto;
+}
+
+.book-confirm-section .image-wrapper img {
+  height: 76%;
+}
+
+@media (max-width: 992px) {
+  .book-confirm-section .image-wrapper img {
+    height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .book-confirm-section .image-wrapper img {
+    height: 300px;
+    margin: 0;
+  }
+}
+
+.book-confirm-section .section-title {
+  color: #c2b299;
+}
+
+.book-confirm-section .text {
+  color: #e4dfd4;
+}
+
+.book-confirm-section .map {
+  height: 650px;
+  width: 600px;
+  margin: auto;
+}
+
+@media (max-width: 992px) {
+  .book-confirm-section .map {
+    height: 400px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 1270px) {
+  .book-confirm-section .map {
+    width: 100%;
+  }
 }

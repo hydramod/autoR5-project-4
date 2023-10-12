@@ -57,8 +57,7 @@ def book_car(request, car_id):
         if form.is_valid():
             booking = form.save(commit=False)
             booking.user = request.user
-            booking.car = car
-            booking.location = car.location
+            booking.location = car.location_name
 
             today = date.today()
             rental_date = booking.rental_date.date()
@@ -88,7 +87,11 @@ def book_car(request, car_id):
 @login_required
 def booking_confirmation(request, booking_id):
     booking = get_object_or_404(Booking, pk=booking_id)
-    return render(request, 'booking_confirmation.html', {'booking': booking})
+    car = booking.car
+    location_name = car.location_name
+    location_lat = car.latitude
+    location_long = car.longitude
+    return render(request, 'booking_confirmation.html', {'booking': booking, 'location_name': location_name, 'location_lat': location_lat, 'location_long': location_long})
 
 @login_required
 def leave_review(request, car_id):

@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jarallax/2.1.4/jarallax.min.css" integrity="sha512-7WC5//oz0DF1gX/V0ca+IsJUd+a7aSZLk+kJy6VvdeBqn8sVtVD2xp8Aaxin1GDOoNJPSdV8fpNU/4odjWyeoQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Gloock:400&display=swap">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 </head>
@@ -90,14 +91,14 @@
         <div class="container-fluid">
             <div class="media-container-row">
                 <div class="row row-links">
-                    <ul class="foot-menu fonts-style display-4">
-                        <li class="foot-menu-item fonts-style">
+                    <ul class="foot-menu display-4">
+                        <li class="foot-menu-item">
                             <a href="{% url 'index' %}">Home</a>
                         </li>
-                        <li class="foot-menu-item fonts-style">
+                        <li class="foot-menu-item">
                             <a href="{% url 'cars_list' %}">Our Fleet</a>
                         </li>
-                        <li class="foot-menu-item fonts-style">
+                        <li class="foot-menu-item">
                             <a href="{% url 'contact' %}">Contact Us</a>
                         </li>
                     </ul>
@@ -141,6 +142,7 @@
     {{ form.media.js }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jarallax/2.1.4/jarallax.min.js" integrity="sha512-wMKzkL82Stz/9uvNuVDtNa54reXuasH+lngpkCb9D66uU31uRw8UUMEKpqEJkfaXTmV7U13vQuZ3IELMoIgWnA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://kit.fontawesome.com/b48464af7c.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="{% static 'assets/js/script.js' %}"></script>
 
 </body>

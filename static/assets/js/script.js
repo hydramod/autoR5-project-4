@@ -46,5 +46,25 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+//map
+
+// Retrieve latitude and longitude from the HTML element
+let carLocationElement = document.getElementById('car-location');
+let latitude = carLocationElement.getAttribute('data-latitude');
+let longitude = carLocationElement.getAttribute('data-longitude');
+let locationName = carLocationElement.textContent;
+
+// Initialize the map
+let carLocation = [parseFloat(latitude), parseFloat(longitude)];
+let map = L.map('map').setView(carLocation, 15);
+
+// Add the tile layer
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+// Add a marker with a popup
+L.marker(carLocation).addTo(map).bindPopup("Location: " + locationName);
+
 
 

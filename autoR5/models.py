@@ -23,7 +23,9 @@ class Car(models.Model):
     license_plate = models.CharField(max_length=20, unique=True)
     daily_rate = models.DecimalField(max_digits=8, decimal_places=2)
     is_available = models.BooleanField(default=True)
-    location = models.CharField(max_length=100)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, default=53.349805)  # Default to Dublin's latitude
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, default=-6.26031)  # Default to Dublin's longitude
+    location_name = models.CharField(max_length=100)  # Field for location name
     image = CloudinaryField('car_images', blank=True, null=True)
     features = models.TextField(blank=True, null=True)
     car_type = models.ForeignKey(CarType, on_delete=models.SET_NULL, blank=True, null=True)
@@ -34,6 +36,14 @@ class Car(models.Model):
 
     def get_absolute_url(self):
         return reverse('car_detail', args=[str(self.id)])
+
+    @property
+    def location(self):
+        return f"{self.latitude},{self.longitude}"
+
+    @property
+    def address(self):
+        return self.location_name  # Return the location name as the address
 
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
