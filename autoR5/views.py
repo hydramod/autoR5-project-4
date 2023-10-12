@@ -58,7 +58,7 @@ def book_car(request, car_id):
             booking = form.save(commit=False)
             booking.user = request.user
             booking.car = car
-            booking.location = Car.location
+            booking.location = car.location
 
             today = date.today()
             rental_date = booking.rental_date.date()

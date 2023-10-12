@@ -8,6 +8,10 @@
     <p>Location: {{ car.location }}</p>
     <p>Daily Rate: ${{ car.daily_rate }}</p>
     <p>Features: {{ car.features }}</p>
+
+    <div class="section-btn">
+      <a class="btn btn-primary-outline display-4" href="{% url 'book_car' car.id %}"><span></span>Book Now</a>
+    </div>
   
     <h2>Reviews</h2>
     <ul>

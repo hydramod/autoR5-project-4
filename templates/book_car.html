@@ -1,10 +1,31 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags%}
 
 {% block content %}
-  <h1>Book {{ car }}</h1>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit Booking</button>
-  </form>
-{% endblock %}
+  
+    <section class="booking-section jarallax">
+      <div class="overlay"></div>
+      <div class="container-fluid">
+          <div class="row">
+              <div class="col-12 col-lg-5 form">
+                  <div class="title-wrapper">
+                      <h2 class="section-title fonts-style display-5">Rent: {{ car.make }} {{ car.model }}</h2>
+                  </div>
+                  <form action="{% url 'book_car' car.id %}" method="POST">
+                      {% csrf_token %}
+                      <div class="form-area row">
+                          {% crispy form %}
+                          <div class="col-md-auto col section-btn">
+                              <button type="submit" class="btn btn-primary-outline display-4">
+                                  <span></span>Submit Booking
+                              </button>
+                          </div>
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+    </section>
+
+  {% endblock %}
+  

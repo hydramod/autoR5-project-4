@@ -1525,3 +1525,66 @@ strong {
 .contact-section label {
   color: #c2b299;
 }
+
+/* booking page */
+
+.booking-section {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+  background-image: url("{{ car.image.url }}");
+}
+.booking-section .container-fluid {
+  padding: 0 40px;
+}
+@media (max-width: 992px) {
+  .booking-section .container-fluid {
+    padding: 0 20px;
+  }
+}
+.booking-section .row {
+  justify-content: center;
+}
+.booking-section .title-wrapper {
+  padding: 40px 78px;
+  background-color: #1b1b1b;
+}
+@media (max-width: 1200px) {
+  .booking-section .title-wrapper {
+    padding: 40px;
+  }
+}
+@media (max-width: 992px) {
+  .booking-section .title-wrapper {
+    padding: 50px 25px;
+  }
+}
+.booking-section .title-wrapper .section-title {
+  margin-bottom: 16px;
+}
+.booking-section .form-area.row {
+  padding: 80px 78px;
+  background-color: #000000;
+  margin: 0;
+}
+@media (max-width: 1200px) {
+  .booking-section .form-area.row {
+    padding: 80px 40px;
+  }
+}
+@media (max-width: 992px) {
+  .booking-section .form-area.row {
+    padding: 50px 25px;
+  }
+}
+.booking-section .form-area.row .section-btn {
+  width: 100%;
+}
+.booking-section .section-title {
+  color: #c2b299;
+}
+.booking-section .text {
+  color: #e4dfd4;
+}
+.booking-section label {
+  color: #c2b299;
+}

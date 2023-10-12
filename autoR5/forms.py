@@ -1,5 +1,7 @@
 from django import forms
 from .models import Booking, Review
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout
 from bootstrap_datepicker_plus.widgets import DatePickerInput
 
 class BookingForm(forms.ModelForm):
@@ -7,8 +9,8 @@ class BookingForm(forms.ModelForm):
         model = Booking
         fields = ['rental_date', 'return_date']
         widgets = {
-            'rental_date': DatePickerInput(format='%d-%m-%Y'), 
-            'return_date': DatePickerInput(format='%d-%m-%Y'), 
+            'rental_date': DatePickerInput(), 
+            'return_date': DatePickerInput(), 
         }
 
     def clean(self):
@@ -19,10 +21,12 @@ class BookingForm(forms.ModelForm):
         if rental_date and return_date and rental_date >= return_date:
             raise forms.ValidationError("Return date must be after the rental date.")
 
-class ReviewForm(forms.ModelForm):
+class ReviewForm(forms.Form):
     class Meta:
         model = Review
         fields = ['rating', 'comment']
+
+from django import forms
 
 class ContactForm(forms.Form):
     first_name = forms.CharField(label='FIRST NAME', max_length=100)
@@ -32,3 +36,4 @@ class ContactForm(forms.Form):
         label='Message',
         widget=forms.Textarea(attrs={'rows': 5, 'cols': 40}),
     )
+
