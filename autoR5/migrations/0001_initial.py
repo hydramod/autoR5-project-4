@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ('license_plate', models.CharField(max_length=20, unique=True)),
                 ('daily_rate', models.DecimalField(decimal_places=2, max_digits=8)),
                 ('is_available', models.BooleanField(default=True)),
-                ('location', models.CharField(max_length=100)),
+                ('location_name', models.CharField(max_length=100)),
                 ('image', models.ImageField(blank=True, null=True, upload_to='car_images/')),
                 ('features', models.TextField(blank=True, null=True)),
             ],
