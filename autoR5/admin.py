@@ -2,9 +2,9 @@ from django.contrib import admin
 from .models import Car, Booking, Review, UserProfile, Payment, Notification, CancellationRequest, Location
 
 class CarAdmin(admin.ModelAdmin):
-    list_display = ('make', 'model', 'year', 'license_plate', 'daily_rate', 'is_available', 'location')
-    list_filter = ('make', 'model', 'year', 'is_available', 'location')
-    search_fields = ('make', 'model', 'year', 'location')
+    list_display = ('make', 'model', 'year', 'license_plate', 'daily_rate', 'is_available', 'latitude', 'longitude', 'location_name')
+    list_filter = ('make', 'model', 'year', 'is_available', 'location_name')
+    search_fields = ('make', 'model', 'year', 'location_name')
 
 class BookingAdmin(admin.ModelAdmin):
     list_display = ('user', 'car', 'rental_date', 'return_date', 'total_cost')
