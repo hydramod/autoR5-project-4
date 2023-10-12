@@ -14,7 +14,7 @@
                             <select name="make" id="car_make" class="form-control display-7">
                                 <option value="">All</option>
                                 {% for car in cars %}
-                                    <option value="{{ car.make }}">{{ car.make }}</option>
+                                <option value="{{ car.make }}">{{ car.make }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -23,7 +23,7 @@
                             <select name="model" id="car_model" class="form-control display-7">
                                 <option value="">All</option>
                                 {% for car in cars %}
-                                    <option value="{{ car.model }}">{{ car.model }}</option>
+                                <option value="{{ car.model }}">{{ car.model }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -32,7 +32,7 @@
                             <select name="year" id="car_year" class="form-control display-7">
                                 <option value="">All</option>
                                 {% for car in cars %}
-                                    <option value="{{ car.year }}">{{ car.year }}</option>
+                                <option value="{{ car.year }}">{{ car.year }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -41,7 +41,7 @@
                             <select name="location" id="car_location" class="form-control display-7">
                                 <option value="">All</option>
                                 {% for car in cars %}
-                                    <option value="{{ car.location }}">{{ car.location }}</option>
+                                <option value="{{ car.location }}">{{ car.location }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -50,7 +50,7 @@
                             <select name="car_type" id="car_type" class="form-control display-7">
                                 <option value="">All</option>
                                 {% for car_type in car_types %}
-                                    <option value="{{ car_type.name }}">{{ car_type.name }}</option>
+                                <option value="{{ car_type.name }}">{{ car_type.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -59,7 +59,7 @@
                             <select name="fuel_type" id="fuel_type" class="form-control display-7">
                                 <option value="">All</option>
                                 {% for fuel_type in fuel_types %}
-                                    <option value="{{ fuel_type.name }}">{{ fuel_type.name }}</option>
+                                <option value="{{ fuel_type.name }}">{{ fuel_type.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -76,42 +76,42 @@
             </div>
         </div>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-12 col-lg-9">
-                <div class="title-wrapper">
-                    <h3 class="section-title display-1">Our Fleet</h3>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-lg-9">
+                    <div class="title-wrapper">
+                        <h3 class="section-title display-1">Our Fleet</h3>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            {% for car in cars %}
-            <div class="item features-image сol-12 col-lg-3">
-                <div class="item-wrapper">
-                    <a href="{% url 'car_detail' car.id %}">
-                        <div class="item-img">
-                            <img src="{{ car.image.url }}" alt="">
-                            <span class="iconfont">
-                                <i class="fa-solid fa-calendar-days"></i>
-                            </span>
-                        </div>
-                        <div class="item-content">
-                            <p class="date display-4">
-                                {{ car.year }}
-                            </p>
-                            <h4 class="card-title display-5">
-                                {{ car.make }} {{ car.model}}
-                            </h4>
-                        </div>
-                    </a>
+            <div class="row">
+                {% for car in cars %}
+                <div class="item features-image сol-12 col-lg-3">
+                    <div class="item-wrapper">
+                        <a href="{% url 'car_detail' car.id %}">
+                            <div class="item-img">
+                                <img src="{{ car.image.url }}" alt="">
+                                <span class="iconfont">
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                </span>
+                            </div>
+                            <div class="item-content">
+                                <p class="date display-4">
+                                    {{ car.year }}
+                                </p>
+                                <h4 class="card-title display-5">
+                                    {{ car.make }} {{ car.model}}
+                                </h4>
+                            </div>
+                        </a>
+                    </div>
                 </div>
+                {% empty %}
+                <p class="card-title display-5">No cars available.</p>
+                {% endfor %}
             </div>
-            {% empty %}
-            <p class="card-title display-5">No cars available.</p>
-            {% endfor %}
         </div>
-    </div>
 </section>
 
 {% endblock %}

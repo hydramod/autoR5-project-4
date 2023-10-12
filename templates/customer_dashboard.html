@@ -1,5 +1,217 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
+
+<section class="counter-section">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-lg-3 col-md-6 card">
+                <div class="card-wrap">
+                    {% if current_bookings %}
+                    <p class="description display-7">Current Bookings</p>
+                    <p class="number display-1">{{ current_bookings.count }}</p>
+                    {% else %}
+                    <p class="description display-7">Current Bookings</p>
+                    <p class="number display-1">0</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-12 col-lg-3 col-md-6 card">
+                <div class="card-wrap">
+                    {% if past_bookings %}
+                    <p class="description display-7">Past Bookings</p>
+                    <p class="number display-1">{{ past_bookings.count }}</p>
+                    {% else %}
+                    <p class="description display-7">Past Bookings</p>
+                    <p class="number display-1">0</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-12 col-lg-3 col-md-6 card">
+                <div class="card-wrap">
+                    {% if reviews %}
+                    <p class="description display-7">Total Reviews</p>
+                    <p class="number display-1">{{ review.count }}</p>
+                    {% else %}
+                    <p class="description display-7">Total Reviews</p>
+                    <p class="number display-1">0</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="welcome-user-section">
+
+    <div class="container-fluid">
+        <div class="row flex-row-reverse">
+            <div class="col-12 col-lg-6 text">
+                <div class="image-wrapper">
+                    {% if user.userprofile.profile_picture %}
+                    <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture">
+                    {% else %}
+                    <img src="path_to_default_image" alt="Default Profile Picture">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-12 col-lg-6">
+                <div class="title-wrapper">
+                    <h1 class="section-title display-6">
+                        Welcome, {{ user }}
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section class="manage-booking-section">
+
+    <div class="container-fluid">
+        <div class="row flex-row-reverse">
+            <div class="col-12 col-lg-10">
+                <div class="title-wrapper">
+
+                    <h2 class="section-title display-6">
+                        Current Bookings</h2>
+
+                </div>
+            </div>
+            {% for booking in current_bookings %}
+            <div class="item features-image сol-12 col-lg-10">
+                <div class="item-wrapper">
+                    <div class="item-img">
+                        <img src="{% static 'assets/images/image3.jpg' %}" alt="">
+                    </div>
+                    <div class="item-content">
+                        <div class="title-wrap">
+                            <h4 class="item-title display-7">
+                                {{ booking.car }} - {{ booking.rental_date|date:"Y-m-d" }} to {{
+                                booking.return_date|date:"Y-m-d" }}
+                            </h4>
+                            <button class="btn btn-primary-outline-reverse display-4">
+                                <a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
+                            </button>
+                        </div>
+                        <form action="{% url 'cancel_booking' booking.id %}" method="post">
+                            {% csrf_token %}
+                            <label for="{{ form.reason.id_for_label }}">Reason for Cancellation:</label>
+                            <br>
+                            <textarea id="{{ form.reason.id_for_label }}" name="{{ form.reason.name }}" rows="4"
+                                cols="40" required>
+                            {{ form.reason.value }}
+                            </textarea>
+                            {{ form.reason.errors }}
+                            <button type="submit" class="btn btn-primary-outline-reverse display-4">
+                                <span></span>Cancel
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="item features-image сol-12 col-lg-10">
+                <div class="item-wrapper">
+                    <div class="item-content">
+                        <div class="title-wrap">
+                            <h4 class="item-title display-5">
+                                No current bookings
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row flex-row-reverse">
+                <div class="col-12 col-lg-10">
+                    <div class="title-wrapper">
+
+                        <h2 class="section-title display-6">
+                            Past Bookings</h2>
+
+                    </div>
+                </div>
+                {% for booking in past_bookings %}
+                <div class="item features-image сol-12 col-lg-10">
+                    <div class="item-wrapper">
+                        <div class="item-img">
+                            <img src="{{ car.image.url }}" alt="">
+                        </div>
+                        <div class="item-content">
+                            <div class="title-wrap">
+                                <h4 class="item-title display-7">
+                                    {{ booking.car }} - {{ booking.rental_date|date:"Y-m-d" }} to {{
+                                    booking.return_date|date:"Y-m-d" }}
+                                </h4>
+                                <button class="btn btn-primary-outline-reverse display-4">
+                                    <a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="item features-image сol-12 col-lg-10">
+                    <div class="item-wrapper">
+                        <div class="item-content">
+                            <div class="title-wrap">
+                                <h4 class="item-title display-7">
+                                    No past bookings
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+</section>
+
+<section data-bs-version="5.1" class="user-reviews-section">
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="title col-md-12 mb-5">
+                    <h3 class="section-title display-6">
+                        Your Reviews</h3>
+
+                </div>
+                {% for review in reviews %}
+                <div class="item features-without-image col-12 active">
+                    <div class="item-wrapper">
+                        <div class="card-box align-left">
+                            <h5 class="card-title mb-3 display-5">
+                                Review for {{ review.car }} (Rating: {{ review.rating }}/5)
+                            </h5>
+                            <p class="card-text mb-5 display-7">
+                                {{ review.comment }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="item features-without-image col-12 active">
+                    <div class="item-wrapper">
+                        <div class="card-box align-left">
+                            <h5 class="card-title mb-3 display-7">
+                                No reviews submitted.
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
 
 {% endblock %}

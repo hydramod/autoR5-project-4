@@ -2,9 +2,9 @@
 
 {% block content %}
 
-  <!-- Car Details-->
+<!-- Car Details-->
 
-  <section data-bs-version="5.1" class="car-details-section">
+<section class="car-details-section">
 
     <div class="container-fluid">
         <div class="row">
@@ -17,18 +17,20 @@
                 <div class="title-wrapper">
                     <div class="title-wrap">
                         <h3 class="section-title display-5">
-                          {{ car }}
+                            {{ car }}
                         </h3>
                         <p class="text display-7">
-                          Location: {{ car.location_name }}
+                            Location: {{ car.location_name }}
                         </p>
                         <p class="text display-7">
-                          Daily Rate: ${{ car.daily_rate }}
+                            Daily Rate: ${{ car.daily_rate }}
                         </p>
                         <p class="text display-7">
-                          Features: {{ car.features }}
+                            Features: {{ car.features }}
                         </p>
-                        <div class="section-btn"><a class="btn btn-primary-outline display-4" href="{% url 'book_car' car.id %}"><span class="mobi-mbri mobi-mbri-touch iconfont iconfont-btn"></span>Book Now</a></div>
+                        <div class="section-btn"><a class="btn btn-primary-outline display-4"
+                                href="{% url 'book_car' car.id %}"><span
+                                    class="mobi-mbri mobi-mbri-touch iconfont iconfont-btn"></span>Book Now</a></div>
                     </div>
                 </div>
             </div>
@@ -51,10 +53,10 @@
             <div class="col-12 col-lg-4 col-md-6 card">
                 <div class="card-wrap">
                     <p class="date display-4">
-                      Rating: {{ review.rating }}
+                        Rating: {{ review.rating }}
                     </p>
                     <p class="text display-5">
-                            "{{ review.comment }}"
+                        "{{ review.comment }}"
                     </p>
                 </div>
             </div>
@@ -62,13 +64,14 @@
             <div class="col-12 col-lg-4 col-md-6 card">
                 <div class="card-wrap">
                     <p class="date display-4">
-                      No reviews yet.
+                        No reviews yet.
                     </p>
                 </div>
             </div>
             {% endfor %}
             <div class="col-12">
-                <div class="section-btn"><a class="btn btn-primary display-4" href="{% url 'leave_review' car.id %}">Your Feedback</a></div>
+                <div class="section-btn"><a class="btn btn-primary display-4"
+                        href="{% url 'leave_review' car.id %}">Your Feedback</a></div>
             </div>
         </div>
     </div>
