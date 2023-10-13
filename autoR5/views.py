@@ -60,8 +60,6 @@ def car_detail(request, car_id):
 
 @login_required
 def book_car(request, car_id):
-    if not request.user.is_authenticated:
-        return redirect('account_login')
 
     car = get_object_or_404(Car, pk=car_id)
     if request.method == 'POST':
@@ -102,8 +100,6 @@ def book_car(request, car_id):
 
 @login_required
 def booking_confirmation(request, booking_id):
-    if not request.user.is_authenticated:
-        return redirect('account_login')
 
     booking = get_object_or_404(Booking, pk=booking_id)
     car = booking.car
@@ -141,8 +137,6 @@ def leave_review(request, car_id):
 
 @login_required
 def customer_dashboard(request):
-    if not request.user.is_authenticated:
-        return redirect('account_login')
 
     user = request.user
     current_bookings = Booking.objects.filter(
@@ -161,8 +155,6 @@ def customer_dashboard(request):
 
 @login_required
 def cancel_booking(request, booking_id):
-    if not request.user.is_authenticated:
-        return redirect('account_login')
 
     booking = get_object_or_404(Booking, id=booking_id, user=request.user)
 
