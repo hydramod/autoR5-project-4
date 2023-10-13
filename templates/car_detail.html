@@ -4,7 +4,7 @@
 
 <!-- Car Details-->
 
-<section class="car-details-section">
+<section data-bs-version="5.1" class="car-details-section">
 
     <div class="container-fluid">
         <div class="row">
@@ -53,7 +53,14 @@
             <div class="col-12 col-lg-4 col-md-6 card">
                 <div class="card-wrap">
                     <p class="date display-4">
-                        Rating: {{ review.rating }}
+                        Rating:
+                        {% for i in "01234" %}
+                        {% if i|add:0 == review.rating %}
+                        <i class="far fa-star"></i>
+                        {% else %}
+                        <i class="fas fa-star"></i>
+                        {% endif %}
+                        {% endfor %}
                     </p>
                     <p class="text display-5">
                         "{{ review.comment }}"

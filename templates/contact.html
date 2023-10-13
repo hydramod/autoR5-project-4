@@ -23,19 +23,19 @@
                 <form action="" method="POST">
                     <div hidden="hidden" class="alert alert-success col-12">
                         {% if messages %}
-                        {% for message in messages %}
-                        {{ message }}
-                        {% endfor %}
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
                         {% endif %}
                     </div>
-
+                    
                     <div hidden="hidden" class="alert alert-danger col-12">
                         {% if messages %}
-                        {% for message in messages %}
-                        {{ message }}
-                        {% endfor %}
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
                         {% endif %}
-                    </div>
+                    </div>                    
                     <div class="form-area row">
                         {% crispy form %}
                         <div class="col-md-auto col section-btn">
