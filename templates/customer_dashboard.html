@@ -88,8 +88,7 @@
                     <div class="item-content">
                         <div class="title-wrap">
                             <h4 class="item-title display-7">
-                                {{ booking.car }} - {{ booking.rental_date|date:"d-m-Y" }} to {{
-                                booking.return_date|date:"d-m-Y" }}
+                                {{ booking.car }} - {{ booking.rental_date.date|date:"d-m-Y" }} to {{ booking.return_date.date|date:"d-m-Y" }}
                             </h4>
                             <button class="btn btn-primary-outline-reverse display-4">
                                 <a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
@@ -149,8 +148,7 @@
                     <div class="item-content">
                         <div class="title-wrap">
                             <h4 class="item-title display-7">
-                                {{ booking.car }} - {{ booking.rental_date|date:"d-m-Y" }} to {{
-                                booking.return_date|date:"d-m-Y" }}
+                                {{ booking.car }} - {{ booking.rental_date.date|date:"d-m-Y" }} to {{ booking.return_date.date|date:"d-m-Y" }}
                             </h4>
                             <button class="btn btn-primary-outline-reverse display-4">
                                 <a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
@@ -190,9 +188,18 @@
                     <div class="item-wrapper">
                         <div class="card-box align-left">
                             <h5 class="card-title mb-3 display-5">
-                                Review for {{ review.car }} (Rating: {{ review.rating }}/5)
+                                Review for {{ review.car }}
                             </h5>
                             <p class="card-text mb-5 display-7">
+                                Rating:
+                                {% for i in "01234" %}
+                                {% if i|add:0 == review.rating %}
+                                <i class="far fa-star"></i>
+                                {% else %}
+                                <i class="fas fa-star"></i>
+                                {% endif %}
+                                {% endfor %}
+                                <br>
                                 {{ review.comment }}
                             </p>
                         </div>
