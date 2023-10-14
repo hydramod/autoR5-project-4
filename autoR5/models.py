@@ -3,20 +3,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
 from cloudinary.models import CloudinaryField
-
-
-class FuelType(models.Model):
-    name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
-
-
-class CarType(models.Model):
-    name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
+from decimal import Decimal
 
 
 class Car(models.Model):
@@ -26,19 +13,28 @@ class Car(models.Model):
     license_plate = models.CharField(max_length=20, unique=True)
     daily_rate = models.DecimalField(max_digits=8, decimal_places=2)
     is_available = models.BooleanField(default=True)
-    # Default to Dublin's latitude
-    latitude = models.DecimalField(
-        max_digits=9, decimal_places=6, default=53.349805)
-    # Default to Dublin's longitude
-    longitude = models.DecimalField(
-        max_digits=9, decimal_places=6, default=-6.26031)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, default=53.349805)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, default=-6.26031)
     location_name = models.CharField(max_length=100)  # Field for location name
     image = CloudinaryField('car_images', blank=True, null=True)
     features = models.TextField(blank=True, null=True)
-    car_type = models.ForeignKey(
-        CarType, on_delete=models.SET_NULL, blank=True, null=True)
-    fuel_type = models.ForeignKey(
-        FuelType, on_delete=models.SET_NULL, blank=True, null=True)
+    CAR_TYPES = [
+        ('Hatchback', 'Hatchback'),
+        ('Saloon', 'Saloon'),
+        ('Estate', 'Estate'),
+        ('MPV', 'MPV'),
+        ('SUV', 'SUV'),
+        ('Sports car', 'Sports car'),
+    ]
+
+    FUEL_TYPES = [
+        ('Petrol', 'Petrol'),
+        ('Diesel', 'Diesel'),
+        ('Hybrid', 'Hybrid'),
+        ('Electric', 'Electric'),
+    ]
+    car_type = models.CharField(max_length=20, choices=CAR_TYPES, blank=True, null=True)
+    fuel_type = models.CharField(max_length=20, choices=FUEL_TYPES, blank=True, null=True)
 
     def __str__(self):
         return f"{self.year} {self.make} {self.model}"
@@ -46,9 +42,21 @@ class Car(models.Model):
     def get_absolute_url(self):
         return reverse('car_detail', args=[str(self.id)])
 
+    # Define the location property with getter and setter
     @property
     def location(self):
         return f"{self.latitude},{self.longitude}"
+
+    @location.setter
+    def location(self, value):
+        # Parse the value and update latitude and longitude
+        try:
+            lat, lon = value.split(',')
+            self.latitude = lat
+            self.longitude = lon
+        except ValueError:
+            # Handle the exception if parsing fails
+            pass
 
     @property
     def address(self):
@@ -64,6 +72,23 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"Booking for {self.car} by {self.user}"
+
+    def calculate_total_cost(self):
+        # Calculate the total cost based on the rental period and car's daily rate
+        if self.return_date:
+            rental_period = (self.return_date - self.rental_date).days
+            if rental_period < 1:
+                rental_period = 1
+            # Convert car.daily_rate to Decimal
+            car_daily_rate = Decimal(str(self.car.daily_rate))
+            self.total_cost = car_daily_rate * Decimal(rental_period)
+        else:
+            self.total_cost = Decimal('0.00')
+
+    def save(self, *args, **kwargs):
+        # Automatically calculate the total cost before saving
+        self.calculate_total_cost()
+        super().save(*args, **kwargs)
 
 
 class Review(models.Model):
@@ -129,18 +154,3 @@ class Location(models.Model):
 
     def __str__(self):
         return self.name
-
-
-# Add car types
-CarType.objects.get_or_create(name='Hatchback')
-CarType.objects.get_or_create(name='Saloon')
-CarType.objects.get_or_create(name='Estate')
-CarType.objects.get_or_create(name='MPV')
-CarType.objects.get_or_create(name='SUV')
-CarType.objects.get_or_create(name='Sports car')
-
-# Add fuel types
-FuelType.objects.get_or_create(name='Petrol')
-FuelType.objects.get_or_create(name='Diesel')
-FuelType.objects.get_or_create(name='Hybrid')
-FuelType.objects.get_or_create(name='Electric')

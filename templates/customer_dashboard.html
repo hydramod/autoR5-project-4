@@ -75,10 +75,8 @@
         <div class="row flex-row-reverse">
             <div class="col-12 col-lg-10">
                 <div class="title-wrapper">
-
                     <h2 class="section-title display-6">
                         Current Bookings</h2>
-
                 </div>
             </div>
             {% for booking in current_bookings %}
@@ -90,22 +88,26 @@
                     <div class="item-content">
                         <div class="title-wrap">
                             <h4 class="item-title display-7">
-                                {{ booking.car }} - {{ booking.rental_date|date:"Y-m-d" }} to {{
-                                booking.return_date|date:"Y-m-d" }}
+                                {{ booking.car }} - {{ booking.rental_date|date:"d-m-Y" }} to {{
+                                booking.return_date|date:"d-m-Y" }}
                             </h4>
                             <button class="btn btn-primary-outline-reverse display-4">
                                 <a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
                             </button>
                         </div>
-                        <form action="{% url 'cancel_booking' booking.id %}" method="post">
+                        <form method="POST">
                             {% csrf_token %}
-                            <label for="{{ form.reason.id_for_label }}">Reason for Cancellation:</label>
-                            <br>
-                            <textarea id="{{ form.reason.id_for_label }}" name="{{ form.reason.name }}" rows="4"
-                                cols="40" required>
-                            {{ form.reason.value }}
-                            </textarea>
-                            {{ form.reason.errors }}
+                            <input type="hidden" name="booking_id" value="{{ booking.id }}"> <!-- Add this line -->
+                            <div class="form-group">
+                                <label for="{{ form.reason.id_for_label }}" class="control-label">Reason for
+                                    Cancellation:</label>
+                                <div>
+                                    <textarea id="{{ form.reason.id_for_label }}" name="{{ form.reason.name }}"
+                                        class="form-control" required
+                                        placeholder="Enter your reason here">{{ form.reason.value }}</textarea>
+                                    {{ form.reason.errors }}
+                                </div>
+                            </div>
                             <button type="submit" class="btn btn-primary-outline-reverse display-4">
                                 <span></span>Cancel
                             </button>
@@ -118,64 +120,62 @@
                 <div class="item-wrapper">
                     <div class="item-content">
                         <div class="title-wrap">
-                            <h4 class="item-title display-5">
+                            <h4 class="item-title display-7">
                                 No current bookings
                             </h4>
                         </div>
                     </div>
                 </div>
-                {% endfor %}
-
             </div>
+            {% endfor %}
         </div>
+    </div>
 
-        <div class="container-fluid">
-            <div class="row flex-row-reverse">
-                <div class="col-12 col-lg-10">
-                    <div class="title-wrapper">
+    <div class="container-fluid">
+        <div class="row flex-row-reverse">
+            <div class="col-12 col-lg-10">
+                <div class="title-wrapper">
 
-                        <h2 class="section-title display-6">
-                            Past Bookings</h2>
-
-                    </div>
-                </div>
-                {% for booking in past_bookings %}
-                <div class="item features-image сol-12 col-lg-10">
-                    <div class="item-wrapper">
-                        <div class="item-img">
-                            <img src="{{ car.image.url }}" alt="">
-                        </div>
-                        <div class="item-content">
-                            <div class="title-wrap">
-                                <h4 class="item-title display-7">
-                                    {{ booking.car }} - {{ booking.rental_date|date:"Y-m-d" }} to {{
-                                    booking.return_date|date:"Y-m-d" }}
-                                </h4>
-                                <button class="btn btn-primary-outline-reverse display-4">
-                                    <a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="item features-image сol-12 col-lg-10">
-                    <div class="item-wrapper">
-                        <div class="item-content">
-                            <div class="title-wrap">
-                                <h4 class="item-title display-7">
-                                    No past bookings
-                                </h4>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-
+                    <h2 class="section-title display-6">
+                        Past Bookings</h2>
                 </div>
             </div>
+            {% for booking in past_bookings %}
+            <div class="item features-image сol-12 col-lg-10">
+                <div class="item-wrapper">
+                    <div class="item-img">
+                        <img src="{{ car.image.url }}" alt="">
+                    </div>
+                    <div class="item-content">
+                        <div class="title-wrap">
+                            <h4 class="item-title display-7">
+                                {{ booking.car }} - {{ booking.rental_date|date:"d-m-Y" }} to {{
+                                booking.return_date|date:"d-m-Y" }}
+                            </h4>
+                            <button class="btn btn-primary-outline-reverse display-4">
+                                <a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="item features-image сol-12 col-lg-10">
+                <div class="item-wrapper">
+                    <div class="item-content">
+                        <div class="title-wrap">
+                            <h4 class="item-title display-7">
+                                No past bookings
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
 </section>
 
-<section data-bs-version="5.1" class="user-reviews-section">
+<section class="user-reviews-section">
 
     <div class="container-fluid">
         <div class="row justify-content-center">

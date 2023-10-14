@@ -10,6 +10,5 @@ urlpatterns = [
     path('cars_list/', views.cars_list, name='cars_list'),
     path('contact/', views.contact, name='contact'),
     path('customer_dashboard/', views.customer_dashboard, name='customer_dashboard'),
-    path('cancel_booking/<int:booking_id>/', views.cancel_booking, name='cancel_booking'),
     path('reset_filter/', views.reset_filter, name='reset_filter'),
 ]

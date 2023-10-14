@@ -4,14 +4,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Q
-from .models import Car, CarType, FuelType, Booking, Review, CancellationRequest
+from .models import Car, Booking, Review, CancellationRequest
 from .forms import BookingForm, ReviewForm, ContactForm, CancellationRequestForm
 from datetime import date
+from django.http import HttpResponseRedirect
 
 
 def index(request):
-    # cars = Car.objects.filter(is_available=True)
-    return render(request, 'index.html')
+    # Get unique car types and fuel types from the Car model
+    car_types = Car.objects.values_list('car_type', flat=True).distinct().exclude(car_type=None)
+    fuel_types = Car.objects.values_list('fuel_type', flat=True).distinct().exclude(fuel_type=None)
+
+    return render(request, 'index.html', {'car_types': car_types, 'fuel_types': fuel_types})
 
 
 def contact(request):
@@ -20,8 +24,6 @@ def contact(request):
 
 def cars_list(request):
     cars = Car.objects.all()
-    car_types = CarType.objects.all()
-    fuel_types = FuelType.objects.all()
 
     # Get filter values from the request's GET parameters
     car_make = request.GET.get('make')
@@ -39,13 +41,18 @@ def cars_list(request):
     if car_year:
         cars = cars.filter(year=car_year)
     if car_location:
-        cars = cars.filter(location=car_location)
+        cars = cars.filter(location_name=car_location)
+    
     if car_type:
-        cars = cars.filter(car_type__name=car_type)
+        cars = cars.filter(car_type=car_type)
     if fuel_type:
-        cars = cars.filter(fuel_type__name=fuel_type)
+        cars = cars.filter(fuel_type=fuel_type)
 
-    return render(request, 'cars_list.html', {'cars': cars, 'car_types': car_types, 'fuel_types': fuel_types})
+    return render(request, 'cars_list.html', {
+        'cars': cars,
+        'car_types': Car.CAR_TYPES,  # Use the choices defined in the Car model
+        'fuel_types': Car.FUEL_TYPES,  # Use the choices defined in the Car model
+    })
 
 
 def reset_filter(request):
@@ -60,8 +67,9 @@ def car_detail(request, car_id):
 
 @login_required
 def book_car(request, car_id):
-
     car = get_object_or_404(Car, pk=car_id)
+    total_cost = None  # Initialize total_cost as None
+
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
@@ -88,9 +96,11 @@ def book_car(request, car_id):
                     request, 'This car is already booked for the selected dates.')
                 return redirect('book_car', car_id=car_id)
 
-            booking.total_cost = (booking.return_date -
-                                  booking.rental_date).days * car.daily_rate
+            # Calculate the total_cost before saving
+            booking.calculate_total_cost()
             booking.save()
+            total_cost = booking.total_cost
+
             return redirect('booking_confirmation', booking_id=booking.id)
     else:
         form = BookingForm()
@@ -100,13 +110,13 @@ def book_car(request, car_id):
 
 @login_required
 def booking_confirmation(request, booking_id):
-
     booking = get_object_or_404(Booking, pk=booking_id)
     car = booking.car
     location_name = car.location_name
     location_lat = car.latitude
     location_long = car.longitude
-    return render(request, 'booking_confirmation.html', {'booking': booking, 'location_name': location_name, 'location_lat': location_lat, 'location_long': location_long})
+    total_cost = booking.total_cost
+    return render(request, 'booking_confirmation.html', {'booking': booking, 'location_name': location_name, 'location_lat': location_lat, 'location_long': location_long, 'total_cost': total_cost})
 
 
 @login_required
@@ -137,43 +147,39 @@ def leave_review(request, car_id):
 
 @login_required
 def customer_dashboard(request):
-
     user = request.user
     current_bookings = Booking.objects.filter(
         user=user, return_date__gte=timezone.now())
     past_bookings = Booking.objects.filter(
         user=user, return_date__lt=timezone.now())
     reviews = Review.objects.filter(user=user)
+    form = CancellationRequestForm()  # Define the form here
+
+    # Handle booking cancellations
+    if request.method == 'POST':
+        booking_id = request.POST.get('booking_id')  # Retrieve the booking_id from request.POST
+        if booking_id is not None:
+            booking = Booking.objects.get(id=booking_id)
+
+            # Create a cancellation request
+            cancellation_request = form.save(commit=False)
+            cancellation_request.booking = booking
+            cancellation_request.user = user
+            cancellation_request.save()
+
+            # Delete the booking
+            booking.delete()
+
+            messages.success(request, 'Cancellation request submitted successfully')
+            return redirect('customer_dashboard')
 
     return render(request, 'customer_dashboard.html', {
         'user': user,
         'current_bookings': current_bookings,
         'past_bookings': past_bookings,
         'reviews': reviews,
+        'form': form,
     })
-
-
-@login_required
-def cancel_booking(request, booking_id):
-
-    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
-
-    if request.method == 'POST':
-        if booking.return_date >= timezone.now():
-            form = CancellationRequestForm(request.POST)
-            if form.is_valid():
-                reason = form.cleaned_data['reason']
-                CancellationRequest.objects.create(
-                    booking=booking, user=request.user, reason=reason)
-                booking.delete()
-                messages.success(request, 'Booking has been canceled.')
-                return redirect('customer_dashboard')
-        else:
-            messages.error(request, 'You cannot cancel a past booking.')
-    else:
-        form = CancellationRequestForm()
-
-    return render(request, 'cancel_booking.html', {'booking': booking, 'form': form})
 
 
 def contact(request):

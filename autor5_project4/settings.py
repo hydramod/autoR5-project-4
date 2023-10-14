@@ -124,9 +124,12 @@ WSGI_APPLICATION = 'autor5_project4.wsgi.application'
 #}
 
 DATABASES = {
-     'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
- }
-
+    'default': dj_database_url.parse(os.environ.get("DATABASE_URL")),
+    'TEST': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'test_db.sqlite3',
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

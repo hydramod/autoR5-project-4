@@ -1,4 +1,6 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
 
 <!--Landing Page-->
 <section class="header fullscreen jarallax">
@@ -13,13 +15,7 @@
                     <h1 class="section-title display-1">Welcome to AutoR5 Car Rentals</h1>
 
                     <p class="text display-7">
-                        Your gateway to an extraordinary driving experience. At AutoR5, we pride ourselves on delivering
-                        top-notch car rental solutions that cater to your every need. Whether you're embarking on a
-                        weekend getaway, a business trip, or simply need a reliable set of wheels for daily commuting,
-                        our diverse fleet of vehicles ensures there's a perfect match for you. With a commitment to
-                        exceptional service, competitive rates, and a hassle-free rental process, we're here to
-                        transform your journey into an unforgettable adventure. Join us today and discover the road to
-                        convenience, comfort, and style with AutoR5 Car Rentals.
+                        Your gateway to an extraordinary driving experience. At AutoR5, we pride ourselves on delivering top-notch car rental solutions that cater to your every need. Whether you're embarking on a weekend getaway, a business trip, or simply need a reliable set of wheels for daily commuting, our diverse fleet of vehicles ensures there's a perfect match for you. With a commitment to exceptional service, competitive rates, and a hassle-free rental process, we're here to transform your journey into an unforgettable adventure. Join us today and discover the road to convenience, comfort, and style with AutoR5 Car Rentals.
                     </p>
                 </div>
             </div>
@@ -33,168 +29,45 @@
     </div>
 </section>
 
-<section data-bs-version="5.1" class="featured fullscreen">
-
+<section class="featured fullscreen">
     <div class="container-fluid">
         <div class="row">
+            {% for car_type in car_types %}
             <div class="item features-image сol-12 col-lg-6">
                 <div class="item-wrapper">
                     <div class="item-img">
-                        <img src="assets/images/ar5-1757x1168.webp" alt="">
+                        <img src="{% static 'assets/images/image3.webp' %}" alt="{{ car_type }}">
                         <div class="item-content">
                             <div class="title-wrap">
-                                <h4 class="item-title  display-5">
-                                    Hatchback</h4>
-                                <p class="description  display-7">
-                                    Ideal for daily commuting.
+                                <h4 class="item-title display-5">{{ car_type }}</h4>
+                                <p class="description display-7">
+                                    {% if car_type == 'Hatchback' %}
+                                        Ideal for daily commuting.
+                                    {% elif car_type == 'Saloon' %}
+                                        Great for comfort and long-distance travel.
+                                    {% elif car_type == 'Estate' %}
+                                        Blend luxury and cargo space, ideal for upscale travel and practical needs.
+                                    {% elif car_type == 'MPV' %}
+                                        Prioritize versatility, accommodating passengers and cargo, ideal for families.
+                                    {% elif car_type == 'SUV' %}
+                                        Elevated, versatile, and ideal for adventure.
+                                    {% elif car_type == 'Sports car' %}
+                                        Thrilling performance and agile handling, ideal for enthusiasts who crave an exhilarating drive.
+                                    {% endif %}
                                 </p>
                             </div>
                             <div class="section-btn">
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Hatchback&fuel=Petrol">Petrol</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Hatchback&fuel=Diesel">Diesel</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Hatchback&fuel=Hybrid">Hybrid</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Hatchback&fuel=Electric">Electric</a>
+                                <a class="btn btn-primary-outline display-4" href="{% url 'cars_list' %}?car_type={{ car_type }}&fuel_type=Petrol">Petrol</a>
+                                <a class="btn btn-primary-outline display-4" href="{% url 'cars_list' %}?car_type={{ car_type }}&fuel_type=Diesel">Diesel</a>
+                                <a class="btn btn-primary-outline display-4" href="{% url 'cars_list' %}?car_type={{ car_type }}&fuel_type=Hybrid">Hybrid</a>
+                                <a class="btn btn-primary-outline display-4" href="{% url 'cars_list' %}?car_type={{ car_type }}&fuel_type=Electric">Electric</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="item features-image сol-12 col-lg-6">
-                <div class="item-wrapper">
-                    <div class="item-img">
-                        <img src="assets/images/ar5-721x1080.webp" alt="">
-                        <div class="item-content">
-                            <div class="title-wrap">
-                                <h4 class="item-title  display-5">
-                                    Saloon</h4>
-                                <p class="description  display-7">
-                                    Great for comfort and long-distance travel.
-                                </p>
-                            </div>
-                            <div class="section-btn">
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Saloon&fuel=Petrol">Petrol</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Saloon&fuel=Diesel">Diesel</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Saloon&fuel=Hybrid">Hybrid</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Saloon&fuel=Electric">Electric</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="item features-image сol-12 col-lg-6">
-                <div class="item-wrapper">
-                    <div class="item-img">
-                        <img src="assets/images/ar5-1-1757x1168.webp" alt="">
-                        <div class="item-content">
-                            <div class="title-wrap">
-                                <h4 class="item-title  display-5">
-                                    Estate</h4>
-                                <p class="description  display-7">
-                                    Blend luxury and cargo space, ideal for upscale travel and practical needs.
-                                </p>
-                            </div>
-                            <div class="section-btn">
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Estate&fuel=Petrol">Petrol</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Estate&fuel=Diesel">Diesel</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Estate&fuel=Hybrid">Hybrid</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Estate&fuel=Electric">Electric</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="item features-image сol-12 col-lg-6">
-                <div class="item-wrapper">
-                    <div class="item-img">
-                        <img src="assets/images/car-1125501-1920-1757x1318.webp" alt="">
-                        <div class="item-content">
-                            <div class="title-wrap">
-                                <h4 class="item-title  display-5">
-                                    MPV</h4>
-                                <p class="description  display-7">
-                                    prioritize versatility, accommodating passengers and cargo, ideal for families.
-                                </p>
-                            </div>
-                            <div class="section-btn">
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=MPV&fuel=Petrol">Petrol</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=MPV&fuel=Diesel">Diesel</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=MPV&fuel=Hybrid">Hybrid</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=MPV&fuel=Electric">Electric</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="item features-image сol-12 col-lg-6">
-                <div class="item-wrapper">
-                    <div class="item-img">
-                        <img src="assets/images/ar5-1-1757x1171.webp" alt="" data-slide-to="4" data-bs-slide-to="5">
-                        <div class="item-content">
-                            <div class="title-wrap">
-                                <h4 class="item-title  display-5">
-                                    SUV</h4>
-                                <p class="description  display-7">
-                                    Elevated, versatile, and ideal for adventure.
-                                </p>
-                            </div>
-                            <div class="section-btn">
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=SUV&fuel=Petrol">Petrol</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=SUV&fuel=Diesel">Diesel</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=SUV&fuel=Hybrid">Hybrid</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=SUV&fuel=Electric">Electric</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="item features-image сol-12 col-lg-6">
-                <div class="item-wrapper">
-                    <div class="item-img">
-                        <img src="assets/images/ar5-1757x1076.webp" alt="" data-slide-to="5" data-bs-slide-to="6">
-                        <div class="item-content">
-                            <div class="title-wrap">
-                                <h4 class="item-title  display-5">Sports Cars</h4>
-                                <p class="description  display-7">
-                                    Thrilling performance and agile handling, ideal for enthusiasts who crave an
-                                    exhilarating drive.
-                                </p>
-                            </div>
-                            <div class="section-btn">
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Sports cars&fuel=Petrol">Petrol</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Sports cars&fuel=Diesel">Diesel</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Sports cars&fuel=Hybrid">Hybrid</a>
-                                <a class="btn btn-primary-outline display-4"
-                                    href="{% url 'cars_list' %}?type=Sports cars&fuel=Electric">Electric</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </section>
-
 {% endblock %}
