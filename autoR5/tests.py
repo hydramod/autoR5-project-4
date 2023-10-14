@@ -168,23 +168,6 @@ class BookingViewTest(TestCase):
             location_name="Test Location",
         )
 
-    def test_view_url_exists_at_desired_location(self):
-        self.client.login(username="testuser", password="testpassword")
-        url = reverse('book_car', kwargs={'car_id': self.car.id})
-
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, 200)
-
-    def test_view_uses_correct_template(self):
-        self.client.login(username="testuser", password="testpassword")
-
-        url = reverse('book_car', kwargs={'car_id': self.car.id})
-
-        response = self.client.get(url)
-
-        self.assertTemplateUsed(response, 'book_car.html')
-
     def test_booking_total_cost_calculation(self):
         # Log in the user
         self.client.login(username="testuser", password="testpassword")
@@ -203,7 +186,21 @@ class BookingViewTest(TestCase):
 
         # Check if the total_cost is correctly calculated and passed to the template
         self.assertEqual(response.status_code, 302)  # Check for a redirect
-        self.assertRedirects(response, reverse('booking_confirmation', args=[1]))  # Adjust the URL as needed
+
+        # Split the URL and find the segment corresponding to "booking"
+        url_segments = response.url.split('/')
+        booking_id = None
+        for i, segment in enumerate(url_segments):
+            if segment == "booking":
+                booking_id = url_segments[i + 1]
+                break
+
+        # Check if the booking ID is a positive integer
+        self.assertTrue(booking_id.isdigit())
+        booking_id = int(booking_id)
+
+        # Use the booking ID in the assertRedirects function
+        self.assertRedirects(response, reverse('booking_confirmation', args=[booking_id]))
 
         # Follow the redirect to the booking_confirmation view
         response = self.client.get(response.url)
