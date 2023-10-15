@@ -133,11 +133,18 @@ WSGI_APPLICATION = 'autor5_project4.wsgi.application'
 #}
 
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("DATABASE_URL")),
-    'test': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'test_db.sqlite3',
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     },
+    'test': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_TEST_NAME'),
+    }
 }
 
 # Password validation
@@ -185,3 +192,16 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Emailing settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_FROM = os.environ.get('EMAIL_HOST_USER')  # Use os.environ to get the environment variable
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')  # Use os.environ to get the environment variable
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')  # Use os.environ to get the environment variable
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = None  # Customize the redirection URL after email confirmation
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3  # Customize the number of days the confirmation link is valid
+ACCOUNT_EMAIL_CONFIRMATION_COOLDOWN = 600  # Customize the cooldown period between resending confirmation emails
