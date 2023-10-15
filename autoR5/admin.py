@@ -1,10 +1,72 @@
 from django.contrib import admin
+from django.urls import path
+from django.shortcuts import render
 from .models import Car, Booking, Review, UserProfile, Payment, Notification, CancellationRequest, Location
+from .forms import CsvImportForm
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
 
 class CarAdmin(admin.ModelAdmin):
     list_display = ('make', 'model', 'year', 'license_plate', 'daily_rate', 'is_available', 'latitude', 'longitude', 'location_name')
     list_filter = ('make', 'model', 'year', 'is_available', 'location_name')
     search_fields = ('make', 'model', 'year', 'location_name')
+
+
+    def get_urls(self):
+        urls = super().get_urls()
+        new_urls = [
+            path('import_csv/', self.import_csv, name='import_csv'),  # Change the URL pattern
+        ]
+
+        return new_urls + urls
+
+    def import_csv(self, request):  # Change the method name
+
+        if request.method == "POST":
+            csv_file = request.FILES.get("csv_import")  # Change the variable name
+            
+            if not csv_file.name.endswith('.csv'):
+                messages.warning(request, 'Invalid file format. Please upload a CSV file.')  # Update the message
+                return HttpResponseRedirect(request.path_info)
+            
+            file_data = csv_file.read().decode("utf-8")
+            csv_data = file_data.split("\n")
+ 
+            for i, x in enumerate(csv_data):
+                # Skip the first row (header)
+                if i == 0:
+                    continue
+
+                fields = x.split(",")
+                if len(fields) == 14:  # Update this to match your CSV file structure
+                    [make, model, year, license_plate, daily_rate, is_available, latitude, longitude, location_name, image, features, car_type, fuel_type, End] = fields
+                    print(f"Reading data from CSV: make={make}, model={model}, fuel_type={fuel_type}")
+                    car, created = Car.objects.update_or_create(
+                        license_plate=license_plate,
+                        defaults={
+                            'make': make,
+                            'model': model,
+                            'year': year,
+                            'daily_rate': daily_rate,
+                            'is_available': is_available,
+                            'latitude': latitude,
+                            'longitude': longitude,
+                            'location_name': location_name,
+                            'image': image,
+                            'features': features,
+                            'fuel_type': fuel_type,
+                            'car_type': car_type,
+                        }
+                    )
+
+            url = reverse('admin:index')
+            return HttpResponseRedirect(url)
+
+        form = CsvImportForm()
+        data = {"form": form}
+        return render(request, "admin/csv_import.html", data)
 
 class BookingAdmin(admin.ModelAdmin):
     list_display = ('user', 'car', 'rental_date', 'return_date', 'total_cost')

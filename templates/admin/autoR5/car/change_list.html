@@ -1,0 +1,8 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+{% block content %}
+
+<a href="{% url 'admin:import_csv' %}">Import from csv</a>
+
+{{ block.super }}
+{% endblock %}

@@ -47,3 +47,6 @@ class CancellationRequestForm(forms.ModelForm):
         widgets = {
             'reason': forms.Textarea(attrs={'rows': 4, 'cols': 40, 'required': True}),
         }
+
+class CsvImportForm(forms.Form):
+    csv_import = forms.FileField(label='Select CSV File')
