@@ -15,9 +15,9 @@ class Car(models.Model):
     is_available = models.BooleanField(default=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, default=53.349805)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, default=-6.26031)
-    location_name = models.CharField(max_length=100)  # Field for location name
+    location_name = models.CharField(max_length=100)
     image = CloudinaryField('car_images', blank=True, null=True)
-    features = models.TextField(blank=True, null=True)
+    features = models.TextField(blank=True, null=True, max_length=500)
     CAR_TYPES = [
         ('Hatchback', 'Hatchback'),
         ('Saloon', 'Saloon'),
@@ -26,7 +26,6 @@ class Car(models.Model):
         ('SUV', 'SUV'),
         ('Sports car', 'Sports car'),
     ]
-
     FUEL_TYPES = [
         ('Petrol', 'Petrol'),
         ('Diesel', 'Diesel'),
