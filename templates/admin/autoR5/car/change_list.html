@@ -3,6 +3,7 @@
 {% block content %}
 
 <a href="{% url 'admin:import_csv' %}">Import from csv</a>
+<a href="{% url 'admin:export_csv' %}">Export to csv</a>
 
 {{ block.super }}
 {% endblock %}
