@@ -8,6 +8,7 @@ from .models import Car, Booking, Review, CancellationRequest
 from .forms import BookingForm, ReviewForm, ContactForm, CancellationRequestForm
 from datetime import date
 from django.http import HttpResponseRedirect
+from django.core.paginator import Paginator
 
 
 def index(request):
@@ -48,8 +49,13 @@ def cars_list(request):
     if fuel_type:
         cars = cars.filter(fuel_type=fuel_type)
 
+    # Add pagination
+    page_number = request.GET.get('page')
+    paginator = Paginator(cars, 8)  # Show 10 cars per page
+    page = paginator.get_page(page_number)
+
     return render(request, 'cars_list.html', {
-        'cars': cars,
+        'cars': page,  # Pass the current page instead of all cars
         'car_types': Car.CAR_TYPES,  # Use the choices defined in the Car model
         'fuel_types': Car.FUEL_TYPES,  # Use the choices defined in the Car model
     })
