@@ -111,37 +111,31 @@
             <p class="card-title display-5">No cars available.</p>
             {% endfor %}
         </div>
-        
-        
 
         <!-- Add pagination links -->
         <div class="pagination">
             <span class="step-links">
-                {% if cars.has_previous %}
                 <div class="col-md-auto col section-btn">
-                    <a href="?page=1" class="btn btn-primary-outline display-4">
+                {% if cars.has_previous %}
+                    <a href="?page=1" class="btn section-btn btn-primary-outline display-4">
                         <span></span>First
                     </a>
-                    <a href="?page={{ cars.previous_page_number }}" class="btn btn-secondary display-4">
+                    <a href="?page={{ cars.previous_page_number }}" class="btn section-btn btn-secondary display-4">
                         <span></span>Previous
                     </a>
-                </div>
                 {% endif %}
-
-                <span class="current-page">
+                <p class="current-page date display-4">
                     Page {{ cars.number }} of {{ cars.paginator.num_pages }}.
-                </span>
-
+                </p>
                 {% if cars.has_next %}
-                <div class="col-md-auto col section-btn">
-                    <a href="?page={{ cars.next_page_number }}" class="btn btn-primary-outline display-4">
+                    <a href="?page={{ cars.next_page_number }}" class="btn section-btn btn-primary-outline display-4">
                         <span></span>Next
                     </a>
-                    <a href="?page={{ cars.paginator.num_pages }}" class="btn btn-secondary display-4">
+                    <a href="?page={{ cars.paginator.num_pages }}" class="btn section-btn btn-secondary display-4">
                         <span></span>Last
                     </a>
-                </div>
                 {% endif %}
+                </div>
             </span>
         </div>
     </div>

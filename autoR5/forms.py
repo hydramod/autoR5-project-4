@@ -1,5 +1,5 @@
 from django import forms
-from .models import Booking, Review, CancellationRequest
+from .models import Booking, Review, CancellationRequest, UserProfile
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
 from bootstrap_datepicker_plus.widgets import DatePickerInput
@@ -47,6 +47,13 @@ class CancellationRequestForm(forms.ModelForm):
         widgets = {
             'reason': forms.Textarea(attrs={'rows': 4, 'cols': 40, 'required': True}),
         }
+
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['phone_number', 'profile_picture']
+
 
 class CsvImportForm(forms.Form):
     csv_import = forms.FileField(label='Select CSV File')

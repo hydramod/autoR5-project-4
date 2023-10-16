@@ -4,20 +4,22 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
 from cloudinary.models import CloudinaryField
 from decimal import Decimal
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Car(models.Model):
     make = models.CharField(max_length=50)
     model = models.CharField(max_length=50)
     year = models.PositiveIntegerField()
-    license_plate = models.CharField(max_length=20, unique=True)
+    license_plate = models.CharField(max_length=30, unique=True)
     daily_rate = models.DecimalField(max_digits=8, decimal_places=2)
     is_available = models.BooleanField(default=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, default=53.349805)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, default=-6.26031)
     location_name = models.CharField(max_length=100)
     image = CloudinaryField('car_images', blank=True, null=True)
-    features = models.TextField(blank=True, null=True, max_length=500)
+    features = models.TextField(blank=True, null=True, max_length=1000)
     CAR_TYPES = [
         ('Hatchback', 'Hatchback'),
         ('Saloon', 'Saloon'),
@@ -111,6 +113,16 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+    
+    @property
+    def email(self):
+        return self.user.email
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
 
 
 class Payment(models.Model):

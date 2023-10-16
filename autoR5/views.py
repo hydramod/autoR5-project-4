@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Q
 from .models import Car, Booking, Review, CancellationRequest
-from .forms import BookingForm, ReviewForm, ContactForm, CancellationRequestForm
+from .forms import BookingForm, ReviewForm, ContactForm, CancellationRequestForm, UserProfileForm
 from datetime import date
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
@@ -186,6 +186,34 @@ def customer_dashboard(request):
         'reviews': reviews,
         'form': form,
     })
+
+
+@login_required
+def edit_profile(request):
+    user_profile = request.user.userprofile  # Get the user's profile
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+
+        if form.is_valid():
+            # Check if phone_number and profile_picture fields have data
+            new_phone_number = form.cleaned_data.get('phone_number')
+            new_profile_picture = form.cleaned_data.get('profile_picture')
+
+            if new_phone_number or new_profile_picture:
+                if new_phone_number:
+                    user_profile.phone_number = new_phone_number
+                if new_profile_picture:
+                    user_profile.profile_picture = new_profile_picture
+
+                user_profile.save()
+
+            # Redirect to a success page or the user's profile page
+            return redirect('customer_dashboard')
+    else:
+        form = UserProfileForm(instance=user_profile)
+
+    return render(request, 'edit_profile.html', {'form': form})
 
 
 def contact(request):
