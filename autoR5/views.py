@@ -7,14 +7,18 @@ from django.db.models import Q
 from .models import Car, Booking, Review, CancellationRequest
 from .forms import BookingForm, ReviewForm, ContactForm, CancellationRequestForm, UserProfileForm
 from datetime import date
-from django.http import HttpResponseRedirect
-from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect, HttpResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils.translation import gettext as _
+from django.http import JsonResponse
 
 
 def index(request):
     # Get unique car types and fuel types from the Car model
-    car_types = Car.objects.values_list('car_type', flat=True).distinct().exclude(car_type=None)
-    fuel_types = Car.objects.values_list('fuel_type', flat=True).distinct().exclude(fuel_type=None)
+    car_types = Car.objects.values_list(
+        'car_type', flat=True).distinct().exclude(car_type=None)
+    fuel_types = Car.objects.values_list(
+        'fuel_type', flat=True).distinct().exclude(fuel_type=None)
 
     return render(request, 'index.html', {'car_types': car_types, 'fuel_types': fuel_types})
 
@@ -27,42 +31,124 @@ def cars_list(request):
     cars = Car.objects.all()
 
     # Get filter values from the request's GET parameters
-    car_make = request.GET.get('make')
-    car_model = request.GET.get('model')
-    car_year = request.GET.get('year')
-    car_location = request.GET.get('location')
+    make = request.GET.get('make')
+    model = request.GET.get('model')
+    year = request.GET.get('year')
+    location = request.GET.get('location')
     car_type = request.GET.get('car_type')
     fuel_type = request.GET.get('fuel_type')
 
     # Filter the queryset based on the selected filter values
-    if car_make:
-        cars = cars.filter(make=car_make)
-    if car_model:
-        cars = cars.filter(model=car_model)
-    if car_year:
-        cars = cars.filter(year=car_year)
-    if car_location:
-        cars = cars.filter(location_name=car_location)
-    
+    filters = {}
+    if make:
+        filters['make'] = make
+    if model:
+        filters['model'] = model
+    if year:
+        filters['year'] = year
+    if location:
+        filters['location_name'] = location
     if car_type:
-        cars = cars.filter(car_type=car_type)
+        filters['car_type'] = car_type
     if fuel_type:
-        cars = cars.filter(fuel_type=fuel_type)
+        filters['fuel_type'] = fuel_type
 
-    # Add pagination
+    # Apply filtering based on the selected filter criteria
+    filtered_cars = Car.objects.filter(**filters)
+
+    # Combine both the filtered and unfiltered querysets
+    all_cars = filtered_cars if make or model or year or location or car_type or fuel_type else cars
+
+    makes = Car.objects.values('make').distinct()
+    models = Car.objects.values('model').distinct()
+    years = Car.objects.values('year').distinct()
+    locations = Car.objects.values('location_name').distinct()
+    car_types = Car.CAR_TYPES
+    fuel_types = Car.FUEL_TYPES
+
+    # Add pagination to the combined queryset
     page_number = request.GET.get('page')
-    paginator = Paginator(cars, 8)  # Show 10 cars per page
-    page = paginator.get_page(page_number)
+    paginator = Paginator(all_cars, 8)  # Show 8 cars per page
+
+    try:
+        page = paginator.page(page_number)
+    except PageNotAnInteger:
+        page = paginator.page(1)
+    except EmptyPage:
+        page = paginator.page(paginator.num_pages)
 
     return render(request, 'cars_list.html', {
-        'cars': page,  # Pass the current page instead of all cars
-        'car_types': Car.CAR_TYPES,  # Use the choices defined in the Car model
-        'fuel_types': Car.FUEL_TYPES,  # Use the choices defined in the Car model
+        'cars': page,
+        'makes': makes,
+        'models': models,
+        'years': years,
+        'locations': locations,
+        'car_types': car_types,
+        'fuel_types': fuel_types,
+        'make': make,
+        'model': model,
+        'year': year,
+        'location': location,
+        'car_type': car_type,
+        'fuel_type': fuel_type
     })
 
 
-def reset_filter(request):
-    return redirect(reverse('cars_list'))
+def get_car_makes(request):
+    car_makes = Car.objects.values('make').distinct()
+    make_options = [{'value': make['make'], 'text': make['make']}
+                    for make in car_makes]
+    return JsonResponse(make_options, safe=False)
+
+
+def get_car_models(request):
+    selected_make = request.GET.get('make')
+    car_models = Car.objects.filter(
+        make=selected_make).values('model').distinct()
+    model_options = [{'value': model['model'], 'text': model['model']}
+                     for model in car_models]
+    return JsonResponse(model_options, safe=False)
+
+
+def get_car_years(request):
+    selected_model = request.GET.get('model')
+    car_years = Car.objects.filter(
+        model=selected_model).values('year').distinct()
+    year_options = [{'value': year['year'], 'text': year['year']}
+                    for year in car_years]
+    return JsonResponse(year_options, safe=False)
+
+
+def get_car_types(request):
+    selected_year = request.GET.get('year')
+    car_types = Car.objects.filter(
+        year=selected_year).values('car_type').distinct()
+    car_type_options = [{'value': car_type['car_type'], 'text': get_display_value(
+        Car.CAR_TYPES, car_type['car_type'])} for car_type in car_types]
+    return JsonResponse(car_type_options, safe=False)
+
+
+def get_fuel_types(request):
+    selected_car_type = request.GET.get('car_type')
+    fuel_types = Car.objects.filter(
+        car_type=selected_car_type).values('fuel_type').distinct()
+    fuel_type_options = [{'value': fuel_type['fuel_type'], 'text': get_display_value(
+        Car.FUEL_TYPES, fuel_type['fuel_type'])} for fuel_type in fuel_types]
+    return JsonResponse(fuel_type_options, safe=False)
+
+
+def get_display_value(choices, choice_key):
+    for choice in choices:
+        if choice[0] == choice_key:
+            return choice[1]
+    return choice_key
+
+
+def get_car_locations(request):
+    car_locations = Car.objects.values('location_name').distinct()
+    location_options = [{'value': location['location_name'],
+                         'text': location['location_name']} for location in car_locations]
+    return JsonResponse(location_options, safe=False)
 
 
 def car_detail(request, car_id):
@@ -163,7 +249,8 @@ def customer_dashboard(request):
 
     # Handle booking cancellations
     if request.method == 'POST':
-        booking_id = request.POST.get('booking_id')  # Retrieve the booking_id from request.POST
+        # Retrieve the booking_id from request.POST
+        booking_id = request.POST.get('booking_id')
         if booking_id is not None:
             booking = Booking.objects.get(id=booking_id)
 
@@ -176,7 +263,8 @@ def customer_dashboard(request):
             # Delete the booking
             booking.delete()
 
-            messages.success(request, 'Cancellation request submitted successfully')
+            messages.success(
+                request, 'Cancellation request submitted successfully')
             return redirect('customer_dashboard')
 
     return render(request, 'customer_dashboard.html', {
@@ -193,7 +281,8 @@ def edit_profile(request):
     user_profile = request.user.userprofile  # Get the user's profile
 
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        form = UserProfileForm(
+            request.POST, request.FILES, instance=user_profile)
 
         if form.is_valid():
             # Check if phone_number and profile_picture fields have data

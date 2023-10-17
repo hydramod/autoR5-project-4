@@ -10,7 +10,8 @@ import csv
 
 
 class CarAdmin(admin.ModelAdmin):
-    list_display = ('make', 'model', 'year', 'license_plate', 'daily_rate', 'is_available','latitude', 'longitude', 'location_name',)
+    list_display = ('make', 'model', 'year', 'license_plate', 'daily_rate',
+                    'is_available', 'latitude', 'longitude', 'location_name',)
     list_filter = ('make', 'model', 'year', 'is_available', 'location_name')
     search_fields = ('make', 'model', 'year', 'location_name')
 
@@ -31,7 +32,8 @@ class CarAdmin(admin.ModelAdmin):
                 csv_file = form.cleaned_data['csv_import']
 
                 if not csv_file.name.endswith('.csv'):
-                    messages.error(request, 'Invalid file format. Please upload a CSV file.')
+                    messages.error(
+                        request, 'Invalid file format. Please upload a CSV file.')
                 else:
                     file_data = csv_file.read().decode("utf-8")
                     csv_data = file_data.split("\n")
@@ -43,7 +45,8 @@ class CarAdmin(admin.ModelAdmin):
 
                         fields = row.split(",")
                         if len(fields) == 14:
-                            make, model, year, license_plate, daily_rate, is_available, latitude, longitude, location_name, image, features, car_type, fuel_type, end, = [field.strip(' "') for field in fields]
+                            make, model, year, license_plate, daily_rate, is_available, latitude, longitude, location_name, image, features, car_type, fuel_type, end, = [
+                                field.strip(' "') for field in fields]
 
                             # Handle empty fields by converting them to None
                             if not image:
@@ -69,7 +72,8 @@ class CarAdmin(admin.ModelAdmin):
                                 }
                             )
 
-                    messages.success(request, 'CSV data imported successfully.')
+                    messages.success(
+                        request, 'CSV data imported successfully.')
                     url = reverse('admin:autoR5_car_changelist')
                     return HttpResponseRedirect(url)
 
@@ -78,7 +82,6 @@ class CarAdmin(admin.ModelAdmin):
         return render(request, "admin/csv_import.html", data)
 
     import_csv.short_description = "Import CSV file"
-
 
     def export_csv(self, request):
         response = HttpResponse(content_type='text/csv')
@@ -100,7 +103,7 @@ class CarAdmin(admin.ModelAdmin):
             ])
 
         return response
-    
+
     export_csv.short_description = "Export CSV"
 
 
@@ -109,29 +112,36 @@ class BookingAdmin(admin.ModelAdmin):
     list_filter = ('user', 'car', 'rental_date', 'return_date')
     search_fields = ('user__username', 'car__make', 'car__model', 'car__year')
 
+
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ('car', 'user', 'rating', 'comment')
     list_filter = ('car', 'user', 'rating')
     search_fields = ('car__make', 'car__model', 'user__username')
 
+
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'phone_number')
     search_fields = ('user__username', 'phone_number')
 
+
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('user', 'booking', 'amount', 'payment_date', 'payment_method', 'payment_status')
+    list_display = ('user', 'booking', 'amount', 'payment_date',
+                    'payment_method', 'payment_status')
     list_filter = ('user', 'payment_date', 'payment_method', 'payment_status')
     search_fields = ('user__username', 'booking__id')
+
 
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('user', 'message', 'is_read', 'created_at')
     list_filter = ('user', 'is_read', 'created_at')
     search_fields = ('user__username', 'message')
 
+
 class CancellationRequestAdmin(admin.ModelAdmin):
     list_display = ('booking', 'user', 'request_date', 'reason')
     list_filter = ('user', 'request_date')
     search_fields = ('user__username', 'booking__id', 'reason')
+
 
 class LocationAdmin(admin.ModelAdmin):
     list_display = ('name', 'address', 'latitude', 'longitude')
