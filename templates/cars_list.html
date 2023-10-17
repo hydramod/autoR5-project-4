@@ -18,8 +18,7 @@
                                 <option value="">Select Manufacturer</option>
                                 {% endif %}
                                 {% for make_option in makes %}
-                                <option value="{{ make_option.make }}" {% if make_option.make==car_make %}selected{%
-                                    endif %}>
+                                <option value="{{ make_option.make }}" {% if make_option.make==car_make %}selected{% endif %}>
                                     {{ make_option.make }}
                                 </option>
                                 {% endfor %}
@@ -34,8 +33,7 @@
                                 <option value="">Select Model</option>
                                 {% endif %}
                                 {% for model_option in models %}
-                                <option value="{{ model_option.model }}" {% if model_option.model==car_model
-                                    %}selected{% endif %}>
+                                <option value="{{ model_option.model }}" {% if model_option.model==car_model%}selected{% endif %}>
                                     {{ model_option.model }}
                                 </option>
                                 {% endfor %}
@@ -50,8 +48,7 @@
                                 <option value="">Select Year</option>
                                 {% endif %}
                                 {% for year_option in years %}
-                                <option value="{{ year_option.year }}" {% if year_option.year==car_year %}selected{%
-                                    endif %}>
+                                <option value="{{ year_option.year }}" {% if year_option.year==car_year %}selected{ %endif %}>
                                     {{ year_option.year }}
                                 </option>
                                 {% endfor %}
@@ -66,8 +63,7 @@
                                 <option value="">Select Car Type</option>
                                 {% endif %}
                                 {% for car_type_option in car_types %}
-                                <option value="{{ car_type_option.0 }}" {% if car_type_option.0==car_type %}selected{%
-                                    endif %}>
+                                <option value="{{ car_type_option.0 }}" {% if car_type_option.0==car_type %}selected{% endif %}>
                                     {{ car_type_option.1 }}
                                 </option>
                                 {% endfor %}
@@ -82,8 +78,7 @@
                                 <option value="">Select Fuel Type</option>
                                 {% endif %}
                                 {% for fuel_type_option in fuel_types %}
-                                <option value="{{ fuel_type_option.0 }}" {% if fuel_type_option.0==fuel_type
-                                    %}selected{% endif %}>
+                                <option value="{{ fuel_type_option.0 }}" {% if fuel_type_option.0==fuel_type%}selected{% endif %}>
                                     {{ fuel_type_option.1 }}
                                 </option>
                                 {% endfor %}
@@ -98,8 +93,7 @@
                                 <option value="">Select Location</option>
                                 {% endif %}
                                 {% for location_option in locations %}
-                                <option value="{{ location_option.location_name }}" {% if
-                                    location_option.location_name==car_location %}selected{% endif %}>
+                                <option value="{{ location_option.location_name }}" {% if location_option.location_name==car_location %}selected{% endif %}>
                                     {{ location_option.location_name }}
                                 </option>
                                 {% endfor %}
