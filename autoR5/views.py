@@ -4,17 +4,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Q
-from .models import Car, Booking, Review, CancellationRequest
+from .models import Car, Booking, Review, CancellationRequest, Payment
 from .forms import BookingForm, ReviewForm, ContactForm, CancellationRequestForm, UserProfileForm
 from datetime import date
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.translation import gettext as _
 from django.http import JsonResponse
+import stripe
+from django.conf import settings
 
 
 def index(request):
-    # Get unique car types and fuel types from the Car model
     car_types = Car.objects.values_list(
         'car_type', flat=True).distinct().exclude(car_type=None)
     fuel_types = Car.objects.values_list(
@@ -30,7 +31,6 @@ def contact(request):
 def cars_list(request):
     cars = Car.objects.all()
 
-    # Get filter values from the request's GET parameters
     make = request.GET.get('make')
     model = request.GET.get('model')
     year = request.GET.get('year')
@@ -38,7 +38,6 @@ def cars_list(request):
     car_type = request.GET.get('car_type')
     fuel_type = request.GET.get('fuel_type')
 
-    # Filter the queryset based on the selected filter values
     filters = {}
     if make:
         filters['make'] = make
@@ -53,10 +52,8 @@ def cars_list(request):
     if fuel_type:
         filters['fuel_type'] = fuel_type
 
-    # Apply filtering based on the selected filter criteria
     filtered_cars = Car.objects.filter(**filters)
 
-    # Combine both the filtered and unfiltered querysets
     all_cars = filtered_cars if make or model or year or location or car_type or fuel_type else cars
 
     makes = Car.objects.values('make').distinct()
@@ -66,9 +63,8 @@ def cars_list(request):
     car_types = Car.CAR_TYPES
     fuel_types = Car.FUEL_TYPES
 
-    # Add pagination to the combined queryset
     page_number = request.GET.get('page')
-    paginator = Paginator(all_cars, 8)  # Show 8 cars per page
+    paginator = Paginator(all_cars, 8)
 
     try:
         page = paginator.page(page_number)
@@ -160,7 +156,7 @@ def car_detail(request, car_id):
 @login_required
 def book_car(request, car_id):
     car = get_object_or_404(Car, pk=car_id)
-    total_cost = None  # Initialize total_cost as None
+    total_cost = None
 
     if request.method == 'POST':
         form = BookingForm(request.POST)
@@ -188,27 +184,97 @@ def book_car(request, car_id):
                     request, 'This car is already booked for the selected dates.')
                 return redirect('book_car', car_id=car_id)
 
-            # Calculate the total_cost before saving
             booking.calculate_total_cost()
+            booking.status = 'Pending'
             booking.save()
             total_cost = booking.total_cost
 
-            return redirect('booking_confirmation', booking_id=booking.id)
+            payment = Payment(
+                user=request.user,
+                booking=booking,
+                amount=booking.total_cost,
+                payment_method='Stripe',
+                payment_status='Pending',
+            )
+            payment.save()
+            return redirect('checkout', car_id=booking.car.id, booking_id=booking.id)
     else:
         form = BookingForm()
 
     return render(request, 'book_car.html', {'car': car, 'form': form})
 
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+
+@login_required
+def checkout(request, car_id, booking_id):
+    booking = get_object_or_404(Booking, pk=booking_id)
+    stripe_publishable_key = settings.STRIPE_PUBLISHABLE_KEY
+
+    try:
+        intent = stripe.PaymentIntent.create(
+            amount=int(booking.total_cost * 100),
+            currency='eur',
+            metadata={'booking_id': booking.id},
+        )
+
+        return render(request, 'checkout.html', {
+            'intent_client_secret': intent.client_secret,
+            'stripe_publishable_key': stripe_publishable_key,
+            'booking_id': booking_id,
+            'total_cost': booking.total_cost
+        })
+
+    except stripe.error.StripeError as e:
+        print("Stripe Error:", str(e))
+        messages.error(request, "Payment processing error. Please try again")
+        return redirect('checkout')
+
+
 @login_required
 def booking_confirmation(request, booking_id):
     booking = get_object_or_404(Booking, pk=booking_id)
+
+    payment_intent_id = request.GET.get("payment_intent")
+    intent_client_secret = request.GET.get("payment_intent_client_secret")
+
+    if intent_client_secret:
+        try:
+            intent = stripe.PaymentIntent.retrieve(payment_intent_id)
+        except stripe.error.StripeError as e:
+            messages.error(
+                request, "Payment processing error. Please try again")
+            return redirect('checkout')
+
+        payment_intent_status = intent.status
+        payment = Payment.objects.get(booking=booking)
+
+        if payment_intent_status == 'succeeded':
+            payment.payment_status = 'Paid'
+            booking.status = 'Confirmed'
+        elif payment_intent_status == 'processing':
+            payment.payment_status = 'Pending'
+            booking.status = 'Pending'
+        else:
+            payment.payment_status = 'Failed'
+            booking.status = 'Canceled'
+
+        payment.save()
+        booking.save()
+
     car = booking.car
     location_name = car.location_name
     location_lat = car.latitude
     location_long = car.longitude
     total_cost = booking.total_cost
-    return render(request, 'booking_confirmation.html', {'booking': booking, 'location_name': location_name, 'location_lat': location_lat, 'location_long': location_long, 'total_cost': total_cost})
+    return render(request, 'booking_confirmation.html', {
+        'booking': booking,
+        'location_name': location_name,
+        'location_lat': location_lat,
+        'location_long': location_long,
+        'total_cost': total_cost
+    })
 
 
 @login_required
@@ -245,22 +311,18 @@ def customer_dashboard(request):
     past_bookings = Booking.objects.filter(
         user=user, return_date__lt=timezone.now())
     reviews = Review.objects.filter(user=user)
-    form = CancellationRequestForm()  # Define the form here
+    form = CancellationRequestForm()
 
-    # Handle booking cancellations
     if request.method == 'POST':
-        # Retrieve the booking_id from request.POST
         booking_id = request.POST.get('booking_id')
         if booking_id is not None:
             booking = Booking.objects.get(id=booking_id)
 
-            # Create a cancellation request
             cancellation_request = form.save(commit=False)
             cancellation_request.booking = booking
             cancellation_request.user = user
             cancellation_request.save()
 
-            # Delete the booking
             booking.delete()
 
             messages.success(
@@ -278,14 +340,13 @@ def customer_dashboard(request):
 
 @login_required
 def edit_profile(request):
-    user_profile = request.user.userprofile  # Get the user's profile
+    user_profile = request.user.userprofile
 
     if request.method == 'POST':
         form = UserProfileForm(
             request.POST, request.FILES, instance=user_profile)
 
         if form.is_valid():
-            # Check if phone_number and profile_picture fields have data
             new_phone_number = form.cleaned_data.get('phone_number')
             new_profile_picture = form.cleaned_data.get('profile_picture')
 
@@ -296,8 +357,6 @@ def edit_profile(request):
                     user_profile.profile_picture = new_profile_picture
 
                 user_profile.save()
-
-            # Redirect to a success page or the user's profile page
             return redirect('customer_dashboard')
     else:
         form = UserProfileForm(instance=user_profile)
@@ -309,16 +368,12 @@ def contact(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            # Form data is valid, you can now process the data
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             email = form.cleaned_data['email']
-
-            # Trigger a success message
             messages.success(
                 request, 'Thanks for getting touch, One of our representatives will contact you soon')
         else:
-            # Form data is not valid, trigger an error message
             messages.error(
                 request, 'Oops...! There was a probolem submitting your request.')
 

@@ -11,7 +11,7 @@ import csv
 
 class CarAdmin(admin.ModelAdmin):
     list_display = ('make', 'model', 'year', 'license_plate', 'daily_rate',
-                    'is_available', 'latitude', 'longitude', 'location_name',)
+                    'is_available', 'latitude', 'longitude', 'location_name')
     list_filter = ('make', 'model', 'year', 'is_available', 'location_name')
     search_fields = ('make', 'model', 'year', 'location_name')
 
@@ -108,8 +108,9 @@ class CarAdmin(admin.ModelAdmin):
 
 
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ('user', 'car', 'rental_date', 'return_date', 'total_cost')
-    list_filter = ('user', 'car', 'rental_date', 'return_date')
+    list_display = ('user', 'car', 'rental_date',
+                    'return_date', 'total_cost', 'status')
+    list_filter = ('user', 'car', 'rental_date', 'return_date', 'status')
     search_fields = ('user__username', 'car__make', 'car__model', 'car__year')
 
 

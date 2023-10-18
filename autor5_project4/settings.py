@@ -205,12 +205,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Emailing settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_FROM = os.environ.get('EMAIL_HOST_USER')  # Use os.environ to get the environment variable
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')  # Use os.environ to get the environment variable
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')  # Use os.environ to get the environment variable
+EMAIL_FROM = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = None  # Customize the redirection URL after email confirmation
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3  # Customize the number of days the confirmation link is valid
-ACCOUNT_EMAIL_CONFIRMATION_COOLDOWN = 600  # Customize the cooldown period between resending confirmation emails
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = None
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
+ACCOUNT_EMAIL_CONFIRMATION_COOLDOWN = 600
+
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')

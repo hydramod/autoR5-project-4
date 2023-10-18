@@ -15,8 +15,10 @@ class Car(models.Model):
     license_plate = models.CharField(max_length=30, unique=True)
     daily_rate = models.DecimalField(max_digits=8, decimal_places=2)
     is_available = models.BooleanField(default=True)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, default=53.349805)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, default=-6.26031)
+    latitude = models.DecimalField(
+        max_digits=9, decimal_places=6, default=53.349805)
+    longitude = models.DecimalField(
+        max_digits=9, decimal_places=6, default=-6.26031)
     location_name = models.CharField(max_length=100)
     image = CloudinaryField('car_images', blank=True, null=True)
     features = models.TextField(blank=True, null=True, max_length=1000)
@@ -34,8 +36,10 @@ class Car(models.Model):
         ('Hybrid', 'Hybrid'),
         ('Electric', 'Electric'),
     ]
-    car_type = models.CharField(max_length=20, choices=CAR_TYPES, blank=True, null=True)
-    fuel_type = models.CharField(max_length=20, choices=FUEL_TYPES, blank=True, null=True)
+    car_type = models.CharField(
+        max_length=20, choices=CAR_TYPES, blank=True, null=True)
+    fuel_type = models.CharField(
+        max_length=20, choices=FUEL_TYPES, blank=True, null=True)
 
     def __str__(self):
         return f"{self.year} {self.make} {self.model}"
@@ -65,11 +69,21 @@ class Car(models.Model):
 
 
 class Booking(models.Model):
+    # Define choices for booking status
+    BOOKING_STATUS_CHOICES = (
+        ('Pending', 'Pending'),
+        ('Confirmed', 'Confirmed'),
+        ('Completed', 'Completed'),
+        ('Canceled', 'Canceled'),
+    )
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     rental_date = models.DateTimeField()
     return_date = models.DateTimeField(blank=True, null=True)
     total_cost = models.DecimalField(max_digits=8, decimal_places=2)
+    status = models.CharField(
+        max_length=20, choices=BOOKING_STATUS_CHOICES, default='Pending')
 
     def __str__(self):
         return f"Booking for {self.car} by {self.user}"
@@ -90,6 +104,26 @@ class Booking(models.Model):
         # Automatically calculate the total cost before saving
         self.calculate_total_cost()
         super().save(*args, **kwargs)
+
+
+class Payment(models.Model):
+    # Define choices for payment status
+    PAYMENT_STATUS_CHOICES = (
+        ('Pending', 'Pending'),
+        ('Paid', 'Paid'),
+        ('Failed', 'Failed'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    booking = models.ForeignKey('Booking', on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=8, decimal_places=2)
+    payment_date = models.DateTimeField(auto_now_add=True)
+    payment_method = models.CharField(max_length=50)
+    payment_status = models.CharField(
+        max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending')
+
+    def __str__(self):
+        return f"Payment of {self.amount} for Booking {self.booking}"
 
 
 class Review(models.Model):
@@ -113,7 +147,7 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
-    
+
     @property
     def email(self):
         return self.user.email
@@ -123,18 +157,6 @@ class UserProfile(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
-
-
-class Payment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=8, decimal_places=2)
-    payment_date = models.DateTimeField(auto_now_add=True)
-    payment_method = models.CharField(max_length=50)
-    payment_status = models.CharField(max_length=20)
-
-    def __str__(self):
-        return f"Payment of {self.amount} for Booking {self.booking}"
 
 
 class Notification(models.Model):
