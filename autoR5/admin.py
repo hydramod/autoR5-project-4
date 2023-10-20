@@ -59,8 +59,8 @@ class CarAdmin(admin.ModelAdmin):
                             continue
 
                         fields = row.split(",")
-                        if len(fields) == 14:
-                            make, model, year, license_plate, daily_rate, is_available, latitude, longitude, location_city, image, features, car_type, fuel_type, end, = [
+                        if len(fields) == 15:
+                            make, model, year, license_plate, daily_rate, is_available, latitude, longitude, location_city, location_address, image, features, car_type, fuel_type, end, = [
                                 field.strip(' "') for field in fields]
 
                             # Handle empty fields by converting them to None
