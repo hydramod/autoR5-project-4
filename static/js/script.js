@@ -189,6 +189,7 @@ const stripePublishableKey = formElement.getAttribute("data-pk");
 const bookingId = formElement.getAttribute("data-booking-id");
 const carId = formElement.getAttribute("data-car-id");
 const clientSecret = formElement.getAttribute("data-client-secret");
+const siteUrl = window.location.protocol + "//" + window.location.hostname
 
 const stripe = Stripe(stripePublishableKey);
 
@@ -237,7 +238,7 @@ async function handleSubmit(e) {
   const { error } = await stripe.confirmPayment({
     elements,
     confirmParams: {
-      return_url: `http://localhost:8000/booking/${bookingId}/confirmation/`,
+      return_url: `${siteUrl}/booking/${bookingId}/confirmation/`,
       receipt_email: emailAddress,
     },
   });
