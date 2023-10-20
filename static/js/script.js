@@ -1,18 +1,20 @@
-//initilise jarallax
+// Initialize the jarallax plugin for parallax scrolling
 jarallax(document.querySelectorAll(".jarallax"));
 
-//Message alerts
+// Functionality for displaying message alerts
 document.addEventListener("DOMContentLoaded", function () {
   let messageContainer = document.getElementById("message-container");
   let alerts = messageContainer.querySelectorAll(".alert");
 
   function showMessage() {
+    // Show the message container
     messageContainer.style.display = "block";
     messageContainer.style.transition = "transform 0.3s ease-in-out";
     messageContainer.style.transform = "translateY(0)";
   }
 
   function hideMessage() {
+    // Hide the message container with animation
     messageContainer.style.transition = "transform 0.3s ease-in-out";
     messageContainer.style.transform = "translateY(-100%)";
 
@@ -45,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-//filter
+// Filtering options using jQuery
 $(document).ready(function () {
   // Function to update dropdown options
   function updateDropdown(dropdown, data, placeholder) {
@@ -74,7 +76,8 @@ $(document).ready(function () {
     },
   });
 
-  // Event handler for car make selection
+  // Event handlers for filtering car models, years, types, and fuel types
+  // These make additional AJAX requests to populate dropdowns
   $("#car_make").change(function () {
     let selectedMake = $(this).val();
     if (selectedMake) {
@@ -155,33 +158,32 @@ $(document).ready(function () {
   });
 });
 
-//map
-// Retrieve latitude and longitude from the HTML element
+// Display car location on a map
 let carLocationElement = document.getElementById("car-location");
 
 if (carLocationElement) {
+  // Retrieve latitude and longitude from the HTML element
   let latitude = carLocationElement.getAttribute("data-latitude");
   let longitude = carLocationElement.getAttribute("data-longitude");
   let locationName = carLocationElement.textContent;
 
-  // Initialize the map
+  // Initialize the map using Leaflet
   let carLocation = [parseFloat(latitude), parseFloat(longitude)];
   let map = L.map("map").setView(carLocation, 15);
 
-  // Add the tile layer
+  // Uses OpenStreetMap for the base layer
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
 
-  // Add a marker with a popup
+  // Add a marker for the car's location
   L.marker(carLocation)
     .addTo(map)
     .bindPopup("Location: " + locationName);
 }
 
-//Payment
-const checkoutElement = document.getElementById("checkout");
+// Payment handling
 const formElement = document.getElementById("payment-form");
 const stripePublishableKey = formElement.getAttribute("data-pk");
 const bookingId = formElement.getAttribute("data-booking-id");
@@ -200,30 +202,38 @@ document
 
 let emailAddress = "";
 
+// Initialize Stripe elements and link authentication
 async function initialize() {
+  // Configure the appearance of Stripe elements
   const appearance = {
     theme: "stripe",
   };
   elements = stripe.elements({ appearance, clientSecret });
 
+  // Create and mount the link authentication element
   const linkAuthenticationElement = elements.create("linkAuthentication");
   linkAuthenticationElement.mount("#link-authentication-element");
 
+  // Update the email address when it changes in the link authentication element
   linkAuthenticationElement.on("change", (event) => {
     emailAddress = event.value.email;
   });
 
+  // Configure options for the payment element
   const paymentElementOptions = {
     layout: "tabs",
   };
 
+  // Create and mount the payment element
   const paymentElement = elements.create("payment", paymentElementOptions);
   paymentElement.mount("#payment-element");
 }
 
+// Handle the form submission for payment confirmation
 async function handleSubmit(e) {
   e.preventDefault();
 
+  // Confirm the payment using Stripe
   const { error } = await stripe.confirmPayment({
     elements,
     confirmParams: {
@@ -232,6 +242,7 @@ async function handleSubmit(e) {
     },
   });
 
+  // Show appropriate messages based on the payment outcome
   if (error.type === "card_error" || error.type === "validation_error") {
     showMessage(error.message);
   } else {
@@ -239,21 +250,22 @@ async function handleSubmit(e) {
   }
 }
 
-// ------- UI helpers -------
-
+// UI helper to display messages
 function showMessage(messageText) {
   const messageContainer = document.querySelector("#payment-message");
 
+  // Show the message container and set the message text
   messageContainer.classList.remove("hidden");
   messageContainer.textContent = messageText;
 
+  // Hide the message container after 4 seconds
   setTimeout(function () {
     messageContainer.classList.add("hidden");
     messageContainer.textContent = "";
   }, 4000);
 }
 
-// Show a spinner on payment submission
+// Show a loading spinner during payment submission
 function setLoading(isLoading) {
   if (isLoading) {
     // Disable the button and show a spinner
@@ -261,8 +273,10 @@ function setLoading(isLoading) {
     document.querySelector("#spinner").classList.remove("hidden");
     document.querySelector("#button-text").classList.add("hidden");
   } else {
+    // Enable the button and hide the spinner
     document.querySelector("#submit").disabled = false;
     document.querySelector("#spinner").classList.add("hidden");
     document.querySelector("#button-text").classList.remove("hidden");
   }
 }
+

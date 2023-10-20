@@ -4,7 +4,7 @@
 
 <!-- Car Details-->
 
-<section data-bs-version="5.1" class="car-details-section">
+<section class="car-details-section">
 
     <div class="container-fluid">
         <div class="row">
@@ -20,7 +20,7 @@
                             {{ car }}
                         </h3>
                         <p class="text display-7">
-                            Location: {{ car.location_name }}
+                            Location: {{ car.location_city }}
                         </p>
                         <p class="text display-7">
                             Daily Rate: €{{ car.daily_rate }}
@@ -36,6 +36,7 @@
             </div>
         </div>
     </div>
+
 </section>
 
 <!-- Reviews -->
@@ -82,6 +83,7 @@
             </div>
         </div>
     </div>
+    
 </section>
 
 {% endblock %}

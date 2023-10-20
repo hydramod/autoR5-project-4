@@ -3,15 +3,24 @@
 {% block content %}
 
 <section data-bs-version="5.1" class="book-confirm-section fullscreen">
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-12 col-lg-6">
+            {% if payment_status == "Pending" %}
+                <p>Complete payment to unlock location</p>
+            {% else %}
                 <div id="map" class="map"></div>
+            {% endif %}
             </div>
             <div class="col-12 col-lg-6">
                 <div class="title-wrapper">
                     <h1 class="section-title display-5">
-                        Booking Confirmation
+                        {% if payment_status == "Pending" %}
+                        Booking Pending
+                        {% else %}
+                        Booking Confirmed
+                        {% endif %}
                     </h1>
                     <div class="text display-7">
                         <p>Booking ID: {{ booking.id }}</p>
@@ -19,8 +28,14 @@
                         <p>Rental Date: {{ booking.rental_date }}</p>
                         <p>Return Date: {{ booking.return_date }}</p>
                         <p>Total Cost: €{{ total_cost }}</p>
+                    {% if payment_status == "Pending" %}
+                        <div class="col-md-auto col section-btn">
+                            <button type="submit" class="btn btn-primary-outline display-4">Pay Now</button>
+                        </div>
+                    {% else %}
                         <p id="car-location" data-latitude="{{ location_lat }}" data-longitude="{{ location_long }}"
-                            class="text display-7">Pickup Location: {{ location_name }}</p>
+                            class="text display-7">Pickup Location: {{ location_address }}</p>
+                    {% endif %}
                     </div>
                 </div>
                 <div class="image-wrapper">
@@ -29,6 +44,7 @@
             </div>
         </div>
     </div>
+    
 </section>
 
 {% endblock %}

@@ -42,6 +42,7 @@
             </div>
         </div>
     </div>
+
 </section>
 
 <section class="welcome-user-section">
@@ -62,14 +63,11 @@
                     <h1 class="section-title display-6">
                         Welcome, {{ user }}
                     </h1>
-                    <button class="btn btn-primary-outline-reverse display-4">
-                        
-                    </button>
                     <ul class="user-menu">
                         <li class="user-menu-item"><a class="nav-link link text-primary display-4"
-                                href="{% url 'index' %}">Manage emails</a></li>
+                                href="{% url 'account_email' %}">Manage emails</a></li>
                         <li class="user-menu-item"><a class="nav-link link text-primary display-4"
-                                href="{% url 'cars_list' %}">Edit profile</a></li>
+                                href="{% url 'edit_profile' %}">Edit profile</a></li>
                     </ul>
                 </div>
             </div>
@@ -97,22 +95,22 @@
                     <div class="item-content">
                         <div class="title-wrap">
                             <h4 class="item-title display-7">
-                                {{ booking.car }} - {{ booking.rental_date.date|date:"d-m-Y" }} to {{ booking.return_date.date|date:"d-m-Y" }}
+                                {{ booking.car }} - {{ booking.rental_date|date:"d-m-Y" }} to {{booking.return_date|date:"d-m-Y" }}
                             </h4>
                             <button class="btn btn-primary-outline-reverse display-4">
-                                <a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
+                                <span></span><a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
                             </button>
                         </div>
                         <form method="POST">
                             {% csrf_token %}
-                            <input type="hidden" name="booking_id" value="{{ booking.id }}"> <!-- Add this line -->
+                            <input type="hidden" name="booking_id" value="{{ booking.id }}">
                             <div class="form-group">
                                 <label for="{{ form.reason.id_for_label }}" class="control-label">Reason for
                                     Cancellation:</label>
                                 <div>
                                     <textarea id="{{ form.reason.id_for_label }}" name="{{ form.reason.name }}"
                                         class="form-control" required
-                                        placeholder="Enter your reason here">{{ form.reason.value }}</textarea>
+                                        placeholder="Enter your reason here"></textarea>
                                     {{ form.reason.errors }}
                                 </div>
                             </div>
@@ -138,7 +136,6 @@
             {% endfor %}
         </div>
     </div>
-
     <div class="container-fluid">
         <div class="row flex-row-reverse">
             <div class="col-12 col-lg-10">
@@ -157,7 +154,7 @@
                     <div class="item-content">
                         <div class="title-wrap">
                             <h4 class="item-title display-7">
-                                {{ booking.car }} - {{ booking.rental_date.date|date:"d-m-Y" }} to {{ booking.return_date.date|date:"d-m-Y" }}
+                                {{ booking.car }} - {{ booking.rental_date|date:"d-m-Y" }} to {{booking.return_date|date:"d-m-Y" }}
                             </h4>
                             <button class="btn btn-primary-outline-reverse display-4">
                                 <a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
@@ -180,6 +177,7 @@
             </div>
             {% endfor %}
         </div>
+
 </section>
 
 <section class="user-reviews-section">
@@ -197,18 +195,9 @@
                     <div class="item-wrapper">
                         <div class="card-box align-left">
                             <h5 class="card-title mb-3 display-5">
-                                Review for {{ review.car }}
+                                Review for {{ review.car }} (Rating: {{ review.rating }}/5)
                             </h5>
                             <p class="card-text mb-5 display-7">
-                                Rating:
-                                {% for i in "01234" %}
-                                {% if i|add:0 == review.rating %}
-                                <i class="far fa-star"></i>
-                                {% else %}
-                                <i class="fas fa-star"></i>
-                                {% endif %}
-                                {% endfor %}
-                                <br>
                                 {{ review.comment }}
                             </p>
                         </div>
@@ -228,6 +217,7 @@
             </div>
         </div>
     </div>
+
 </section>
 
 {% endblock %}

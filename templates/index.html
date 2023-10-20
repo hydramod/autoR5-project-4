@@ -6,16 +6,19 @@
 <section class="header fullscreen jarallax">
 
     <div class="overlay"></div>
-
     <div class="container-fluid">
         <div class="row">
             <div class="col-12 col-lg-6">
                 <div class="title-wrapper">
-
                     <h1 class="section-title display-1">Welcome to AutoR5 Car Rentals</h1>
-
                     <p class="text display-7">
-                        Your gateway to an extraordinary driving experience. At AutoR5, we pride ourselves on delivering top-notch car rental solutions that cater to your every need. Whether you're embarking on a weekend getaway, a business trip, or simply need a reliable set of wheels for daily commuting, our diverse fleet of vehicles ensures there's a perfect match for you. With a commitment to exceptional service, competitive rates, and a hassle-free rental process, we're here to transform your journey into an unforgettable adventure. Join us today and discover the road to convenience, comfort, and style with AutoR5 Car Rentals.
+                        Your gateway to an extraordinary driving experience. At AutoR5, we pride ourselves on delivering
+                        top-notch car rental solutions that cater to your every need. Whether you're embarking on a
+                        weekend getaway, a business trip, or simply need a reliable set of wheels for daily commuting,
+                        our diverse fleet of vehicles ensures there's a perfect match for you. With a commitment to
+                        exceptional service, competitive rates, and a hassle-free rental process, we're here to
+                        transform your journey into an unforgettable adventure. Join us today and discover the road to
+                        convenience, comfort, and style with AutoR5 Car Rentals.
                     </p>
                 </div>
             </div>
@@ -27,9 +30,11 @@
             </div>
         </div>
     </div>
+
 </section>
 
 <section class="featured fullscreen">
+
     <div class="container-fluid">
         <div class="row">
             {% for car_type in car_types %}
@@ -42,25 +47,30 @@
                                 <h4 class="item-title display-5">{{ car_type }}</h4>
                                 <p class="description display-7">
                                     {% if car_type == 'Hatchback' %}
-                                        Ideal for daily commuting.
+                                    Ideal for daily commuting.
                                     {% elif car_type == 'Saloon' %}
-                                        Great for comfort and long-distance travel.
+                                    Great for comfort and long-distance travel.
                                     {% elif car_type == 'Estate' %}
-                                        Blend luxury and cargo space, ideal for upscale travel and practical needs.
+                                    Blend luxury and cargo space, ideal for upscale travel and practical needs.
                                     {% elif car_type == 'MPV' %}
-                                        Prioritize versatility, accommodating passengers and cargo, ideal for families.
+                                    Prioritize versatility, accommodating passengers and cargo, ideal for families.
                                     {% elif car_type == 'SUV' %}
-                                        Elevated, versatile, and ideal for adventure.
+                                    Elevated, versatile, and ideal for adventure.
                                     {% elif car_type == 'Sports car' %}
-                                        Thrilling performance and agile handling, ideal for enthusiasts who crave an exhilarating drive.
+                                    Thrilling performance and agile handling, ideal for enthusiasts who crave an
+                                    exhilarating drive.
                                     {% endif %}
                                 </p>
                             </div>
                             <div class="section-btn">
-                                <a class="btn btn-primary-outline display-4" href="{% url 'cars_list' %}?car_type={{ car_type }}&fuel_type=Petrol">Petrol</a>
-                                <a class="btn btn-primary-outline display-4" href="{% url 'cars_list' %}?car_type={{ car_type }}&fuel_type=Diesel">Diesel</a>
-                                <a class="btn btn-primary-outline display-4" href="{% url 'cars_list' %}?car_type={{ car_type }}&fuel_type=Hybrid">Hybrid</a>
-                                <a class="btn btn-primary-outline display-4" href="{% url 'cars_list' %}?car_type={{ car_type }}&fuel_type=Electric">Electric</a>
+                                <a class="btn btn-primary-outline display-4"
+                                    href="{% url 'cars_list' %}?car_type={{ car_type }}&fuel_type=Petrol">Petrol</a>
+                                <a class="btn btn-primary-outline display-4"
+                                    href="{% url 'cars_list' %}?car_type={{ car_type }}&fuel_type=Diesel">Diesel</a>
+                                <a class="btn btn-primary-outline display-4"
+                                    href="{% url 'cars_list' %}?car_type={{ car_type }}&fuel_type=Hybrid">Hybrid</a>
+                                <a class="btn btn-primary-outline display-4"
+                                    href="{% url 'cars_list' %}?car_type={{ car_type }}&fuel_type=Electric">Electric</a>
                             </div>
                         </div>
                     </div>
@@ -69,5 +79,6 @@
             {% endfor %}
         </div>
     </div>
+    
 </section>
 {% endblock %}
