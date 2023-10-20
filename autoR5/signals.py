@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import CancellationRequest, Booking, Payment, Car
+from .models import CancellationRequest, Booking, Payment, UserProfile
 import stripe
 from django.contrib.auth.models import User
 
