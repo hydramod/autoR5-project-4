@@ -18,8 +18,10 @@ class Car(models.Model):
     license_plate = models.CharField(max_length=30, unique=True)
     daily_rate = models.DecimalField(max_digits=8, decimal_places=2)
     is_available = models.BooleanField(default=True)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, default=53.349805)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, default=-6.26031)
+    latitude = models.DecimalField(
+        max_digits=9, decimal_places=6, default=53.349805)
+    longitude = models.DecimalField(
+        max_digits=9, decimal_places=6, default=-6.26031)
     location_city = models.CharField(blank=True, null=True, max_length=255)
     location_address = models.CharField(blank=True, null=True, max_length=255)
     image = CloudinaryField('car_images', blank=True, null=True)
@@ -40,8 +42,10 @@ class Car(models.Model):
         ('Hybrid', 'Hybrid'),
         ('Electric', 'Electric'),
     ]
-    car_type = models.CharField(max_length=20, choices=CAR_TYPES, blank=True, null=True)
-    fuel_type = models.CharField(max_length=20, choices=FUEL_TYPES, blank=True, null=True)
+    car_type = models.CharField(
+        max_length=20, choices=CAR_TYPES, blank=True, null=True)
+    fuel_type = models.CharField(
+        max_length=20, choices=FUEL_TYPES, blank=True, null=True)
 
     def __str__(self):
         return f"{self.year} {self.make} {self.model}"
@@ -65,7 +69,8 @@ class Booking(models.Model):
     rental_date = models.DateTimeField()
     return_date = models.DateTimeField(blank=True, null=True)
     total_cost = models.DecimalField(max_digits=8, decimal_places=2)
-    status = models.CharField(max_length=20, choices=BOOKING_STATUS_CHOICES, default='Pending')
+    status = models.CharField(
+        max_length=20, choices=BOOKING_STATUS_CHOICES, default='Pending')
 
     def __str__(self):
         return f"Booking for {self.car} by {self.user}"
@@ -106,7 +111,8 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=8, decimal_places=2)
     payment_date = models.DateTimeField(auto_now_add=True)
     payment_method = models.CharField(max_length=50)
-    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending')
+    payment_status = models.CharField(
+        max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending')
     payment_intent = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
@@ -140,7 +146,8 @@ class Review(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
-    profile_picture = CloudinaryField('profile_pictures', blank=True, null=True)
+    profile_picture = CloudinaryField(
+        'profile_pictures', blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -148,12 +155,6 @@ class UserProfile(models.Model):
     @property
     def email(self):
         return self.user.email
-
-# Signal receiver to create a user profile when a new user is registered
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
 
 # Notification model for user notifications
 class Notification(models.Model):
