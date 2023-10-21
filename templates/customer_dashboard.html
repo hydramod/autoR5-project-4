@@ -100,6 +100,11 @@
                             <button class="btn btn-primary-outline-reverse display-4">
                                 <span></span><a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
                             </button>
+                            {% if booking.status == "Pending" %}
+                                <button class="btn btn-primary-outline-reverse display-4">
+                                    <span></span><a href="{% url 'checkout' booking.car.id booking.id %}">Pay Now</a>
+                                </button>
+                            {% endif %}
                         </div>
                         <form method="POST">
                             {% csrf_token %}
@@ -159,11 +164,6 @@
                             <button class="btn btn-primary-outline-reverse display-4">
                                 <a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
                             </button>
-                            {% if booking.status == "Pending" %}
-                                <button class="btn btn-primary-outline-reverse display-4">
-                                    <span></span><a href="{% url 'checkout' booking.car.id booking.id %}">Pay Now</a>
-                                </button>
-                            {% endif %}
                         </div>
                     </div>
                 </div>
