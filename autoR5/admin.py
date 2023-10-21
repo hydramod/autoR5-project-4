@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib import messages
 
-from .models import Car, Booking, Review, UserProfile, Payment, Notification, CancellationRequest
+from .models import Car, Booking, Review, UserProfile, Payment, Notification, CancellationRequest, ContactFormSubmission
 from .forms import CsvImportForm
 
 # Geolocator for updating car locations
@@ -165,6 +165,12 @@ class CancellationRequestAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'booking__id', 'reason')
     pass
 
+
+class ContactFormSubmissionAdmin(admin.ModelAdmin):
+    list_display = ('first_name', 'last_name', 'email', 'subject')
+    pass
+
+
 # Register admin classes for models
 admin.site.register(Car, CarAdmin)
 admin.site.register(Booking, BookingAdmin)
@@ -173,3 +179,4 @@ admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(Notification, NotificationAdmin)
 admin.site.register(CancellationRequest, CancellationRequestAdmin)
+admin.site.register(ContactFormSubmission, ContactFormSubmissionAdmin)

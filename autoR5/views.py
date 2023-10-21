@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Q
-from .models import Car, Booking, Review, CancellationRequest, Payment
+from .models import Car, Booking, Review, CancellationRequest, Payment, ContactFormSubmission
 from .forms import BookingForm, ReviewForm, ContactForm, CancellationRequestForm, UserProfileForm
 from datetime import date
 from django.http import HttpResponseRedirect, HttpResponse
@@ -24,9 +24,6 @@ def index(request):
         'fuel_type', flat=True).distinct().exclude(fuel_type=None)
     return render(request, 'index.html', {'car_types': car_types, 'fuel_types': fuel_types})
 
-# View for the contact page
-def contact(request):
-    return render(request, 'contact.html')
 
 # View for listing cars
 def cars_list(request):
@@ -394,7 +391,7 @@ def edit_profile(request):
 
     return render(request, 'edit_profile.html', {'form': form})
 
-# View for contacting the site administrators
+# View for contact page
 def contact(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
@@ -402,12 +399,23 @@ def contact(request):
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             email = form.cleaned_data['email']
-            messages.success(
-                request, 'Thanks for getting in touch. One of our representatives will contact you soon')
-        else:
-            messages.error(
-                request, 'Oops...! There was a problem submitting your request.')
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
 
+            # Save the submission to the database
+            submission = ContactFormSubmission(
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                subject=subject,
+                message=message
+            )
+            submission.save()
+
+            messages.success(
+                request, 'Thanks for getting in touch. One of our representatives will contact you soon.')
+
+            return redirect('contact')  # Redirect back to the contact page after submission
     else:
         form = ContactForm()
 
