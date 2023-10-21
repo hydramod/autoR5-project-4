@@ -327,29 +327,36 @@ def customer_dashboard(request):
     user = request.user
     current_bookings = Booking.objects.filter(
         Q(status='Pending') | Q(status='Confirmed'),
-        user=user,
+        user=user, 
         return_date__gte=timezone.now()
     )
     past_bookings = Booking.objects.filter(
         Q(status='Completed'),
-        user=user,
+        user=user, 
         return_date__lt=timezone.now()
     )
     reviews = Review.objects.filter(user=user)
     form = CancellationRequestForm(request.POST or None)
+    unapproved_requests = {}
 
     if request.method == 'POST' and form.is_valid():
         booking_id = request.POST.get('booking_id')
         if booking_id is not None:
             booking = Booking.objects.get(id=booking_id)
 
-            cancellation_request = form.save(commit=False)
-            cancellation_request.booking = booking
-            cancellation_request.user = user
-            cancellation_request.save()
-        else:
-            messages.success(
-                request, 'Cancellation request submitted successfully')
+            # Check if there is an unapproved cancellation request
+            unapproved_request = CancellationRequest.objects.filter(
+                booking=booking, approved=False
+            ).first()
+
+            if unapproved_request:
+                messages.error(request, 'Cannot request cancellation. There is a pending cancellation request.')
+            else:
+                cancellation_request = form.save(commit=False)
+                cancellation_request.booking = booking
+                cancellation_request.user = user
+                cancellation_request.save()
+                messages.success(request, 'Cancellation request submitted successfully')
         return redirect('customer_dashboard')
 
     return render(request, 'customer_dashboard.html', {
@@ -358,6 +365,7 @@ def customer_dashboard(request):
         'past_bookings': past_bookings,
         'reviews': reviews,
         'form': form,
+        'unapproved_requests': unapproved_requests,
     })
 
 # View for editing user profile

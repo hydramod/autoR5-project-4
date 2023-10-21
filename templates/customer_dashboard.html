@@ -106,23 +106,26 @@
                                 </button>
                             {% endif %}
                         </div>
-                        <form method="POST">
-                            {% csrf_token %}
-                            <input type="hidden" name="booking_id" value="{{ booking.id }}">
-                            <div class="form-group">
-                                <label for="{{ form.reason.id_for_label }}" class="control-label">Reason for
-                                    Cancellation:</label>
-                                <div>
-                                    <textarea id="{{ form.reason.id_for_label }}" name="{{ form.reason.name }}"
-                                        class="form-control" required
-                                        placeholder="Enter your reason here"></textarea>
-                                    {{ form.reason.errors }}
+                        {% if not unapproved_requests|default:booking.id %}
+                            <form method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="booking_id" value="{{ booking.id }}">
+                                <div class="form-group">
+                                    <label for="{{ form.reason.id_for_label }}" class="control-label">Reason for Cancellation:</label>
+                                    <div>
+                                        <textarea id="{{ form.reason.id_for_label }}" name="{{ form.reason.name }}"
+                                            class="form-control" required
+                                            placeholder="Enter your reason here"></textarea>
+                                        {{ form.reason.errors }}
+                                    </div>
                                 </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary-outline-reverse display-4">
-                                <span></span>Cancel
-                            </button>
-                        </form>
+                                <button type="submit" class="btn btn-primary-outline-reverse display-4">
+                                    <span></span>Cancel
+                                </button>
+                            </form>
+                        {% else %}
+                            <p>Cancellation request pending approval</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
