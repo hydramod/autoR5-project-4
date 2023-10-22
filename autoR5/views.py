@@ -15,6 +15,7 @@ import stripe
 from django.conf import settings
 from .signals import RefundProcessingError
 
+
 # View for the home page
 def index(request):
     # Retrieve unique car types and fuel types
@@ -27,7 +28,7 @@ def index(request):
 
 # View for listing cars
 def cars_list(request):
-    cars = Car.objects.all()
+    cars = Car.objects.filter(is_available=True)
 
     # Get filter parameters from the URL
     make = request.GET.get('make')
@@ -90,30 +91,34 @@ def cars_list(request):
         'fuel_type': fuel_type
     })
 
+
 # View to get car makes through AJAX
 def get_car_makes(request):
-    car_makes = Car.objects.values('make').distinct()
+    car_makes = Car.objects.values('make').distinct().order_by('make')
     make_options = [{'value': make['make'], 'text': make['make']}
                     for make in car_makes]
     return JsonResponse(make_options, safe=False)
 
+
 # View to get car models through AJAX
 def get_car_models(request):
     selected_make = request.GET.get('make')
-    car_models = Car.objects.filter(
-        make=selected_make).values('model').distinct()
+    car_models = Car.objects.filter(make=selected_make).values(
+        'model').distinct().order_by('model')
     model_options = [{'value': model['model'], 'text': model['model']}
                      for model in car_models]
     return JsonResponse(model_options, safe=False)
 
+
 # View to get car years through AJAX
 def get_car_years(request):
     selected_model = request.GET.get('model')
-    car_years = Car.objects.filter(
-        model=selected_model).values('year').distinct()
+    car_years = Car.objects.filter(model=selected_model).values(
+        'year').distinct().order_by('year')
     year_options = [{'value': year['year'], 'text': year['year']}
                     for year in car_years]
     return JsonResponse(year_options, safe=False)
+
 
 # View to get car types through AJAX
 def get_car_types(request):
@@ -124,6 +129,7 @@ def get_car_types(request):
         Car.CAR_TYPES, car_type['car_type'])} for car_type in car_types]
     return JsonResponse(car_type_options, safe=False)
 
+
 # View to get fuel types through AJAX
 def get_fuel_types(request):
     selected_car_type = request.GET.get('car_type')
@@ -133,6 +139,7 @@ def get_fuel_types(request):
         Car.FUEL_TYPES, fuel_type['fuel_type'])} for fuel_type in fuel_types]
     return JsonResponse(fuel_type_options, safe=False)
 
+
 # Function to get the display value for a choice key
 def get_display_value(choices, choice_key):
     for choice in choices:
@@ -140,18 +147,22 @@ def get_display_value(choices, choice_key):
             return choice[1]
     return choice_key
 
+
 # View to get car locations through AJAX
 def get_car_locations(request):
-    car_locations = Car.objects.values('location_city').distinct()
+    car_locations = Car.objects.values(
+        'location_city').distinct().order_by('location_city')
     location_options = [{'value': location['location_city'],
                          'text': location['location_city']} for location in car_locations]
     return JsonResponse(location_options, safe=False)
+
 
 # View for displaying car details
 def car_detail(request, car_id):
     car = get_object_or_404(Car, pk=car_id)
     reviews = Review.objects.filter(car=car, approved=True)
     return render(request, 'car_detail.html', {'car': car, 'reviews': reviews})
+
 
 # View for booking a car
 @login_required
@@ -167,26 +178,49 @@ def book_car(request, car_id):
             booking.car = car
             booking.location = car.location_city
 
-            today = date.today()
-            rental_date = booking.rental_date.date()
-            if rental_date < today:
-                messages.error(request, 'You cannot book for a past date.')
-                return redirect('book_car', car_id=car_id)
-
-            # Check for conflicting bookings with the same car and overlapping date ranges
-            conflicting_bookings = Booking.objects.filter(
-                Q(car=car) &
-                (
-                    Q(rental_date__range=(booking.rental_date, booking.return_date)) |
-                    Q(return_date__range=(booking.rental_date, booking.return_date))
-                )
-            )
-
-            # Check if any of the conflicting bookings have a return date in the future and the car is not available
-            if conflicting_bookings.filter(return_date__gt=timezone.now()).exclude(car__is_available=True).exists():
+            if not car.is_available:
                 messages.error(
-                    request, 'This car is already booked for the selected dates.')
-                return redirect('book_car', car_id=car_id)
+                    request, 'This car is not available for booking.')
+                return redirect('car_detail', car_id=car_id)
+
+            if request.method == 'POST':
+                form = BookingForm(request.POST)
+                if form.is_valid():
+                    booking = form.save(commit=False)
+                    booking.user = request.user
+                    booking.car = car
+                    booking.location = car.location_city
+
+                    today = date.today()
+                    rental_date = booking.rental_date.date()
+
+                    if rental_date < today:
+                        messages.error(
+                            request, 'You cannot book for a past date.')
+                        return redirect('book_car', car_id=car_id)
+
+                    # Check for conflicting bookings with the same car and overlapping date ranges
+                    conflicting_bookings = Booking.objects.filter(
+                        Q(car=car) &
+                        (
+                            Q(rental_date__range=(booking.rental_date, booking.return_date)) |
+                            Q(return_date__range=(
+                                booking.rental_date, booking.return_date))
+                        )
+                    )
+
+                    # Check if any of the conflicting bookings have a return date in the future
+                    future_conflicting_bookings = conflicting_bookings.filter(
+                        return_date__gt=timezone.now())
+
+                    if future_conflicting_bookings.exists():
+                        # Check if the booking date is after the return date of the conflicting booking
+                        if future_conflicting_bookings.filter(return_date__lt=booking.rental_date).exists():
+                            pass  # Booking is allowed
+                        else:
+                            messages.error(
+                                request, 'This car is already booked for the selected dates.')
+                            return redirect('book_car', car_id=car_id)
 
             booking.calculate_total_cost()
             booking.status = 'Pending'
@@ -210,6 +244,7 @@ def book_car(request, car_id):
 
 # Initialize Stripe API key
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 # View for the checkout process
 @login_required
@@ -236,6 +271,7 @@ def checkout(request, car_id, booking_id):
         messages.error(request, "Payment processing error. Please try again")
         return redirect('checkout')
 
+
 # View for booking confirmation
 @login_required
 def booking_confirmation(request, booking_id):
@@ -261,7 +297,6 @@ def booking_confirmation(request, booking_id):
             payment.payment_status = 'Paid'
             booking.status = 'Confirmed'
             payment.payment_intent = payment_intent_id
-            car.is_available = False
             messages.success(request, "Payment successful")
         elif payment_intent_status in ['processing', 'requires_payment_method']:
             payment.payment_status = 'Pending'
@@ -273,7 +308,6 @@ def booking_confirmation(request, booking_id):
             booking.status = 'Canceled'
             messages.error(request, "Payment failed")
 
-        car.save()
         payment.save()
         booking.save()
 
@@ -291,6 +325,7 @@ def booking_confirmation(request, booking_id):
         'payment_intent_id': payment_intent_id,
         'payment_status': payment.payment_status
     })
+
 
 # View for leaving a review
 @login_required
@@ -318,18 +353,19 @@ def leave_review(request, car_id):
 
     return render(request, 'leave_review.html', {'car': car, 'form': form})
 
+
 # View for the customer dashboard
 @login_required
 def customer_dashboard(request):
     user = request.user
     current_bookings = Booking.objects.filter(
         Q(status='Pending') | Q(status='Confirmed'),
-        user=user, 
+        user=user,
         return_date__gte=timezone.now()
     )
     past_bookings = Booking.objects.filter(
         Q(status='Completed'),
-        user=user, 
+        user=user,
         return_date__lt=timezone.now()
     )
     reviews = Review.objects.filter(user=user)
@@ -347,13 +383,15 @@ def customer_dashboard(request):
             ).first()
 
             if unapproved_request:
-                messages.error(request, 'Cannot request cancellation. There is a pending cancellation request.')
+                messages.error(
+                    request, 'Cannot request cancellation. There is a pending cancellation request.')
             else:
                 cancellation_request = form.save(commit=False)
                 cancellation_request.booking = booking
                 cancellation_request.user = user
                 cancellation_request.save()
-                messages.success(request, 'Cancellation request submitted successfully')
+                messages.success(
+                    request, 'Cancellation request submitted successfully')
         return redirect('customer_dashboard')
 
     return render(request, 'customer_dashboard.html', {
@@ -364,6 +402,7 @@ def customer_dashboard(request):
         'form': form,
         'unapproved_requests': unapproved_requests,
     })
+
 
 # View for editing user profile
 @login_required
@@ -391,6 +430,7 @@ def edit_profile(request):
 
     return render(request, 'edit_profile.html', {'form': form})
 
+
 # View for contact page
 def contact(request):
     if request.method == 'POST':
@@ -415,7 +455,8 @@ def contact(request):
             messages.success(
                 request, 'Thanks for getting in touch. One of our representatives will contact you soon.')
 
-            return redirect('contact')  # Redirect back to the contact page after submission
+            # Redirect back to the contact page after submission
+            return redirect('contact')
     else:
         form = ContactForm()
 
