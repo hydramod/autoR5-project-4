@@ -1,8 +1,11 @@
 from django import forms
 from .models import Booking, Review, CancellationRequest, UserProfile
-from bootstrap_datepicker_plus.widgets import DatePickerInput
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout
+from crispy_forms.layout import Layout, Field, Div
+from bootstrap_datepicker_plus.widgets import DatePickerInput
+from allauth.account.forms import SignupForm
+from django.core.validators import RegexValidator
+
 
 # BookingForm for booking a car
 class BookingForm(forms.ModelForm):
@@ -50,9 +53,49 @@ class CancellationRequestForm(forms.ModelForm):
 
 # UserProfileForm for updating user profile information
 class UserProfileForm(forms.ModelForm):
+    phone_number_validator = RegexValidator(
+        regex=r'^\d{9,10}$',
+        message='Phone number must be 9 to 10 digits long.',
+    )
+
+    phone_number = forms.CharField(
+        validators=[phone_number_validator],
+        label='Phone Number',
+        required=True,
+    )
+
+    profile_picture_upload = forms.ImageField(
+        label='Profile Picture Upload',
+        required=False,
+    )
+
+    clear_picture = forms.BooleanField(
+        required=False,
+        label='Clear Profile Picture',
+    )
+
     class Meta:
         model = UserProfile
         fields = ['phone_number', 'profile_picture']
+
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    Field('phone_number', css_class='form-control'),
+                    css_class='col-md-6'
+                ),
+                Div(
+                    Field('profile_picture_upload'),
+                    css_class='col-md-6'
+                ),
+                css_class='row'
+            ),
+            Field('clear_picture', css_class='form-check-input'),
+        )
 
 # CsvImportForm for importing data from a CSV file
 class CsvImportForm(forms.Form):

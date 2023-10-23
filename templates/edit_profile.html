@@ -3,9 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-
 <section class="login-logout-signup fullscreen jarallax">
-  
   <div class="overlay"></div>
   <div class="container-fluid">
     <div class="row">
@@ -14,17 +12,22 @@
           <h2 class="section-title display-5">Edit Profile</h2>
         </div>
         <div class="form-area row form-text">
-          <p class="">Current Mobile number: {{ request.user.userprofile.phone_number }}</p>
           <form method="post" action="{% url 'edit_profile' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group">
-              <label for="{{ form.phone_number.id_for_label }}">{{ form.phone_number.label_tag }}</label>
-              {{ form.phone_number }}
+              <p>Current Number: {{ request.user.userprofile.phone_number }}</p>
+              {{ form.phone_number|as_crispy_field }}
             </div>
             <div class="form-group">
-              <label for="{{ form.profile_picture.id_for_label }}">Profile picture </label>
-              {{ form.profile_picture }}
+              <p>Current Profile Picture:</p>
+              {% if request.user.userprofile.profile_picture %}
+              <img src="{{ request.user.userprofile.profile_picture.url }}" alt="Current Profile Picture">
+              {% else %}
+              <p>No current profile picture</p>
+              {% endif %}
+              {{ form.profile_picture_upload|as_crispy_field}}
             </div>
+            {{ form.clear_picture|as_crispy_field }}
             <div class="col-md-auto col section-btn">
               <button class="btn btn-primary-outline display-4" type="submit">
                 Submit
@@ -35,7 +38,5 @@
       </div>
     </div>
   </div>
-
 </section>
-
 {% endblock content %}

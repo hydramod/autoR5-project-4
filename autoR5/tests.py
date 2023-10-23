@@ -9,14 +9,15 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
 from io import BytesIO
 import os
-import random
-import string
+import random, string
 from django.urls import reverse
+from unittest import mock
 from unittest.mock import patch, Mock
 import stripe
 from django.http import HttpResponseRedirect
 from django.urls.exceptions import NoReverseMatch
 from .signals import process_cancellation_request
+from cloudinary import api
 
 
 class CarModelTest(TestCase):
@@ -317,10 +318,6 @@ class ReviewModelTest(TestCase):
         self.assertEqual(str(review), expected_string)
 
 
-@override_settings(
-    STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage',
-    DEFAULT_FILE_STORAGE='django.core.files.storage.FileSystemStorage'
-)
 class UserProfileModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -352,9 +349,10 @@ class UserProfileModelTest(TestCase):
         )
 
     def tearDown(self):
-        # Clean up run after every test method.
-        if self.user_profile and self.user_profile.profile_picture:
-            os.remove(self.user_profile.profile_picture.path)
+        if hasattr(self, 'user_profile') and self.user_profile.profile_picture:
+            # Remove the image from Cloudinary
+            public_id = self.user_profile.profile_picture.public_id
+            api.delete_resources(public_id)
 
     def test_user_profile_creation(self):
         # Test that the UserProfile was created
@@ -1159,3 +1157,109 @@ class CustomerDashboardViewTest(TestCase):
 
         # Check if the cancellation request pending message is not displayed
         self.assertContains(response, 'Cancellation request pending approval')
+
+
+class LeaveReviewViewTest(TestCase):
+    def setUp(self):
+        # Create a user
+        self.user = User.objects.create_user(
+            username='testuser', password='testpassword')
+
+        # Create a car
+        self.car = Car.objects.create(
+            make='TestMake',
+            model='TestModel',
+            year=2023,
+            license_plate='ABC123',
+            daily_rate=100.00,
+            location_city='Test Location',
+        )
+
+        # Define the URL for leaving a review
+        self.url = reverse('leave_review', args=[self.car.id])
+
+    def test_view_url_exists_at_desired_location(self):
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'leave_review.html')
+
+    def test_review_form_submission(self):
+        self.client.login(username='testuser', password='testpassword')
+
+        response = self.client.post(
+            self.url, {'rating': 4, 'comment': 'Great car!'}, follow=True)
+
+        # Check for a redirect to the 'car_detail' view
+        self.assertRedirects(response, reverse(
+            'car_detail', args=[self.car.id]))
+
+        # Verify if the success message is present in the response content
+        self.assertContains(response, 'Thanks for your feedback!')
+
+
+class EditProfileViewTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpassword'
+        )
+        self.client.login(username='testuser', password='testpassword')
+        self.url = reverse('edit_profile')
+
+    def test_edit_profile_valid_phone_number(self):
+        response = self.client.post(self.url, {
+            'phone_number': '1234567890'
+        })
+        self.assertEqual(response.status_code, 200)
+        user_profile = UserProfile.objects.get(user=self.user)
+        self.assertEqual(user_profile.phone_number, '1234567890')
+        self.assertContains(response, "Phone number updated successfully.")
+
+    def test_edit_profile_invalid_phone_number(self):
+        response = self.client.post(self.url, {
+            'phone_number': 'invalid_phone_number'
+        })
+        self.assertEqual(response.status_code, 200)
+        user_profile = UserProfile.objects.get(user=self.user)
+        self.assertNotEqual(user_profile.phone_number, 'invalid_phone_number')
+        self.assertContains(
+            response, "Phone number must be 9 to 10 digits long.")
+
+    def test_edit_profile_with_image_upload(self):
+        # Create a mock image file for testing
+        image = Image.new('RGB', (100, 100))
+        output = BytesIO()
+        image.save(output, format='JPEG')
+        output.seek(0)
+
+        # Create a SimpleUploadedFile object based on the image
+        image_file = SimpleUploadedFile(
+            'image.jpg', output.getvalue(), content_type='image/jpeg')
+
+        response = self.client.post(self.url, {
+            'phone_number': '1234567890',
+            'profile_picture': image_file
+        })
+
+        self.assertEqual(response.status_code, 200)
+
+        user_profile = UserProfile.objects.get(user=self.user)
+        self.assertEqual(user_profile.phone_number, '1234567890')
+
+        # Make sure the image exists in Cloudinary
+        self.assertIsNotNone(user_profile.profile_picture)
+
+    def tearDown(self):
+        user_profile = UserProfile.objects.get(user=self.user)
+
+        if user_profile and user_profile.profile_picture:
+            # Remove the image from Cloudinary
+            public_id = user_profile.profile_picture.public_id
+            api.delete_resources(public_id)
+

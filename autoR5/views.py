@@ -415,25 +415,47 @@ def customer_dashboard(request):
 @login_required
 def edit_profile(request):
     user_profile = request.user.userprofile
+    form = UserProfileForm(request.POST or None,
+                           request.FILES, instance=user_profile)
+
+    phone_updated = False
+    picture_updated = False
 
     if request.method == 'POST':
-        form = UserProfileForm(
-            request.POST, request.FILES, instance=user_profile)
-
         if form.is_valid():
-            new_phone_number = form.cleaned_data.get('phone_number')
-            new_profile_picture = form.cleaned_data.get('profile_picture')
+            new_phone_number = form.cleaned_data['phone_number']
+            new_profile_picture = form.cleaned_data['profile_picture_upload']
 
-            if new_phone_number or new_profile_picture:
-                if new_phone_number:
+            if new_phone_number.strip() != "":
+                if new_phone_number.isdigit():
                     user_profile.phone_number = new_phone_number
-                if new_profile_picture:
-                    user_profile.profile_picture = new_profile_picture
+                    phone_updated = True
 
+            if new_profile_picture:
+                user_profile.profile_picture = new_profile_picture
+                picture_updated = True
+
+            if 'clear_picture' in request.POST and request.POST['clear_picture'] == 'on':
+                if user_profile.profile_picture:
+                    user_profile.profile_picture = None
+                    picture_updated = True
+                    messages.success(
+                        request, 'Profile picture removed successfully.')
+
+            if phone_updated:
                 user_profile.save()
-            return redirect('customer_dashboard')
-    else:
-        form = UserProfileForm(instance=user_profile)
+                messages.success(request, 'Phone number updated successfully.')
+            if picture_updated:
+                user_profile.save()
+                messages.success(
+                    request, 'Profile picture updated successfully.')
+            elif not picture_updated and not phone_updated:
+                messages.info(
+                    request, 'No changes made to phone number or profile picture.')
+
+        else:
+            messages.error(
+                request, 'Form contains errors. Please correct them.')
 
     return render(request, 'edit_profile.html', {'form': form})
 
