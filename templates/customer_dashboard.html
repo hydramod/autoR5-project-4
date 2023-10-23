@@ -42,7 +42,6 @@
             </div>
         </div>
     </div>
-
 </section>
 
 <section class="welcome-user-section">
@@ -90,7 +89,7 @@
             <div class="item features-image сol-12 col-lg-10">
                 <div class="item-wrapper">
                     <div class="item-img">
-                        <img src="{% static 'images/image3.jpg' %}" alt="">
+                        <img src="{% static 'assets/images/image3.jpg' %}" alt="">
                     </div>
                     <div class="item-content">
                         <div class="title-wrap">
@@ -106,7 +105,7 @@
                                 </button>
                             {% endif %}
                         </div>
-                        {% if booking.id not in unapproved_requests %}
+                        {% if booking.id in unapproved_requests %}
                             <form method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" name="booking_id" value="{{ booking.id }}">
@@ -144,6 +143,7 @@
             {% endfor %}
         </div>
     </div>
+
     <div class="container-fluid">
         <div class="row flex-row-reverse">
             <div class="col-12 col-lg-10">
@@ -165,8 +165,11 @@
                                 {{ booking.car }} - {{ booking.rental_date|date:"d-m-Y" }} to {{booking.return_date|date:"d-m-Y" }}
                             </h4>
                             <button class="btn btn-primary-outline-reverse display-4">
-                                <a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
+                                <span></span><a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
                             </button>
+                            <button class="btn btn-primary-outline-reverse display-4">
+                                <span></span><a href="{% url 'car_detail' booking.car.id %}">Book Again</a>
+                             </button>
                         </div>
                     </div>
                 </div>
@@ -185,7 +188,6 @@
             </div>
             {% endfor %}
         </div>
-
 </section>
 
 <section class="user-reviews-section">
@@ -225,7 +227,6 @@
             </div>
         </div>
     </div>
-
 </section>
 
 {% endblock %}
