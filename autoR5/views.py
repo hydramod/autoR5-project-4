@@ -26,11 +26,12 @@ def index(request):
     return render(request, 'index.html', {'car_types': car_types, 'fuel_types': fuel_types})
 
 
-# View for listing cars
+# View to display a list of cars
 def cars_list(request):
+    # Get all available cars
     cars = Car.objects.filter(is_available=True)
 
-    # Get filter parameters from the URL
+    # Retrieve filter parameters from the request's query string
     make = request.GET.get('make')
     model = request.GET.get('model')
     year = request.GET.get('year')
@@ -38,6 +39,7 @@ def cars_list(request):
     car_type = request.GET.get('car_type')
     fuel_type = request.GET.get('fuel_type')
 
+    # Create a dictionary to store filters based on the provided parameters
     filters = {}
     if make:
         filters['make'] = make
@@ -52,11 +54,13 @@ def cars_list(request):
     if fuel_type:
         filters['fuel_type'] = fuel_type
 
+    # Apply the filters to retrieve a queryset of filtered cars
     filtered_cars = Car.objects.filter(**filters)
 
+    # If any filters are applied, use the filtered cars; otherwise, use all available cars
     all_cars = filtered_cars if make or model or year or location or car_type or fuel_type else cars
 
-    # Retrieve filter options
+    # Get distinct values for filtering options
     makes = Car.objects.values('make').distinct()
     models = Car.objects.values('model').distinct()
     years = Car.objects.values('year').distinct()
@@ -64,7 +68,7 @@ def cars_list(request):
     car_types = Car.CAR_TYPES
     fuel_types = Car.FUEL_TYPES
 
-    # Paginate the results
+    # Pagination
     page_number = request.GET.get('page')
     paginator = Paginator(all_cars, 8)
 
@@ -75,6 +79,7 @@ def cars_list(request):
     except EmptyPage:
         page = paginator.page(paginator.num_pages)
 
+    # Render the 'cars_list.html' template with relevant context data
     return render(request, 'cars_list.html', {
         'cars': page,
         'makes': makes,
@@ -140,7 +145,7 @@ def get_fuel_types(request):
     return JsonResponse(fuel_type_options, safe=False)
 
 
-# Function to get the display value for a choice key
+# Helper function to get the display value for a choice in a choices field
 def get_display_value(choices, choice_key):
     for choice in choices:
         if choice[0] == choice_key:
@@ -289,7 +294,7 @@ def booking_confirmation(request, booking_id):
         except stripe.error.StripeError as e:
             messages.error(
                 request, "Payment processing error. Please try again")
-            return redirect('checkout')
+            return redirect('checkout', car_id=booking.car.id, booking_id=booking_id)
 
         payment_intent_status = intent.status
 
@@ -298,12 +303,13 @@ def booking_confirmation(request, booking_id):
             booking.status = 'Confirmed'
             payment.payment_intent = payment_intent_id
             messages.success(request, "Payment successful")
-        elif payment_intent_status in ['processing', 'requires_payment_method']:
+        elif payment_intent_status == 'processing':
             payment.payment_status = 'Pending'
             booking.status = 'Pending'
             payment.payment_intent = payment_intent_id
             messages.info(request, "Processing Payment")
         else:
+            payment_intent_status == 'requires_payment_method'
             payment.payment_status = 'Failed'
             booking.status = 'Canceled'
             messages.error(request, "Payment failed")
@@ -372,20 +378,21 @@ def customer_dashboard(request):
     form = CancellationRequestForm(request.POST or None)
     unapproved_requests = {}
 
+    # Get all unapproved cancellation requests for the current user's bookings
+    for booking in current_bookings:
+        unapproved_request = CancellationRequest.objects.filter(
+            booking=booking, approved=False
+        ).first()
+        if unapproved_request:
+            unapproved_requests[booking.id] = unapproved_request
+
     if request.method == 'POST' and form.is_valid():
         booking_id = request.POST.get('booking_id')
         if booking_id is not None:
             booking = Booking.objects.get(id=booking_id)
 
             # Check if there is an unapproved cancellation request
-            unapproved_request = CancellationRequest.objects.filter(
-                booking=booking, approved=False
-            ).first()
-
-            if unapproved_request:
-                messages.error(
-                    request, 'Cannot request cancellation. There is a pending cancellation request.')
-            else:
+            if booking_id in unapproved_requests:
                 cancellation_request = form.save(commit=False)
                 cancellation_request.booking = booking
                 cancellation_request.user = user

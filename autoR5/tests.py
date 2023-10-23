@@ -1,4 +1,4 @@
-from django.test import TestCase, Client, override_settings
+from django.test import TestCase, override_settings
 from django.contrib.auth.models import User
 from .models import Car, Booking, Payment, CancellationRequest, Review, UserProfile, ContactFormSubmission
 from decimal import Decimal
@@ -13,7 +13,6 @@ import random
 import string
 from django.urls import reverse
 from unittest.mock import patch, Mock
-from django.conf import settings
 import stripe
 from django.http import HttpResponseRedirect
 from django.urls.exceptions import NoReverseMatch

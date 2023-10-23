@@ -106,7 +106,7 @@
                                 </button>
                             {% endif %}
                         </div>
-                        {% if not unapproved_requests|default:booking.id %}
+                        {% if booking.id not in unapproved_requests %}
                             <form method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" name="booking_id" value="{{ booking.id }}">
