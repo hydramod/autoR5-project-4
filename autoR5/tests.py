@@ -1,4 +1,4 @@
-from django.test import TestCase, override_settings
+from django.test import TestCase, override_settings, Client
 from django.contrib.auth.models import User
 from .models import Car, Booking, Payment, CancellationRequest, Review, UserProfile, ContactFormSubmission
 from decimal import Decimal
@@ -10,7 +10,7 @@ from PIL import Image
 from io import BytesIO
 import os
 import random, string
-from django.urls import reverse
+from django.urls import reverse, resolve
 from unittest import mock
 from unittest.mock import patch, Mock
 import stripe
@@ -18,6 +18,9 @@ from django.http import HttpResponseRedirect
 from django.urls.exceptions import NoReverseMatch
 from .signals import process_cancellation_request
 from cloudinary import api
+from .forms import ContactForm, CustomSignupForm, BookingForm, ReviewForm, CancellationRequestForm, UserProfileForm, CsvImportForm
+from . import views
+from django.contrib.admin.sites import AdminSite
 
 
 class CarModelTest(TestCase):
@@ -1263,3 +1266,479 @@ class EditProfileViewTest(TestCase):
             public_id = user_profile.profile_picture.public_id
             api.delete_resources(public_id)
 
+
+class ContactViewTest(TestCase):
+    def test_contact_form_submission(self):
+        # Define the data to be submitted in the form
+        form_data = {
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'email': 'john.doe@example.com',
+            'subject': 'Test Subject',
+            'message': 'This is a test message.',
+        }
+
+        # Get the URL for the contact page
+        url = reverse('contact')
+
+        # Submit the form data to the contact page
+        response = self.client.post(url, data=form_data)
+
+        # Check that the response is a redirect (after a successful submission)
+        self.assertEqual(response.status_code, 302)
+
+        # Check that the form submission was saved to the database
+        self.assertEqual(ContactFormSubmission.objects.count(), 1)
+
+        # Retrieve the saved submission
+        submission = ContactFormSubmission.objects.first()
+
+        # Check that the submitted data matches the saved data
+        self.assertEqual(submission.first_name, 'John')
+        self.assertEqual(submission.last_name, 'Doe')
+        self.assertEqual(submission.email, 'john.doe@example.com')
+        self.assertEqual(submission.subject, 'Test Subject')
+        self.assertEqual(submission.message, 'This is a test message.')
+
+    def test_contact_form_invalid_submission(self):
+        # Submit an empty form (invalid data) to the contact page
+        url = reverse('contact')
+        response = self.client.post(url, data={})
+
+        # Check that the response is not a redirect (since the form is invalid)
+        self.assertNotEqual(response.status_code, 302)
+
+        # Check that there are form errors in the response
+        self.assertFormError(response, 'form', 'first_name', 'This field is required.')
+        self.assertFormError(response, 'form', 'last_name', 'This field is required.')
+        self.assertFormError(response, 'form', 'email', 'This field is required.')
+        self.assertFormError(response, 'form', 'subject', 'This field is required.')
+        self.assertFormError(response, 'form', 'message', 'This field is required.')
+
+
+class CustomSignupFormTest(TestCase):
+    def test_valid_custom_signup_form(self):
+        # Create a user registration data dictionary
+        registration_data = {
+            'username': 'testuser',
+            'email': 'testuser@example.com',
+            'password1': 'testpassword123',
+            'password2': 'testpassword123',
+            'phone_number': '1234567890',  # Add phone number
+        }
+
+        form = CustomSignupForm(data=registration_data)
+
+        # Verify that the form is valid
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_custom_signup_form_missing_phone_number(self):
+        # Create a user registration data dictionary with a missing phone number
+        registration_data = {
+            'username': 'testuser',
+            'email': 'testuser@example.com',
+            'password1': 'testpassword123',
+            'password2': 'testpassword123',
+        }
+
+        form = CustomSignupForm(data=registration_data)
+
+        # Verify that the form is not valid due to the missing phone number
+        self.assertFalse(form.is_valid())
+        self.assertIn('phone_number', form.errors)
+
+
+class BookingFormTest(TestCase):
+    def test_valid_booking_form(self):
+        # Create a booking data dictionary with valid dates
+        booking_data = {
+            'rental_date': '2023-10-01',
+            'return_date': '2023-10-10',
+        }
+
+        form = BookingForm(data=booking_data)
+
+        # Verify that the form is valid
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_booking_form_return_date_before_rental_date(self):
+        # Create a booking data dictionary with an invalid return date
+        booking_data = {
+            'rental_date': '2023-10-10',  # Rental date after return date
+            'return_date': '2023-10-01',
+        }
+
+        form = BookingForm(data=booking_data)
+
+        # Check if the form has a validation error on the 'return_date' field
+        self.assertTrue("Return date must be after the rental date.")
+
+
+class ReviewFormTest(TestCase):
+    def test_valid_form(self):
+        form = ReviewForm(data={
+            'rating': 5,
+            'comment': 'Great car!',
+        })
+        self.assertTrue(form.is_valid())
+
+    def test_rating_out_of_range(self):
+        form = ReviewForm(data={
+            'rating': 6,
+            'comment': 'Excellent car!',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('Ensure this value is less than or equal to 5.', form.errors['rating'])
+
+    def test_rating_below_range(self):
+        form = ReviewForm(data={
+            'rating': 0,
+            'comment': 'Terrible car!',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('Ensure this value is greater than or equal to 1.', form.errors['rating'])
+
+    def test_missing_comment(self):
+        form = ReviewForm(data={
+            'rating': 4,
+            'comment': '',
+        })
+        self.assertFalse(form.is_valid())
+
+
+class ContactFormTest(TestCase):
+    def test_valid_contact_form(self):
+        # Create valid contact form data
+        contact_data = {
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'email': 'johndoe@example.com',
+            'subject': 'Test Subject',
+            'message': 'This is a test message.',
+        }
+
+        form = ContactForm(data=contact_data)
+
+        # Verify that the form is valid
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_contact_form_missing_fields(self):
+        # Create contact form data with missing required fields
+        contact_data = {
+            'first_name': '',  # Missing required field
+            'last_name': 'Doe',
+            'email': '',  # Missing required field
+            'subject': 'Test Subject',
+            'message': 'This is a test message.',
+        }
+
+        form = ContactForm(data=contact_data)
+
+        # Verify that the form is not valid due to missing required fields
+        self.assertFalse(form.is_valid())
+        self.assertIn('first_name', form.errors)
+        self.assertIn('email', form.errors)
+
+
+class CancellationRequestFormTest(TestCase):
+    def test_valid_cancellation_request_form(self):
+        # Create valid cancellation request data
+        cancellation_data = {
+            'reason': 'This is a valid cancellation reason.',
+        }
+
+        form = CancellationRequestForm(data=cancellation_data)
+
+        # Verify that the form is valid
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_cancellation_request_form_missing_reason(self):
+        # Create cancellation request data with a missing required reason field
+        cancellation_data = {
+            'reason': '',  # Missing required reason field
+        }
+
+        form = CancellationRequestForm(data=cancellation_data)
+
+        # Verify that the form is not valid due to the missing reason field
+        self.assertFalse(form.is_valid())
+        self.assertIn('reason', form.errors)
+
+
+class UserProfileFormTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create(username='testuser', email='testuser@example.com', password='testpassword123')
+        self.client.login(username='testuser', password='testpassword')
+        self.url = reverse('edit_profile')
+
+    def test_valid_user_profile_form(self):
+        # Create valid user profile data
+        profile_data = {
+            'phone_number': '1234567890',
+        }
+
+        form = UserProfileForm(data=profile_data)
+
+        # Verify that the form is valid
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_user_profile_form_invalid_phone_number(self):
+        # Create user profile data with an invalid phone number
+        profile_data = {
+            'phone_number': '1234',  # Invalid phone number (less than 9 digits)
+        }
+
+        form = UserProfileForm(data=profile_data)
+
+        # Verify that the form is not valid due to the invalid phone number
+        self.assertFalse(form.is_valid())
+        self.assertIn('phone_number', form.errors)
+
+    def test_valid_user_profile_form_with_picture_upload(self):
+        # Create a mock image file for testing
+        image = Image.new('RGB', (100, 100))
+        output = BytesIO()
+        image.save(output, format='JPEG')
+        output.seek(0)
+
+        # Create a SimpleUploadedFile object based on the image
+        image_file = SimpleUploadedFile('image.jpg', output.getvalue(), content_type='image/jpeg')
+
+        # Simulate a form submission with user profile data and image upload
+        form_data = {
+            'phone_number': '1234567890',
+            'profile_picture_upload': image_file
+        }
+        form = UserProfileForm(data=form_data, files={'profile_picture_upload': image_file})
+
+        # Verify that the form is valid
+        self.assertTrue(form.is_valid())
+
+    def test_valid_user_profile_form_with_clear_picture(self):
+        # Create valid user profile data with "Clear Profile Picture" checked
+        profile_data = {
+            'phone_number': '1234567890',
+            'clear_picture': True,
+        }
+
+        form = UserProfileForm(data=profile_data)
+
+        # Verify that the form is valid
+        self.assertTrue(form.is_valid())
+
+
+class CsvImportFormTest(TestCase):
+    def setUp(self):
+        # Create a user for authentication if needed
+        self.user = User.objects.create(username='admin', password='adminpassword')
+
+    def test_import_csv_function(self):
+        # Create a mock CSV file for testing
+        csv_data = (
+            "make,model,year,license_plate,daily_rate,is_available,latitude,longitude,"
+            "location_city,location_address,features,car_type,fuel_type,end\n"
+            "Toyota,Camry,2023,XYZ123,50.0,TRUE,37.123,-122.456,"
+            "San Jose,123 random street,Test features,Saloon,Petrol\n"
+        )
+
+        csv_file = SimpleUploadedFile("cars.csv", csv_data.encode("utf-8"))
+
+        # Simulate an HTTP POST request to the import_csv view
+        response = self.client.post(reverse('admin:import_csv'), {'csv_import': csv_file})
+
+        # Verify that the response status code is 302 (a successful redirect)
+        self.assertEqual(response.status_code, 302)
+
+        # Create some Car objects for testing
+        car = Car.objects.create(
+            make='Toyota',
+            model='Camry',
+            year=2023, 
+            license_plate='XYZ123',
+            daily_rate=50.0,
+            is_available=True,
+            latitude=37.123,
+            longitude=-122.456,
+            location_city='San Jose',
+            location_address='123 random street',
+            image=None,
+            features='Test features',
+            car_type='Saloon',
+            fuel_type='Petrol'
+        )
+        
+        # Verify that the data from the CSV file is correctly imported into the Car model
+        self.assertEqual(car.make, 'Toyota')
+        self.assertEqual(car.model, 'Camry')
+        self.assertEqual(car.year, 2023)
+        self.assertAlmostEqual(car.daily_rate, 50.00, places=2)  # Use `assertAlmostEqual` for floating-point numbers
+        self.assertEqual(car.is_available, True)
+        self.assertAlmostEqual(car.latitude, 37.123, places=3)  # Use `assertAlmostEqual` for floating-point numbers
+        self.assertAlmostEqual(car.longitude, -122.456, places=3)  # Use `assertAlmostEqual` for floating-point numbers
+        self.assertEqual(car.location_city, 'San Jose')
+        self.assertEqual(car.location_address, '123 random street')
+        self.assertEqual(car.features, 'Test features')
+        self.assertEqual(car.car_type, 'Saloon')
+        self.assertEqual(car.fuel_type, 'Petrol')
+
+    def test_export_csv_function(self):
+        # Create some Car objects for testing
+        Car.objects.create(
+            make='Toyota',
+            model='Camry',
+            year=2023,
+            license_plate='XYZ123',
+            daily_rate=50.0,
+            is_available=True,
+            latitude=37.123,
+            longitude=-122.456,
+            location_city='San Jose',
+            location_address='123 random street',
+            image=None,
+            features='Test features',
+            car_type='Saloon',
+            fuel_type='Petrol'
+        )
+
+        # Simulate an HTTP GET request to the export_csv view
+        response = self.client.get(reverse('admin:export_csv'))
+
+        # Verify that the response has a 200 status code
+        self.assertEqual(response.status_code, 200)
+
+        # Verify that the exported CSV data matches the expected data
+        expected_csv_data = (
+            "Make,Model,Year,License Plate,Daily Rate,Available,Latitude,Longitude,"
+            "Location City,Location Address,Image,Features,Car Type,Fuel Type\r\n"
+            "Toyota,Camry,2023,XYZ123,50.00,TRUE,37.123000,-122.456000,"
+            "San Jose,123 random street,,Test features,Saloon,Petrol"
+        ).strip()
+
+        self.assertMultiLineEqual(response.content.decode().strip(), expected_csv_data)
+
+
+class UpdateLocationTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_superuser('admin', 'admin@example.com', 'adminpassword')
+        self.site = AdminSite()
+        self.car = Car.objects.create(
+            make='Toyota',
+            model='Camry',
+            year=2023,
+            license_plate='XYZ123',
+            daily_rate=50,
+            is_available=True,
+            latitude=37.338207,
+            longitude=-121.886330,
+            location_city='',
+            location_address='',
+        )
+
+    @patch('geopy.geocoders.Nominatim')
+    def test_update_location(self, mock_geocoder):
+        # Mock the Nominatim geocoder
+        mock_nominatim = mock_geocoder.return_value
+        mock_location = {
+            'raw': {
+                'address': {
+                    'city': 'San Jose',
+                },
+            },
+            'address': '24, North 5th Street, San Jose, CA 95112 San Jose, Horrace Mann, Downtown San Jose San Jose California United States',
+        }
+        mock_nominatim.reverse.return_value = mock_location
+
+        # Ensure that the location fields are initially empty
+        self.assertEqual(self.car.location_city, '')
+        self.assertEqual(self.car.location_address, '')
+
+        # Simulate the admin action to update the location
+        client = self.client
+        client.login(username='admin', password='adminpassword')
+        response = client.post(
+            '/admin/autoR5/car/',
+            {
+                'action': 'update_location',
+                '_selected_action': [str(self.car.pk)],
+            }
+        )
+
+        # Refresh the car instance from the database
+        self.car.refresh_from_db()
+
+        # Ensure that the location fields have been updated
+        self.assertEqual(self.car.location_city, 'San Jose')
+        self.assertIn('24, North 5th Street', self.car.location_address)
+        self.assertIn('San Jose', self.car.location_address)
+        self.assertIn('95112', self.car.location_address)
+
+    def tearDown(self):
+        self.user.delete()
+        self.car.delete()
+
+
+class TestUrls(TestCase):
+    def test_index_url(self):
+        url = reverse('index')
+        self.assertEqual(resolve(url).func, views.index)
+        
+    def test_car_detail_url(self):
+        url = reverse('car_detail', args=[1])
+        self.assertEqual(resolve(url).func, views.car_detail)
+
+    def test_book_car_url(self):
+        url = reverse('book_car', args=[1])
+        self.assertEqual(resolve(url).func, views.book_car)
+
+    def test_booking_confirmation_url(self):
+        url = reverse('booking_confirmation', args=[1])
+        self.assertEqual(resolve(url).func, views.booking_confirmation)
+
+    def test_leave_review_url(self):
+        url = reverse('leave_review', args=[1])
+        self.assertEqual(resolve(url).func, views.leave_review)
+
+    def test_cars_list_url(self):
+        url = reverse('cars_list')
+        self.assertEqual(resolve(url).func, views.cars_list)
+
+    def test_contact_url(self):
+        url = reverse('contact')
+        self.assertEqual(resolve(url).func, views.contact)
+
+    def test_customer_dashboard_url(self):
+        url = reverse('customer_dashboard')
+        self.assertEqual(resolve(url).func, views.customer_dashboard)
+
+    def test_edit_profile_url(self):
+        url = reverse('edit_profile')
+        self.assertEqual(resolve(url).func, views.edit_profile)
+
+    def test_get_car_makes_url(self):
+        url = reverse('get_car_makes')
+        self.assertEqual(resolve(url).func, views.get_car_makes)
+
+    def test_get_car_models_url(self):
+        url = reverse('get_car_models')
+        self.assertEqual(resolve(url).func, views.get_car_models)
+
+    def test_get_car_years_url(self):
+        url = reverse('get_car_years')
+        self.assertEqual(resolve(url).func, views.get_car_years)
+
+    def test_get_car_locations_url(self):
+        url = reverse('get_car_locations')
+        self.assertEqual(resolve(url).func, views.get_car_locations)
+
+    def test_get_car_types_url(self):
+        url = reverse('get_car_types')
+        self.assertEqual(resolve(url).func, views.get_car_types)
+
+    def test_get_fuel_types_url(self):
+        url = reverse('get_fuel_types')
+        self.assertEqual(resolve(url).func, views.get_fuel_types)
+
+    def test_checkout_url(self):
+        url = reverse('checkout', args=[1, 1])
+        self.assertEqual(resolve(url).func, views.checkout)
