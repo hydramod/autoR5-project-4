@@ -1528,7 +1528,7 @@ class UserProfileFormTest(TestCase):
         self.assertTrue(form.is_valid())
 
 
-class CsvImportFormTest(TestCase):
+class CsvImportExportFormTest(TestCase):
     def setUp(self):
         # Create a user for authentication if needed
         self.user = User.objects.create(username='admin', password='adminpassword')

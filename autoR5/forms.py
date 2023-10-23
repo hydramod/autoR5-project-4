@@ -6,6 +6,22 @@ from bootstrap_datepicker_plus.widgets import DatePickerInput
 from allauth.account.forms import SignupForm
 from django.core.validators import RegexValidator
 
+#custom sign up form
+class CustomSignupForm(SignupForm):
+    phone_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Phone Number'}), required=True)
+
+    def __init__(self, *args, **kwargs):
+        super(CustomSignupForm, self).__init__(*args, **kwargs)
+        self.fields['phone_number'].required = True
+
+    def save(self, request):
+        # Save the phone number to the user's profile.
+        user = super(CustomSignupForm, self).save(request)
+        phone_number = self.cleaned_data.get('phone_number')
+        user.userprofile.phone_number = phone_number
+        user.userprofile.save()
+        return user
+
 
 # BookingForm for booking a car
 class BookingForm(forms.ModelForm):
