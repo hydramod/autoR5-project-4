@@ -391,14 +391,12 @@ def customer_dashboard(request):
         if booking_id is not None:
             booking = Booking.objects.get(id=booking_id)
 
-            # Check if there is an unapproved cancellation request
-            if booking_id in unapproved_requests:
-                cancellation_request = form.save(commit=False)
-                cancellation_request.booking = booking
-                cancellation_request.user = user
-                cancellation_request.save()
-                messages.success(
-                    request, 'Cancellation request submitted successfully')
+            cancellation_request = form.save(commit=False)
+            cancellation_request.booking = booking
+            cancellation_request.user = user
+            cancellation_request.save()
+            messages.success(
+                request, 'Cancellation request submitted successfully')
         return redirect('customer_dashboard')
 
     return render(request, 'customer_dashboard.html', {

@@ -96,16 +96,16 @@
                             <h4 class="item-title display-7">
                                 {{ booking.car }} - {{ booking.rental_date|date:"d-m-Y" }} to {{booking.return_date|date:"d-m-Y" }}
                             </h4>
-                            <button class="btn btn-primary-outline-reverse display-4">
-                                <span></span><a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
-                            </button>
-                            {% if booking.status == "Pending" %}
+                            {% if booking.status == "Pending" and booking.id not in unapproved_requests %}
+                                <button class="btn btn-primary-outline-reverse display-4">
+                                    <span></span><a href="{% url 'booking_confirmation' booking.id %}">View Details</a>
+                                </button>
                                 <button class="btn btn-primary-outline-reverse display-4">
                                     <span></span><a href="{% url 'checkout' booking.car.id booking.id %}">Pay Now</a>
                                 </button>
                             {% endif %}
                         </div>
-                        {% if booking.id in unapproved_requests %}
+                        {% if booking.id not in unapproved_requests %}
                             <form method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" name="booking_id" value="{{ booking.id }}">
