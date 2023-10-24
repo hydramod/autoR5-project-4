@@ -274,7 +274,7 @@ def checkout(request, car_id, booking_id):
     except stripe.error.StripeError as e:
         print("Stripe Error:", str(e))
         messages.error(request, "Payment processing error. Please try again")
-        return redirect('checkout')
+        return redirect('checkout', car_id=car_id, booking_id=booking.id)
 
 
 # View for booking confirmation
