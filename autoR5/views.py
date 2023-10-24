@@ -240,7 +240,7 @@ def book_car(request, car_id):
                 payment_status='Pending',
             )
             payment.save()
-            return redirect('checkout', car_id=booking.car.id, booking_id=booking.id)
+            return redirect('checkout', car_id=car_id, booking_id=booking.id)
     else:
         form = BookingForm()
 
