@@ -207,7 +207,21 @@ let emailAddress = "";
 async function initialize() {
   // Configure the appearance of Stripe elements
   const appearance = {
-    theme: "stripe",
+    theme: 'night',
+    variables: {
+      fontFamily: 'Sohne, system-ui, sans-serif',
+      fontWeightNormal: '500',
+      borderRadius: '8px',
+      colorPrimary: '#f2f2f2',
+      colorText: '#9c8c73',
+      colorTextPlaceholder: '#727F96',
+    },
+    rules: {
+      '.Input, .Block': {
+        backgroundColor: '#1b1b1b',
+        border: '1.5px solid var(--colorPrimary)'
+      }
+    }
   };
   elements = stripe.elements({ appearance, clientSecret });
 

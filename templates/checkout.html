@@ -2,8 +2,7 @@
 
 {% block content %}
 
-<section class="login-logout-signup jarallax">
-
+<section class="login-logout-signup checkout jarallax">
   <div class="overlay"></div>
   <div class="container-fluid">
     <div class="row">
@@ -11,26 +10,32 @@
         <div class="title-wrapper">
           <h2 class="section-title display-5">Confirm Payment</h2>
         </div>
-        <p>Total Cost: €{{ total_cost }}</p>
-        {% csrf_token %}
-        <form id="payment-form" data-pk="{{ stripe_publishable_key }}" data-client-secret="{{ intent_client_secret }}"
-          data-booking-id="{{ booking_id }}" data-car-id="{{car_id}}">
-          <div id="link-authentication-element">
-            <!--Stripe.js injects the Link Authentication Element-->
-          </div>
-          <div id="payment-element">
-            <!--Stripe.js injects the Payment Element-->
-          </div>
-          <button id="submit">
-            <div class="spinner hidden" id="spinner"></div>
-            <span id="button-text">Pay now</span>
-          </button>
-          <div id="payment-message" class="hidden"></div>
-        </form>
+        <div class="form-area row">
+          <p>Total Cost: €{{ total_cost }}</p>
+          <form id="payment-form" data-pk="{{ stripe_publishable_key }}" data-client-secret="{{ intent_client_secret }}"
+            data-booking-id="{{ booking_id }}" data-car-id="{{car_id}}">
+            {% csrf_token %}
+            <div class="">
+              <div id="link-authentication-element">
+                <!--Stripe.js injects the Link Authentication Element-->
+              </div>
+              <div id="payment-element">
+                <!--Stripe.js injects the Payment Element-->
+              </div>
+            </div>
+            <div class="col-md-auto col section-btn">
+              <button id="submit" class="btn btn-primary-outline display-4">
+                <div class="spinner hidden" id="spinner"></div>
+                <span id="button-text">Pay now</span>
+              </button>
+            </div>
+            <div id="payment-message" class="hidden"></div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-  
-  <section>
+</section>
 
-    {% endblock %}
+
+{% endblock content %}
