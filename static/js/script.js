@@ -218,7 +218,7 @@ async function initialize() {
     },
     rules: {
       '.Input, .Block': {
-        backgroundColor: '#1b1b1b',
+        backgroundColor: '#f2f2f2',
         border: '1.5px solid var(--colorPrimary)'
       }
     }
