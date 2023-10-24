@@ -1,4 +1,4 @@
-from django.test import TestCase, override_settings, Client
+from django.test import TestCase, override_settings, Client, LiveServerTestCase
 from django.contrib.auth.models import User
 from .models import Car, Booking, Payment, CancellationRequest, Review, UserProfile, ContactFormSubmission
 from decimal import Decimal
@@ -9,7 +9,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
 from io import BytesIO
 import os
-import random, string
+import random
+import string
 from django.urls import reverse, resolve
 from unittest import mock
 from unittest.mock import patch, Mock
@@ -21,6 +22,15 @@ from cloudinary import api
 from .forms import ContactForm, CustomSignupForm, BookingForm, ReviewForm, CancellationRequestForm, UserProfileForm, CsvImportForm
 from . import views
 from django.contrib.admin.sites import AdminSite
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait, Select
+from selenium.webdriver.support import expected_conditions
+import time
 
 
 class CarModelTest(TestCase):
@@ -609,7 +619,7 @@ class BookCarViewTest(TestCase):
         # Perform a POST request with valid booking data
         response = self.client.post(url, booking_data, follow=True)
 
-        # Check if the response status code is as expected (e.g., 200 for a successful booking)
+        # Check if the response status code is as expected
         self.assertEqual(response.status_code, 200)
 
         # Check if the booking is created
@@ -1309,11 +1319,16 @@ class ContactViewTest(TestCase):
         self.assertNotEqual(response.status_code, 302)
 
         # Check that there are form errors in the response
-        self.assertFormError(response, 'form', 'first_name', 'This field is required.')
-        self.assertFormError(response, 'form', 'last_name', 'This field is required.')
-        self.assertFormError(response, 'form', 'email', 'This field is required.')
-        self.assertFormError(response, 'form', 'subject', 'This field is required.')
-        self.assertFormError(response, 'form', 'message', 'This field is required.')
+        self.assertFormError(response, 'form', 'first_name',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'last_name',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'email',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'subject',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'message',
+                             'This field is required.')
 
 
 class CustomSignupFormTest(TestCase):
@@ -1388,7 +1403,8 @@ class ReviewFormTest(TestCase):
             'comment': 'Excellent car!',
         })
         self.assertFalse(form.is_valid())
-        self.assertIn('Ensure this value is less than or equal to 5.', form.errors['rating'])
+        self.assertIn(
+            'Ensure this value is less than or equal to 5.', form.errors['rating'])
 
     def test_rating_below_range(self):
         form = ReviewForm(data={
@@ -1396,7 +1412,8 @@ class ReviewFormTest(TestCase):
             'comment': 'Terrible car!',
         })
         self.assertFalse(form.is_valid())
-        self.assertIn('Ensure this value is greater than or equal to 1.', form.errors['rating'])
+        self.assertIn(
+            'Ensure this value is greater than or equal to 1.', form.errors['rating'])
 
     def test_missing_comment(self):
         form = ReviewForm(data={
@@ -1468,7 +1485,8 @@ class CancellationRequestFormTest(TestCase):
 class UserProfileFormTest(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create(username='testuser', email='testuser@example.com', password='testpassword123')
+        self.user = User.objects.create(
+            username='testuser', email='testuser@example.com', password='testpassword123')
         self.client.login(username='testuser', password='testpassword')
         self.url = reverse('edit_profile')
 
@@ -1486,7 +1504,8 @@ class UserProfileFormTest(TestCase):
     def test_invalid_user_profile_form_invalid_phone_number(self):
         # Create user profile data with an invalid phone number
         profile_data = {
-            'phone_number': '1234',  # Invalid phone number (less than 9 digits)
+            # Invalid phone number (less than 9 digits)
+            'phone_number': '1234',
         }
 
         form = UserProfileForm(data=profile_data)
@@ -1503,14 +1522,16 @@ class UserProfileFormTest(TestCase):
         output.seek(0)
 
         # Create a SimpleUploadedFile object based on the image
-        image_file = SimpleUploadedFile('image.jpg', output.getvalue(), content_type='image/jpeg')
+        image_file = SimpleUploadedFile(
+            'image.jpg', output.getvalue(), content_type='image/jpeg')
 
         # Simulate a form submission with user profile data and image upload
         form_data = {
             'phone_number': '1234567890',
             'profile_picture_upload': image_file
         }
-        form = UserProfileForm(data=form_data, files={'profile_picture_upload': image_file})
+        form = UserProfileForm(data=form_data, files={
+                               'profile_picture_upload': image_file})
 
         # Verify that the form is valid
         self.assertTrue(form.is_valid())
@@ -1531,7 +1552,8 @@ class UserProfileFormTest(TestCase):
 class CsvImportExportFormTest(TestCase):
     def setUp(self):
         # Create a user for authentication if needed
-        self.user = User.objects.create(username='admin', password='adminpassword')
+        self.user = User.objects.create(
+            username='admin', password='adminpassword')
 
     def test_import_csv_function(self):
         # Create a mock CSV file for testing
@@ -1545,7 +1567,8 @@ class CsvImportExportFormTest(TestCase):
         csv_file = SimpleUploadedFile("cars.csv", csv_data.encode("utf-8"))
 
         # Simulate an HTTP POST request to the import_csv view
-        response = self.client.post(reverse('admin:import_csv'), {'csv_import': csv_file})
+        response = self.client.post(reverse('admin:import_csv'), {
+                                    'csv_import': csv_file})
 
         # Verify that the response status code is 302 (a successful redirect)
         self.assertEqual(response.status_code, 302)
@@ -1554,7 +1577,7 @@ class CsvImportExportFormTest(TestCase):
         car = Car.objects.create(
             make='Toyota',
             model='Camry',
-            year=2023, 
+            year=2023,
             license_plate='XYZ123',
             daily_rate=50.0,
             is_available=True,
@@ -1567,15 +1590,18 @@ class CsvImportExportFormTest(TestCase):
             car_type='Saloon',
             fuel_type='Petrol'
         )
-        
+
         # Verify that the data from the CSV file is correctly imported into the Car model
         self.assertEqual(car.make, 'Toyota')
         self.assertEqual(car.model, 'Camry')
         self.assertEqual(car.year, 2023)
-        self.assertAlmostEqual(car.daily_rate, 50.00, places=2)  # Use `assertAlmostEqual` for floating-point numbers
+        # Use `assertAlmostEqual` for floating-point numbers
+        self.assertAlmostEqual(car.daily_rate, 50.00, places=2)
         self.assertEqual(car.is_available, True)
-        self.assertAlmostEqual(car.latitude, 37.123, places=3)  # Use `assertAlmostEqual` for floating-point numbers
-        self.assertAlmostEqual(car.longitude, -122.456, places=3)  # Use `assertAlmostEqual` for floating-point numbers
+        # Use `assertAlmostEqual` for floating-point numbers
+        self.assertAlmostEqual(car.latitude, 37.123, places=3)
+        # Use `assertAlmostEqual` for floating-point numbers
+        self.assertAlmostEqual(car.longitude, -122.456, places=3)
         self.assertEqual(car.location_city, 'San Jose')
         self.assertEqual(car.location_address, '123 random street')
         self.assertEqual(car.features, 'Test features')
@@ -1615,12 +1641,14 @@ class CsvImportExportFormTest(TestCase):
             "San Jose,123 random street,,Test features,Saloon,Petrol"
         ).strip()
 
-        self.assertMultiLineEqual(response.content.decode().strip(), expected_csv_data)
+        self.assertMultiLineEqual(
+            response.content.decode().strip(), expected_csv_data)
 
 
 class UpdateLocationTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_superuser('admin', 'admin@example.com', 'adminpassword')
+        self.user = User.objects.create_superuser(
+            'admin', 'admin@example.com', 'adminpassword')
         self.site = AdminSite()
         self.car = Car.objects.create(
             make='Toyota',
@@ -1682,7 +1710,7 @@ class TestUrls(TestCase):
     def test_index_url(self):
         url = reverse('index')
         self.assertEqual(resolve(url).func, views.index)
-        
+
     def test_car_detail_url(self):
         url = reverse('car_detail', args=[1])
         self.assertEqual(resolve(url).func, views.car_detail)
@@ -1742,3 +1770,234 @@ class TestUrls(TestCase):
     def test_checkout_url(self):
         url = reverse('checkout', args=[1, 1])
         self.assertEqual(resolve(url).func, views.checkout)
+
+
+class JarallaxTest(LiveServerTestCase):
+    def setUp(self):
+        # Specify the path to your custom ChromeDriver executable
+        custom_chromedriver_path = 'C:/Users/2295883/Desktop/autoR5-project-4/chrome-win64/chromedriver.exe'
+        chrome_binary_path = 'C:/Users/2295883/Desktop/autoR5-project-4/chrome-win64/chrome.exe'
+
+        # Set Chrome options to specify the binary location
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.binary_location = chrome_binary_path
+        chrome_options.add_argument('start-maximized')
+
+        # Initialize the ChromeDriver with the specified paths
+        self.selenium = webdriver.Chrome(
+            executable_path=custom_chromedriver_path, options=chrome_options)
+
+    def tearDown(self):
+        self.selenium.quit()
+
+    def test_jarallax_initialization(self):
+        # Load the page containing Jarallax initialization
+        self.selenium.get('http://localhost:8000/')
+
+        time.sleep(2)  # Wait for 2 seconds (adjust as needed)
+
+        # Find an element with the Jarallax effect
+        jarallax_element = self.selenium.find_element(
+            By.CSS_SELECTOR, '.jarallax-container div')
+
+        # Check if Jarallax effect is applied (e.g., check for a certain CSS property)
+        self.assertIn('transform: translate3d(0px, 65px, 0px);',
+                      jarallax_element.get_attribute('style'))
+
+
+class MessageAlertsTest(LiveServerTestCase):
+    def setUp(self):
+        # Set up the Selenium WebDriver for Chrome
+        custom_chromedriver_path = 'C:/Users/2295883/Desktop/autoR5-project-4/chrome-win64/chromedriver.exe'
+        chrome_binary_path = 'C:/Users/2295883/Desktop/autoR5-project-4/chrome-win64/chrome.exe'
+
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.binary_location = chrome_binary_path
+        chrome_options.add_argument('start-maximized')
+
+        self.selenium = webdriver.Chrome(
+            executable_path=custom_chromedriver_path, options=chrome_options)
+
+    def tearDown(self):
+        self.selenium.quit()
+
+    def test_message_alerts(self):
+        # Open a page where the JavaScript is executed (replace 'url' with the actual URL)
+        self.selenium.get('http://localhost:8000/')
+
+        # Find and click the "Log In" button
+        log_in_button = self.selenium.find_element(
+            By.LINK_TEXT, "Log In")  # Adjust the locator if needed
+        log_in_button.click()
+
+        # Find the login form elements (you may need to inspect your page to determine the element IDs and names)
+        username_input = self.selenium.find_element(By.NAME, "login")
+        password_input = self.selenium.find_element(By.NAME, "password")
+        login_button = self.selenium.find_element(
+            By.XPATH, "//button[@type='submit']")
+
+        username = 'testuser'
+        password = 'testpassword'
+
+        # Enter login credentials and submit the form
+        username_input.send_keys(username)
+        password_input.send_keys(password)
+        login_button.click()
+
+        # Wait for the JavaScript to run and the message container to be displayed
+        WebDriverWait(self.selenium, 10).until(
+            expected_conditions.presence_of_element_located(
+                (By.ID, "message-container"))
+        )
+
+        # Check that the message container is displayed
+        message_container = self.selenium.find_element(
+            By.ID, "message-container")
+        self.assertEqual(
+            message_container.value_of_css_property("display"), 'block')
+
+        # Check that the message contains "Successfully signed in"
+        message_text = message_container.text
+        self.assertIn(f"Successfully signed in as {username}.", message_text)
+
+        # Ensure the message container is no longer displayed
+        WebDriverWait(self.selenium, 10).until(
+            lambda driver: 'none' in message_container.value_of_css_property(
+                "display")
+        )
+
+
+class AJAXFilterTests(LiveServerTestCase):
+    def setUp(self):
+        # Set up the Selenium WebDriver for Chrome
+        custom_chromedriver_path = 'C:/Users/2295883/Desktop/autoR5-project-4/chrome-win64/chromedriver.exe'
+        chrome_binary_path = 'C:/Users/2295883/Desktop/autoR5-project-4/chrome-win64/chrome.exe'
+
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.binary_location = chrome_binary_path
+        chrome_options.add_argument('start-maximized')
+
+        self.selenium = webdriver.Chrome(
+            executable_path=custom_chromedriver_path, options=chrome_options)
+
+    def tearDown(self):
+        # Clean up Selenium WebDriver after the test
+        self.selenium.quit()
+
+    def test_dropdown_updates(self):
+        # Open the target URL
+        self.selenium.get('http://localhost:8000/cars_list/')
+
+        # Find and select the car make
+        make_dropdown = Select(self.selenium.find_element_by_id('car_make'))
+        make_dropdown.select_by_value('Alfa Romeo')
+
+        # Add a 2-3 second pause
+        time.sleep(2)
+
+        # Find and select the car model
+        model_dropdown = Select(self.selenium.find_element_by_id('car_model'))
+        model_dropdown.select_by_value('Giulia')
+
+        # Add a 2-3 second pause
+        time.sleep(2)
+
+        # Find and select the car year
+        year_dropdown = Select(self.selenium.find_element_by_id('car_year'))
+        year_dropdown.select_by_value('2023')
+
+        # Add a 2-3 second pause
+        time.sleep(2)
+
+        # Find and select the car type
+        car_type_dropdown = Select(
+            self.selenium.find_element_by_id('car_type'))
+        car_type_dropdown.select_by_value('Saloon')
+
+        # Add a 2-3 second pause
+        time.sleep(2)
+
+        # Find and select the fuel type
+        fuel_type_dropdown = Select(
+            self.selenium.find_element_by_id('fuel_type'))
+        fuel_type_dropdown.select_by_value('Petrol')
+
+        # Add a 2-3 second pause
+        time.sleep(2)
+
+        # Find and select the location
+        location_dropdown = Select(
+            self.selenium.find_element_by_id('car_location'))
+        location_dropdown.select_by_value('Dublin')
+
+        # Add a 2-3 second pause
+        time.sleep(2)
+
+        # Click the filter button
+        filter_button = login_button = self.selenium.find_element(
+            By.XPATH, '//*[@id="filter-form"]/div/div[7]/button[1]')
+        filter_button.click()
+
+        # Add a 2-3 second pause
+        time.sleep(2)
+
+        # Verify that there is only one element with class "item-wrapper"
+        item_wrappers = self.selenium.find_elements_by_class_name(
+            'item-wrapper')
+        self.assertEqual(len(item_wrappers), 1)
+
+        # Click the reset button
+        reset_button = self.selenium.find_element_by_id('reset-filter')
+        reset_button.click()
+
+        # Add a 2-3 second pause
+        time.sleep(2)
+
+        # Check that there is more than one element with class "item-wrapper"
+        item_wrappers_after_reset = self.selenium.find_elements_by_class_name(
+            'item-wrapper')
+        self.assertGreater(len(item_wrappers_after_reset), 1)
+
+
+class MapTest(LiveServerTestCase):
+    def setUp(self):
+        # Set up the Selenium WebDriver for Chrome
+        custom_chromedriver_path = 'C:/Users/2295883/Desktop/autoR5-project-4/chrome-win64/chromedriver.exe'
+        chrome_binary_path = 'C:/Users/2295883/Desktop/autoR5-project-4/chrome-win64/chrome.exe'
+
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.binary_location = chrome_binary_path
+        chrome_options.add_argument('start-maximized')
+
+        self.selenium = webdriver.Chrome(
+            executable_path=custom_chromedriver_path, options=chrome_options)
+
+    def tearDown(self):
+        # Clean up Selenium WebDriver after the test
+        self.selenium.quit()
+
+    def test_map_displayed(self):
+        # Open the page where the JavaScript initializes the map (replace 'url' with the actual URL)
+        self.selenium.get(f'http://localhost:8000/booking/65/confirmation/')
+
+        # Find the login form elements (you may need to inspect your page to determine the element IDs and names)
+        username_input = self.selenium.find_element(By.NAME, "login")
+        password_input = self.selenium.find_element(By.NAME, "password")
+        login_button = self.selenium.find_element(
+            By.XPATH, "//button[@type='submit']")
+
+        # Enter login credentials and submit the form
+        username_input.send_keys('testuser')
+        password_input.send_keys('testpassword')
+        login_button.click()
+
+        time.sleep(3)
+
+        # Check if the map element is present
+        map_element = self.selenium.find_element_by_id('map')
+        self.assertTrue(map_element.is_displayed())
+
+        # Verify that the map has a marker
+        marker_element = self.selenium.find_element_by_class_name(
+            'leaflet-marker-icon')
+        self.assertTrue(marker_element.is_displayed())
