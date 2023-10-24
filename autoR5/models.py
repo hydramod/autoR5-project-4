@@ -100,7 +100,8 @@ class Payment(models.Model):
         ('Pending', 'Pending'),
         ('Paid', 'Paid'),
         ('Failed', 'Failed'),
-        ('Refunded', 'Refunded')
+        ('Refunded', 'Refunded'),
+        ('Canceled', 'Canceled')
     )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)

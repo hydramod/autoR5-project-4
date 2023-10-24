@@ -14,15 +14,26 @@ def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
 
+
 # Signal receiver to process cancellation requests
 @receiver(post_save, sender=CancellationRequest)
 def process_cancellation_request(sender, instance, created, **kwargs):
     if instance.approved:
         try:
             booking = Booking.objects.get(id=instance.booking_id)
+            payment = Payment.objects.get(booking=booking)
+
+            if payment.payment_status != 'Paid':
+                booking.status = 'Canceled'
+                booking.save()
+                payment.payment_status = 'Canceled'
+                payment.save()
+                car = booking.car
+                car.is_available = True
+                car.save()
+                return 
 
             # Retrieve the payment intent associated with the payment
-            payment = Payment.objects.get(booking=booking)
             payment_intent_id = payment.payment_intent
             car = booking.car
 
