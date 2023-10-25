@@ -17,7 +17,7 @@ The AutoR5 application has been subjected to comprehensive testing to verify its
 
 ### Frontend Testing Using Selenium:
 
-Frontend testing focuses on evaluating the user interface and its interactive components. Selenium is utilized to automate browser interactions and evaluate the application's frontend functionality. Key areas of testing include:
+Frontend testing focuses on evaluating the user interface and its interactive components. Selenium is utilized to automate browser interactions and evaluate the application's frontend functionality. You will need chromedriver and a test supporting browser to run the frontend tests, for more information and how to get setup see [ChromeDriver](https://chromedriver.chromium.org/home).
 
 1. **Jarallax Initialization:** The application employs the Jarallax effect for added depth and interaction. Testing ensures that it initializes correctly and functions as expected.
 
@@ -441,3 +441,15 @@ In these tests, you are using Selenium to perform end-to-end testing of the user
 - It verifies that the map element is present and displayed on the page. Additionally, it checks that the map has a marker displayed (using the presence of a marker element with a class name).
 
 These tests help ensure that the web application's JavaScript features, message alerts, AJAX-based filtering, and map displays are functioning correctly from the user's perspective.
+
+# Results:
+
+Overall the automated test have all pass without failure with a coverage report also of 95%
+
+![Test Structure](docs/images/coverage-report.png)
+
+```bash
+----------------------------------------------------------------------
+Ran 102 tests in 89.524s
+
+OK
