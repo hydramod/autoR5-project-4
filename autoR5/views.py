@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.db.models import Q
 from .models import Car, Booking, Review, CancellationRequest, Payment, ContactFormSubmission
 from .forms import BookingForm, ReviewForm, ContactForm, CancellationRequestForm, UserProfileForm
-from datetime import date
+from datetime import date, timedelta
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.translation import gettext as _
@@ -175,6 +175,25 @@ def book_car(request, car_id):
     car = get_object_or_404(Car, pk=car_id)
     total_cost = None
 
+    # Get all confirmed bookings for the specific car
+    confirmed_bookings = Booking.objects.filter(car=car, status='Confirmed')
+
+    # Create a dictionary of date ranges (bookedDates)
+    bookedDates = {}
+    for booking in confirmed_bookings:
+        current_date = booking.rental_date
+        end_date = booking.return_date
+        date_range = []
+        while current_date <= end_date:
+            date_str = current_date.strftime('%d-%m-%Y')
+            date_range.append(date_str)
+            current_date += timedelta(days=1)
+        # Join the date ranges into a single string
+        date_range_str = ' to '.join(date_range)
+        # Store each booking's date range string in the dictionary
+        bookedDates[booking.id] = date_range_str
+
+
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
@@ -244,7 +263,7 @@ def book_car(request, car_id):
     else:
         form = BookingForm()
 
-    return render(request, 'book_car.html', {'car': car, 'form': form, 'total_cost': total_cost})
+    return render(request, 'book_car.html', {'car': car, 'form': form, 'total_cost': total_cost, 'bookedDates': bookedDates})
 
 
 # Initialize Stripe API key

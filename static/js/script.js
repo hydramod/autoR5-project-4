@@ -184,114 +184,115 @@ if (carLocationElement) {
 }
 
 // Payment handling
-const formElement = document.getElementById("payment-form");
-const stripePublishableKey = formElement.getAttribute("data-pk");
-const bookingId = formElement.getAttribute("data-booking-id");
-const carId = formElement.getAttribute("data-car-id");
-const clientSecret = formElement.getAttribute("data-client-secret");
-const siteUrl = window.location.protocol + "//" + window.location.hostname
+if (window.location.pathname.includes("/checkout/")) {
+  const formElement = document.getElementById("payment-form");
+  const stripePublishableKey = formElement.getAttribute("data-pk");
+  const bookingId = formElement.getAttribute("data-booking-id");
+  const carId = formElement.getAttribute("data-car-id");
+  const clientSecret = formElement.getAttribute("data-client-secret");
+  const siteUrl = window.location.protocol + "//" + window.location.hostname
 
-const stripe = Stripe(stripePublishableKey);
+  const stripe = Stripe(stripePublishableKey);
 
-let elements;
+  let elements;
 
-initialize();
+  initialize();
 
-document
-  .querySelector("#payment-form")
-  .addEventListener("submit", handleSubmit);
+  document
+    .querySelector("#payment-form")
+    .addEventListener("submit", handleSubmit);
 
-let emailAddress = "";
+  let emailAddress = "";
 
-// Initialize Stripe elements and link authentication
-async function initialize() {
-  // Configure the appearance of Stripe elements
-  const appearance = {
-    theme: 'night',
-    variables: {
-      fontFamily: 'Sohne, system-ui, sans-serif',
-      fontWeightNormal: '500',
-      borderRadius: '8px',
-      colorPrimary: '#f2f2f2',
-      colorText: '#9c8c73',
-      colorTextPlaceholder: '#727F96',
-    },
-    rules: {
-      '.Input, .Block': {
-        backgroundColor: '#f2f2f2',
-        border: '1.5px solid var(--colorPrimary)'
+  // Initialize Stripe elements and link authentication
+  async function initialize() {
+    // Configure the appearance of Stripe elements
+    const appearance = {
+      theme: 'night',
+      variables: {
+        fontFamily: 'Sohne, system-ui, sans-serif',
+        fontWeightNormal: '500',
+        borderRadius: '8px',
+        colorPrimary: '#f2f2f2',
+        colorText: '#9c8c73',
+        colorTextPlaceholder: '#727F96',
+      },
+      rules: {
+        '.Input, .Block': {
+          backgroundColor: '#f2f2f2',
+          border: '1.5px solid var(--colorPrimary)'
+        }
       }
+    };
+    elements = stripe.elements({ appearance, clientSecret });
+
+    // Create and mount the link authentication element
+    const linkAuthenticationElement = elements.create("linkAuthentication");
+    linkAuthenticationElement.mount("#link-authentication-element");
+
+    // Update the email address when it changes in the link authentication element
+    linkAuthenticationElement.on("change", (event) => {
+      emailAddress = event.value.email;
+    });
+
+    // Configure options for the payment element
+    const paymentElementOptions = {
+      layout: "tabs",
+    };
+
+    // Create and mount the payment element
+    const paymentElement = elements.create("payment", paymentElementOptions);
+    paymentElement.mount("#payment-element");
+  }
+
+  // Handle the form submission for payment confirmation
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    // Confirm the payment using Stripe
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${siteUrl}/booking/${bookingId}/confirmation/`,
+        receipt_email: emailAddress,
+      },
+    });
+
+    // Show appropriate messages based on the payment outcome
+    if (error.type === "card_error" || error.type === "validation_error") {
+      showMessage(error.message);
+    } else {
+      showMessage("An unexpected error occurred.");
     }
-  };
-  elements = stripe.elements({ appearance, clientSecret });
+  }
 
-  // Create and mount the link authentication element
-  const linkAuthenticationElement = elements.create("linkAuthentication");
-  linkAuthenticationElement.mount("#link-authentication-element");
+  // UI helper to display messages
+  function showMessage(messageText) {
+    const messageContainer = document.querySelector("#payment-message");
 
-  // Update the email address when it changes in the link authentication element
-  linkAuthenticationElement.on("change", (event) => {
-    emailAddress = event.value.email;
-  });
+    // Show the message container and set the message text
+    messageContainer.classList.remove("hidden");
+    messageContainer.textContent = messageText;
 
-  // Configure options for the payment element
-  const paymentElementOptions = {
-    layout: "tabs",
-  };
+    // Hide the message container after 4 seconds
+    setTimeout(function () {
+      messageContainer.classList.add("hidden");
+      messageContainer.textContent = "";
+    }, 4000);
+  }
 
-  // Create and mount the payment element
-  const paymentElement = elements.create("payment", paymentElementOptions);
-  paymentElement.mount("#payment-element");
-}
-
-// Handle the form submission for payment confirmation
-async function handleSubmit(e) {
-  e.preventDefault();
-
-  // Confirm the payment using Stripe
-  const { error } = await stripe.confirmPayment({
-    elements,
-    confirmParams: {
-      return_url: `${siteUrl}/booking/${bookingId}/confirmation/`,
-      receipt_email: emailAddress,
-    },
-  });
-
-  // Show appropriate messages based on the payment outcome
-  if (error.type === "card_error" || error.type === "validation_error") {
-    showMessage(error.message);
-  } else {
-    showMessage("An unexpected error occurred.");
+  // Show a loading spinner during payment submission
+  function setLoading(isLoading) {
+    if (isLoading) {
+      // Disable the button and show a spinner
+      document.querySelector("#submit").disabled = true;
+      document.querySelector("#spinner").classList.remove("hidden");
+      document.querySelector("#button-text").classList.add("hidden");
+    } else {
+      // Enable the button and hide the spinner
+      document.querySelector("#submit").disabled = false;
+      document.querySelector("#spinner").classList.add("hidden");
+      document.querySelector("#button-text").classList.remove("hidden");
+    }
   }
 }
-
-// UI helper to display messages
-function showMessage(messageText) {
-  const messageContainer = document.querySelector("#payment-message");
-
-  // Show the message container and set the message text
-  messageContainer.classList.remove("hidden");
-  messageContainer.textContent = messageText;
-
-  // Hide the message container after 4 seconds
-  setTimeout(function () {
-    messageContainer.classList.add("hidden");
-    messageContainer.textContent = "";
-  }, 4000);
-}
-
-// Show a loading spinner during payment submission
-function setLoading(isLoading) {
-  if (isLoading) {
-    // Disable the button and show a spinner
-    document.querySelector("#submit").disabled = true;
-    document.querySelector("#spinner").classList.remove("hidden");
-    document.querySelector("#button-text").classList.add("hidden");
-  } else {
-    // Enable the button and hide the spinner
-    document.querySelector("#submit").disabled = false;
-    document.querySelector("#spinner").classList.add("hidden");
-    document.querySelector("#button-text").classList.remove("hidden");
-  }
-}
-

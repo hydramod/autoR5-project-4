@@ -15,6 +15,18 @@
                 <form action="{% url 'book_car' car.id %}" method="POST">
                     {% csrf_token %}
                     <div class="form-area row">
+                        {% if bookedDates %}
+                            <p>Already booked dates:</p>
+                            <ul>
+                                {% for bookingId, dateRange in bookedDates.items %}
+                                    <li>
+                                        {{ dateRange }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No booked dates for this car.</p>
+                        {% endif %}
                         {% crispy form %}
                         <div class="col-md-auto col section-btn">
                             <button type="submit" class="btn btn-primary-outline display-4">
