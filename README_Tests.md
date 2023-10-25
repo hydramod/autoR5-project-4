@@ -1,4 +1,5 @@
 # Tests
+![Test Structure](docs/images/testsflowexpanded.webp)
 
 ## AutoR5 Testing Overview
 
