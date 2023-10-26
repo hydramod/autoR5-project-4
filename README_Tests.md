@@ -24,6 +24,14 @@ The website performed as expected.
 
 The website was tested using the [Wave Accessability Tool](https://wave.webaim.org/) to make sure it met certain accessibility standards. The focus was on ensuring that all forms were easily accessible, with clear labels or descriptions for screen readers. Color contrasts met the minimum requirements set by the WCAG 2.1 Contrast Guidelines, and the headings were in the correct order to properly convey the importance of the content. All the content was organized into sections, so it was easy to navigate with assistive technology. Any non-text content had descriptive text or titles, and the HTML page language was set correctly. The website was also checked to make sure that the Aria properties were used correctly and that it followed the best coding practices for WCAG 2.1.
 
+Note: we get a false errors for missing links in the footer
+
+### Index
+
+![Index Accessability Test](docs/images/index%20wavetest.png)
+
+### Car List
+
 ## Lighthouse Test
 
 ## Weblink Test
