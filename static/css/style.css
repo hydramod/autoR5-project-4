@@ -1195,7 +1195,7 @@ strong {
 }
 
 .car-details-section .image-wrapper img {
-    height: 800px;
+    height: auto;
     object-fit: cover
 }
 
