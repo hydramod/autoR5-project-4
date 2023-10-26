@@ -34,6 +34,10 @@ Note: we get a false errors for missing links in the footer
 
 ![Car List Accessability Test](docs/images/carlist%20wavetest.png)
 
+### Contact
+
+![Contact Accessability Test](docs/images/contact%20wavetest.png)
+
 ## Lighthouse Test
 
 ## Weblink Test
