@@ -713,7 +713,7 @@ img {
 .section-btn-main .btn {
     background-color: transparent;
     box-shadow: none;
-    padding: 18px 62px;
+    padding: 18px 50px;
     border: 1px solid !important;
     transition: all .3s ease-in-out
 }
