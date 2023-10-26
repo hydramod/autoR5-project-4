@@ -1112,7 +1112,7 @@ strong {
 .booking-section {
     padding-top: 5rem;
     padding-bottom: 5rem;
-    background-image: url("{{ car.image.url }}")
+    background-image: url("https://res.cloudinary.com/dufksy94v/image/upload/f_auto,q_auto/v1/media/car_images/r5cvqikuabpuc2fjzxu1")
 }
 
 .booking-section .container-fluid {
@@ -1316,7 +1316,10 @@ strong {
 }
 
 .book-confirm-section .container-fluid {
-    padding: 0 40px
+    padding: 0 40px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 @media (max-width:992px) {
@@ -1356,13 +1359,16 @@ strong {
 }
 
 .book-confirm-section .image-wrapper {
-    height: 100%;
     align-items: center;
-    margin: auto
+    margin: auto;
+    width: 100%; /* Make the image wrapper take up the full width of the container */
 }
 
 .book-confirm-section .image-wrapper img {
-    height: 76%
+    width: 100%; /* Make the image fill the image wrapper */
+    height: 100%; /* Make the image fill the image wrapper */
+    object-fit: fill; /* Scale the image as large as possible to cover the image wrapper */
+    object-position: center center;
 }
 
 @media (max-width:992px) {
@@ -1387,8 +1393,8 @@ strong {
 }
 
 .book-confirm-section .map {
-    height: 650px;
-    width: 600px;
+    height: 100%;
+    width: 100%;
     margin: auto
 }
 
