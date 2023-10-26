@@ -1620,7 +1620,7 @@ strong {
 }
 
 .manage-booking-section .item .item-wrapper .item-img {
-    width: 330px;
+    width: 50%;
     margin-right: 50px
 }
 
@@ -1634,13 +1634,13 @@ strong {
 
 .manage-booking-section .item .item-wrapper .item-img img {
     height: 100%;
-    object-fit: cover
+    object-fit: fill
 }
 
 @media (max-width:992px) {
     .manage-booking-section .item .item-wrapper .item-img img {
-        width: 200px;
-        height: 180px;
+        width: 100%;
+        height: 100%;
         margin: 0 auto
     }
 }
