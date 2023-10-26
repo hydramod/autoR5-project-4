@@ -883,7 +883,8 @@ strong {
     padding-bottom: 5rem;
     background-color: #1b1b1b;
     flex: 1;
-    padding: 20px
+    padding: 20px;
+    background-image: url("https://res.cloudinary.com/dufksy94v/image/upload/f_auto,q_auto/v1/media/car_images/ced5fmikx33opajngr80")
 }
 
 @media (max-width:992px) {
@@ -1764,8 +1765,9 @@ strong {
 .login-logout-signup {
     padding-top: 5rem;
     padding-bottom: 5rem;
-    background-image: url(../../../assets/images/background1.webp)
+    background-image: url("https://res.cloudinary.com/dufksy94v/image/upload/f_auto,q_auto/v1/media/car_images/separv0vflhqhoc7dwjj")
 }
+
 
 .login-logout-signup .container-fluid {
     padding: 0 40px
