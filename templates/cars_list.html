@@ -101,11 +101,11 @@
                         </div>
                         <div class="col-md-auto col section-btn">
                             <button type="submit" class="btn btn-primary-outline display-4">
-                                <span></span>Filter
+                                Filter<i class="fa-solid fa-filter"></i>
                             </button>
                             <button>
-                                <button type="" class="btn btn-secondary display-4" id="reset-filter">
-                                    <span></span>Reset
+                                <button class="btn btn-secondary display-4" id="reset-filter">
+                                    Reset<i class="fa-solid fa-arrow-rotate-left"></i>
                                 </button>
                             </button>
                         </div>
@@ -153,10 +153,10 @@
                 <div class="col-md-auto col section-btn">
                 {% if cars.has_previous %}
                     <a href="?page=1" class="btn section-btn btn-primary-outline display-4">
-                        <span></span>First
+                        <i class="fa-solid fa-backward-fast"></i> First
                     </a>
                     <a href="?page={{ cars.previous_page_number }}" class="btn section-btn btn-secondary display-4">
-                        <span></span>Previous
+                        <i class="fa-solid fa-backward"></i> Previous
                     </a>
                 {% endif %}
                 <p class="current-page date display-4">
@@ -164,10 +164,10 @@
                 </p>
                 {% if cars.has_next %}
                     <a href="?page={{ cars.next_page_number }}" class="btn section-btn btn-primary-outline display-4">
-                        <span></span>Next
+                        Next <i class="fa-solid fa-forward"></i>
                     </a>
                     <a href="?page={{ cars.paginator.num_pages }}" class="btn section-btn btn-secondary display-4">
-                        <span></span>Last
+                        Last <i class="fa-solid fa-forward-fast"></i>
                     </a>
                 {% endif %}
                 </div>

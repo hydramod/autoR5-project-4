@@ -56,17 +56,17 @@
                         </ul>
                         {% if user.is_authenticated %}
                         <div class="section-btn-main" role="tablist"><a class="btn btn-primary-outline display-4"
-                                href="{% url 'account_logout' %}">Log Out</a>
+                                href="{% url 'account_logout' %}"><i class="fa-solid fa-arrow-left"></i>Log Out</a>
                         </div>
                         <div class="section-btn-main" role="tablist"><a class="btn btn-primary-outline display-4"
-                                href="{% url 'customer_dashboard' %}">Dashboard</a>
+                                href="{% url 'customer_dashboard' %}">Dashboard <i class="fa-solid fa-table-columns"></i></a>
                         </div>
                         {% else %}
                         <div class="section-btn-main" role="tablist"><a class="btn btn-primary-outline display-4"
-                                href="{% url 'account_signup' %}">Sign Up</a>
+                                href="{% url 'account_signup' %}">Sign Up<i class="fa-solid fa-user-plus"></i></a>
                         </div>
                         <div class="section-btn-main" role="tablist"><a class="btn btn-primary-outline display-4"
-                                href="{% url 'account_login' %}">Log In</a>
+                                href="{% url 'account_login' %}">Log In<i class="fa-solid fa-right-to-bracket"></i></a>
                         </div>
                         {% endif %}
                     </div>
