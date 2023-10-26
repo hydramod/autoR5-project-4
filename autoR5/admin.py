@@ -25,9 +25,9 @@ update_location.short_description = 'Update Location'
 
 class CarAdmin(admin.ModelAdmin):
     list_display = ('make', 'model', 'year', 'license_plate', 'daily_rate',
-                    'is_available', 'latitude', 'longitude', 'location_city')
-    list_filter = ('make', 'model', 'year', 'is_available', 'location_city')
-    search_fields = ('make', 'model', 'year', 'location_city')
+                    'is_available', 'latitude', 'longitude', 'location_city', 'car_type', 'fuel_type')
+    list_filter = ('make', 'model', 'year', 'is_available', 'location_city', 'car_type', 'fuel_type')
+    search_fields = ('make', 'model', 'year', 'location_city', 'car_type', 'fuel_type')
     actions = [update_location]
 
     def get_urls(self):
@@ -60,7 +60,8 @@ class CarAdmin(admin.ModelAdmin):
 
                         fields = row.split(",")
                         if len(fields) == 15:
-                            make, model, year, license_plate, daily_rate, is_available, latitude, longitude, location_city, location_address, image, features, car_type, fuel_type, end, = [
+                            
+                            make, model, year, license_plate, daily_rate, is_available, latitude, longitude, location_city, location_address, image, features, car_type, fuel_type, end = [
                                 field.strip(' "') for field in fields]
 
                             # Handle empty fields by converting them to None

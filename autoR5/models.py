@@ -31,7 +31,7 @@ class Car(models.Model):
         ('Estate', 'Estate'),
         ('MPV', 'MPV'),
         ('SUV', 'SUV'),
-        ('Sports car', 'Sports car'),
+        ('Sports Car', 'Sports Car'),
     ]
     FUEL_TYPES = [
         ('Petrol', 'Petrol'),
