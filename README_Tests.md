@@ -1,4 +1,34 @@
 # Tests
+
+## Responsiveness
+
+The responsiveness of all pages was tested on various screen sizes starting from 320px and above, as per the guidelines of WCAG 2.1 Reflow for responsive design on Chrome, Edge, Firefox, and Opera browsers. [Websiteplanet](https://www.websiteplanet.com/webtools/responsive-checker/) was used for this purpose, which offered various emulated mobile devices such as Samsung and Apple smartphones with different screen sizes. In addition to this, Google Chrome developer tools was used.
+
+To test:
+
+1. Open a browser and go to the [AutoR5 website](https://autor5-33d529a804c5.herokuapp.com/).
+2. Right-click and select "Inspect" to open the developer tools.
+3. Change the view to "responsive" and decrease the width to 320px.
+4. Set the zoom to 50%.
+5. Increase the width of the responsive window to its maximum.
+Expected Result:
+
+The website should be responsive on all screen sizes, with no stretched or pixelated images.
+There should be no horizontal scrolling.
+No elements should overlap.
+Actual Result:
+
+The website performed as expected.
+
+## Accessability
+
+The website was tested using the [Wave Accessability Tool](https://wave.webaim.org/) to make sure it met certain accessibility standards. The focus was on ensuring that all forms were easily accessible, with clear labels or descriptions for screen readers. Color contrasts met the minimum requirements set by the WCAG 2.1 Contrast Guidelines, and the headings were in the correct order to properly convey the importance of the content. All the content was organized into sections, so it was easy to navigate with assistive technology. Any non-text content had descriptive text or titles, and the HTML page language was set correctly. The website was also checked to make sure that the Aria properties were used correctly and that it followed the best coding practices for WCAG 2.1.
+
+## Lighthouse Test
+
+## Weblink Test
+
+## Automated Tests
 ![Test Structure](docs/images/testsflowexpanded.webp)
 
 ## AutoR5 Testing Overview

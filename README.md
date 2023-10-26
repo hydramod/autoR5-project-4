@@ -268,3 +268,41 @@ Once you have PostgreSQL and the requirements installed and configured, you can 
     ```bash
     python manage.py runserver
 
+# Design
+
+## Wireframes
+
+### Index
+![Project Structure](docs/images/index%20wireframe.png)
+### Car List
+![Project Structure](docs/images/carlist%20wireframe.png)
+### Book Car
+![Project Structure](docs/images/bookcar%20wireframe.png)
+### Car Detail
+![Project Structure](docs/images/bookcar%20wireframe.png)
+### Checkout
+![Project Structure](docs/images/checkout%20wireframe.png)
+### Booking Confirmation
+![Project Structure](docs/images/bookingconfrimation%20wireframe.png)
+### Customer Dashboard
+![Project Structure](docs/images/customerdashboard%20wireframe.png)
+### Edit Profile
+![Project Structure](docs/images/editprofile%20wireframe.png)
+### Contact form
+![Project Structure](docs/images/contact%20wireframe.png)
+### Login, Sign Up, 
+![Project Structure](docs/images/login%20wireframe.png)
+### logout
+![Project Structure](docs/images/logout%20wireframe.png)
+
+# Technologies
+- HTML used for website structure
+- CSS for custom styling
+- Javascript for front end functionality
+- Developed using Visual Studio Code IDE
+- Source code hosted on GitHub, deployed with Heroku
+- Git used for code management
+- Icons from Font Awesome
+- Images optimized using TinyPNG
+- Favicon files generated using Favicon.io
+- Wireframes designed using Wirify
