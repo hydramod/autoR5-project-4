@@ -902,7 +902,8 @@ strong {
 }
 
 .car-list .item {
-    margin-bottom: 80px
+    margin-bottom: 80px;
+    width: 45%;
 }
 
 @media (max-width:992px) {
@@ -921,8 +922,9 @@ strong {
 }
 
 .car-list .item .item-wrapper a .item-img img {
-    height: 340px;
-    object-fit: cover
+    height: 300px;
+    object-fit: fill;
+    object-position: center center;
 }
 
 @media (max-width:992px) {

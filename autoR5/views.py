@@ -70,7 +70,7 @@ def cars_list(request):
 
     # Pagination
     page_number = request.GET.get('page')
-    paginator = Paginator(all_cars, 8)
+    paginator = Paginator(all_cars, 4)
 
     try:
         page = paginator.page(page_number)
