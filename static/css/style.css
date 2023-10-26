@@ -1361,13 +1361,13 @@ strong {
 .book-confirm-section .image-wrapper {
     align-items: center;
     margin: auto;
-    width: 100%; /* Make the image wrapper take up the full width of the container */
+    width: 100%;
 }
 
 .book-confirm-section .image-wrapper img {
-    width: 100%; /* Make the image fill the image wrapper */
-    height: 100%; /* Make the image fill the image wrapper */
-    object-fit: fill; /* Scale the image as large as possible to cover the image wrapper */
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
     object-position: center center;
 }
 
