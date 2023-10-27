@@ -190,7 +190,7 @@ if (window.location.pathname.includes("/checkout/")) {
   const bookingId = formElement.getAttribute("data-booking-id");
   const carId = formElement.getAttribute("data-car-id");
   const clientSecret = formElement.getAttribute("data-client-secret");
-  const siteUrl = window.location.protocol + "//" + window.location.hostname
+  const siteUrl = window.location.protocol + "//" + window.location.hostname;
 
   const stripe = Stripe(stripePublishableKey);
 
@@ -208,21 +208,21 @@ if (window.location.pathname.includes("/checkout/")) {
   async function initialize() {
     // Configure the appearance of Stripe elements
     const appearance = {
-      theme: 'night',
+      theme: "night",
       variables: {
-        fontFamily: 'Sohne, system-ui, sans-serif',
-        fontWeightNormal: '500',
-        borderRadius: '8px',
-        colorPrimary: '#f2f2f2',
-        colorText: '#9c8c73',
-        colorTextPlaceholder: '#727F96',
+        fontFamily: "Sohne, system-ui, sans-serif",
+        fontWeightNormal: "500",
+        borderRadius: "8px",
+        colorPrimary: "#f2f2f2",
+        colorText: "#9c8c73",
+        colorTextPlaceholder: "#727F96",
       },
       rules: {
-        '.Input, .Block': {
-          backgroundColor: '#f2f2f2',
-          border: '1.5px solid var(--colorPrimary)'
-        }
-      }
+        ".Input, .Block": {
+          backgroundColor: "#f2f2f2",
+          border: "1.5px solid var(--colorPrimary)",
+        },
+      },
     };
     elements = stripe.elements({ appearance, clientSecret });
 
