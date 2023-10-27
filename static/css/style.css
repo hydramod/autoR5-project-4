@@ -308,7 +308,7 @@ button {
     padding: 0
 }
 
-.custom-navbar button.navbar-toggler {
+.custom-navbar .navbar-toggler {
     outline: 0;
     width: 48px;
     height: 48px;
@@ -321,7 +321,7 @@ button {
     background: #c2b299
 }
 
-.custom-navbar button.navbar-toggler .hamburger span {
+.custom-navbar .navbar-toggler .hamburger span {
     position: absolute;
     right: 10px;
     margin-top: 14px;
@@ -331,12 +331,12 @@ button {
     background-color: #f2f2f2
 }
 
-.custom-navbar button.navbar-toggler .hamburger span:nth-child(1) {
+.custom-navbar .navbar-toggler .hamburger span:nth-child(1) {
     top: 0;
     transition: all .2s
 }
 
-.custom-navbar button.navbar-toggler .hamburger span:nth-child(4) {
+.custom-navbar .navbar-toggler .hamburger span:nth-child(4) {
     top: 16px;
     transition: all .2s
 }
@@ -347,8 +347,8 @@ button {
     justify-content: flex-start
 }
 
-.custom-navbar button.navbar-toggler .hamburger span:nth-child(2),
-.custom-navbar button.navbar-toggler .hamburger span:nth-child(3) {
+.custom-navbar .navbar-toggler .hamburger span:nth-child(2),
+.custom-navbar .navbar-toggler .hamburger span:nth-child(3) {
     top: 8px;
     transition: all .15s
 }
