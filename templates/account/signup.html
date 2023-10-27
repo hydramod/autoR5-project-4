@@ -1,12 +1,10 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load account socialaccount %}
 {% load crispy_forms_tags %}
 
 {% block head_title %}{% trans "Sign Up" %}{% endblock head_title %}
 
 {% block content %}
-{% get_providers as socialaccount_providers %}
 
 <section class="login-logout-signup fullscreen jarallax">
   <div class="overlay"></div>
