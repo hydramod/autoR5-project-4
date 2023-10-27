@@ -13,14 +13,14 @@
                             <label for="car_make" class="display-4">Manufacturer:</label>
                             <select name="make" id="car_make" class="form-control display-7">
                                 {% if make %}
-                                    <option value="">{{ make }}</option>
+                                <option value="">{{ make }}</option>
                                 {% else %}
-                                    <option value="">Select Manufacturer</option>
+                                <option value="">Select Manufacturer</option>
                                 {% endif %}
                                 {% for make_option in makes %}
-                                    <option value="{{ make_option.make }}" {% if make_option.make == car_make %}selected{% endif %}>
-                                        {{ make_option.make }}
-                                    </option>
+                                <option value="{{ make_option.make }}"{% if make_option.make == car_make %}selected{% endif %}>
+                                    {{ make_option.make }}
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -28,14 +28,14 @@
                             <label for="car_model" class="display-4">Model:</label>
                             <select name="model" id="car_model" class="form-control display-7">
                                 {% if model %}
-                                    <option value="">{{ model }}</option>
+                                <option value="">{{ model }}</option>
                                 {% else %}
-                                    <option value="">Select Model</option>
+                                <option value="">Select Model</option>
                                 {% endif %}
                                 {% for model_option in models %}
-                                    <option value="{{ model_option.model }}" {% if model_option.model == car_model %}selected{% endif %}>
-                                        {{ model_option.model }}
-                                    </option>
+                                <option value="{{ model_option.model }}" {% if model_option.model == car_model %}selected{% endif %}>
+                                    {{ model_option.model }}
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -43,14 +43,14 @@
                             <label for="car_year" class="display-4">Year:</label>
                             <select name="year" id="car_year" class="form-control display-7">
                                 {% if year %}
-                                    <option value="">{{ year }}</option>
+                                <option value="">{{ year }}</option>
                                 {% else %}
-                                    <option value="">Select Year</option>
+                                <option value="">Select Year</option>
                                 {% endif %}
                                 {% for year_option in years %}
-                                    <option value="{{ year_option.year }}" {% if year_option.year == car_year %}selected{% endif %}>
-                                        {{ year_option.year }}
-                                    </option>
+                                <option value="{{ year_option.year }}" {% if year_option.year == car_year %}selected{% endif %}>
+                                    {{ year_option.year }}
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -58,14 +58,14 @@
                             <label for="car_type" class="display-4">Car Type:</label>
                             <select name="car_type" id="car_type" class="form-control display-7">
                                 {% if car_type %}
-                                    <option value="">{{ car_type }}</option>
+                                <option value="">{{ car_type }}</option>
                                 {% else %}
-                                    <option value="">Select Car Type</option>
+                                <option value="">Select Car Type</option>
                                 {% endif %}
                                 {% for car_type_option in car_types %}
-                                    <option value="{{ car_type_option.0 }}" {% if car_type_option.0 == car_type %}selected{% endif %}>
-                                        {{ car_type_option.1 }}
-                                    </option>
+                                <option value="{{ car_type_option.0 }}" {% if car_type_option.0 == car_type %}selected{% endif %}>
+                                    {{ car_type_option.1 }}
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -73,14 +73,14 @@
                             <label for="fuel_type" class="display-4">Fuel Type:</label>
                             <select name="fuel_type" id="fuel_type" class="form-control display-7">
                                 {% if fuel_type %}
-                                    <option value="">{{ fuel_type }}</option>
+                                <option value="">{{ fuel_type }}</option>
                                 {% else %}
-                                    <option value="">Select Fuel Type</option>
+                                <option value="">Select Fuel Type</option>
                                 {% endif %}
                                 {% for fuel_type_option in fuel_types %}
-                                    <option value="{{ fuel_type_option.0 }}" {% if fuel_type_option.0 == fuel_type %}selected{% endif %}>
-                                        {{ fuel_type_option.1 }}
-                                    </option>
+                                <option value="{{ fuel_type_option.0 }}"{% if fuel_type_option.0 == fuel_type %}selected{% endif %}>
+                                    {{ fuel_type_option.1 }}
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -88,14 +88,14 @@
                             <label for="car_location" class="display-4">Location:</label>
                             <select name="location" id="car_location" class="form-control display-7">
                                 {% if location %}
-                                    <option value="">{{ location }}</option>
+                                <option value="">{{ location }}</option>
                                 {% else %}
-                                    <option value="">Select Location</option>
+                                <option value="">Select Location</option>
                                 {% endif %}
                                 {% for location_option in locations %}
-                                    <option value="{{ location_option.location_city }}" {% if location_option.location_city == car_location %}selected{% endif %}>
-                                        {{ location_option.location_city }}
-                                    </option>
+                                <option value="{{ location_option.location_city }}"{% if location_option.location_city == car_location %}selected{% endif %}>
+                                    {{ location_option.location_city }}
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -111,69 +111,71 @@
                 </form>
             </div>
         </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-lg-9">
+                    <div class="title-wrapper">
+                        <h2 class="section-title display-1">Our Fleet</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                {% for car in cars %}
+                <div class="item features-image сol-12 col-lg-3">
+                    <div class="item-wrapper">
+                        <a href="{% url 'car_detail' car.id %}">
+                            <div class="item-img">
+                                <img src="{{ car.image.url }}" alt="">
+                                <span class="iconfont">
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                </span>
+                            </div>
+                            <div class="item-content">
+                                <p class="date display-4">
+                                    {{ car.year }}
+                                </p>
+                                <h3 class="card-title display-5">
+                                    {{ car.make }} {{ car.model}}
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="card-title display-5">No cars available.</p>
+                {% endfor %}
+            </div>
+            <!-- Add pagination links -->
+            <div class="pagination">
+                <div class="step-links">
+                    <div class="col-md-auto col section-btn">
+                        {% if cars.has_previous %}
+                        <a href="?page=1" class="btn section-btn btn-primary-outline display-4">
+                            <i class="fa-solid fa-backward-fast"></i> First
+                        </a>
+                        <a href="?page={{ cars.previous_page_number }}" class="btn section-btn btn-secondary display-4">
+                            <i class="fa-solid fa-backward"></i> Previous
+                        </a>
+                        {% endif %}
+                        <p class="current-page date display-4">
+                            Page {{ cars.number }} of {{ cars.paginator.num_pages }}.
+                        </p>
+                        {% if cars.has_next %}
+                        <a href="?page={{ cars.next_page_number }}"
+                            class="btn section-btn btn-primary-outline display-4">
+                            Next <i class="fa-solid fa-forward"></i>
+                        </a>
+                        <a href="?page={{ cars.paginator.num_pages }}" class="btn section-btn btn-secondary display-4">
+                            Last <i class="fa-solid fa-forward-fast"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-12 col-lg-9">
-                <div class="title-wrapper">
-                    <h2 class="section-title display-1">Our Fleet</h2>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            {% for car in cars %}
-            <div class="item features-image сol-12 col-lg-3">
-                <div class="item-wrapper">
-                    <a href="{% url 'car_detail' car.id %}">
-                        <div class="item-img">
-                            <img src="{{ car.image.url }}" alt="">
-                            <span class="iconfont">
-                                <i class="fa-solid fa-calendar-days"></i>
-                            </span>
-                        </div>
-                        <div class="item-content">
-                            <p class="date display-4">
-                                {{ car.year }}
-                            </p>
-                            <h3 class="card-title display-5">
-                                {{ car.make }} {{ car.model}}
-                            </h3>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            {% empty %}
-            <p class="card-title display-5">No cars available.</p>
-            {% endfor %}
-        </div>
-        <!-- Add pagination links -->
-        <div class="pagination">
-            <div class="step-links">
-                <div class="col-md-auto col section-btn">
-                {% if cars.has_previous %}
-                    <a href="?page=1" class="btn section-btn btn-primary-outline display-4">
-                        <i class="fa-solid fa-backward-fast"></i> First
-                    </a>
-                    <a href="?page={{ cars.previous_page_number }}" class="btn section-btn btn-secondary display-4">
-                        <i class="fa-solid fa-backward"></i> Previous
-                    </a>
-                {% endif %}
-                <p class="current-page date display-4">
-                    Page {{ cars.number }} of {{ cars.paginator.num_pages }}.
-                </p>
-                {% if cars.has_next %}
-                    <a href="?page={{ cars.next_page_number }}" class="btn section-btn btn-primary-outline display-4">
-                        Next <i class="fa-solid fa-forward"></i>
-                    </a>
-                    <a href="?page={{ cars.paginator.num_pages }}" class="btn section-btn btn-secondary display-4">
-                        Last <i class="fa-solid fa-forward-fast"></i>
-                    </a>
-                {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-    
+
 </section>
 
 {% endblock %}
