@@ -336,3 +336,8 @@ To explore the autoR5 Car Rental Service locally, you can clone the project repo
   ```
 
 This will create a local copy of the project, allowing you to work with the codebase on your development environment.
+
+# Credits
+
+- Images used from free sources on [Pixabay](https://pixabay.com/) and [TopGear](https://www.topgear.com/)
+- Csv Import tutorial found here [@Very Academy](https://www.youtube.com/watch?v=BLxCnD5-Uvc)
