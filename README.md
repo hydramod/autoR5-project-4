@@ -10,6 +10,9 @@ Welcome to **autoR5**, a comprehensive car rental system developed for a fiction
 4. [Getting Started](#getting-started)
    1. [Requirements](#requirements)
    2. [Initial startup](#initial-startup)
+5. [Design](#wireframes)
+6. [Technologies](#technologies)
+7. [Deployment](#deployment)
 5. [The Code (Powered by Django)](README_TheCode.md#the-code-powered-by-django)
    1. [Models](README_TheCode.md#models)
       1. [Car Model](README_TheCode.md#car-model)
@@ -249,6 +252,7 @@ Please refer to the links for more details on each package or library.
 To install these requirements, you can use the following command:
     ```bash
     pip install -r requirements.txt
+    ```
 
 ## Initial startup 
 
@@ -306,3 +310,20 @@ Once you have PostgreSQL and the requirements installed and configured, you can 
 - Images optimized using TinyPNG
 - Favicon files generated using Favicon.io
 - Wireframes designed using Wirify
+
+# Deployment
+
+The autoR5 Car Rental Service website was developed using Visual Studio Code and the source code was hosted on a remote repository on GitHub named "autoR5-project-4." To ensure the code was properly version-controlled, Git commands were employed in the development workflow. The following Git commands were used:
+
+git add: Used to stage the files for the upcoming commit.
+git commit: Employed to commit the changes to the local Git repository along with descriptive commit messages.
+git push: Utilized to push the committed code to the remote repository on GitHub.
+Once the code was successfully managed on GitHub, the next step involved deploying the autoR5 Car Rental Service website to a live environment. In this case, the deployment was performed on the Heroku platform, making the website accessible at the following link: [autoR5 Car Rental Service.](https://autor5-33d529a804c5.herokuapp.com/)
+
+To explore the autoR5 Car Rental Service locally, you can clone the project repository from GitHub by copying the HTTPS link. Then, open an Integrated Development Environment (IDE) with Git installed, and execute the following command in the terminal:
+
+  ```bash
+  git clone [copied GitHub repository link]
+  ```
+
+This will create a local copy of the project, allowing you to work with the codebase on your development environment.
