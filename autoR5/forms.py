@@ -6,9 +6,12 @@ from bootstrap_datepicker_plus.widgets import DatePickerInput
 from allauth.account.forms import SignupForm
 from django.core.validators import RegexValidator
 
-#custom sign up form
+# custom sign up form
+
+
 class CustomSignupForm(SignupForm):
-    phone_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Phone Number'}), required=True)
+    phone_number = forms.CharField(widget=forms.TextInput(
+        attrs={'placeholder': 'Phone Number'}), required=True)
 
     def __init__(self, *args, **kwargs):
         super(CustomSignupForm, self).__init__(*args, **kwargs)
@@ -39,15 +42,20 @@ class BookingForm(forms.ModelForm):
         return_date = cleaned_data.get("return_date")
 
         if rental_date and return_date and rental_date >= return_date:
-            raise forms.ValidationError("Return date must be after the rental date.")
+            raise forms.ValidationError(
+                "Return date must be after the rental date.")
 
 # ReviewForm for submitting a car review
+
+
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ['rating', 'comment']
 
 # ContactForm for contacting support
+
+
 class ContactForm(forms.Form):
     first_name = forms.CharField(label='FIRST NAME', max_length=100)
     last_name = forms.CharField(label='LAST NAME', max_length=100)
@@ -59,6 +67,8 @@ class ContactForm(forms.Form):
     )
 
 # CancellationRequestForm for canceling a booking
+
+
 class CancellationRequestForm(forms.ModelForm):
     class Meta:
         model = CancellationRequest
@@ -68,6 +78,8 @@ class CancellationRequestForm(forms.ModelForm):
         }
 
 # UserProfileForm for updating user profile information
+
+
 class UserProfileForm(forms.ModelForm):
     phone_number_validator = RegexValidator(
         regex=r'^\d{9,10}$',
@@ -114,5 +126,7 @@ class UserProfileForm(forms.ModelForm):
         )
 
 # CsvImportForm for importing data from a CSV file
+
+
 class CsvImportForm(forms.Form):
     csv_import = forms.FileField(label='Select CSV File')

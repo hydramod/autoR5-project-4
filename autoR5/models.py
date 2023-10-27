@@ -7,6 +7,8 @@ from django.utils import timezone
 from cloudinary.models import CloudinaryField
 
 # Car model for storing car information
+
+
 class Car(models.Model):
     # Fields to store car details
     make = models.CharField(max_length=50)
@@ -94,6 +96,8 @@ class Booking(models.Model):
         super().save(*args, **kwargs)
 
 # Payment model for recording user payments
+
+
 class Payment(models.Model):
     # Choices for payment status
     PAYMENT_STATUS_CHOICES = (
@@ -117,6 +121,8 @@ class Payment(models.Model):
         return f"Payment of {self.amount} for Booking {self.booking}"
 
 # CancellationRequest model for recording booking cancellation requests
+
+
 class CancellationRequest(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -128,6 +134,8 @@ class CancellationRequest(models.Model):
         return f"Cancellation request for {self.booking}"
 
 # Review model for car reviews
+
+
 class Review(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -141,6 +149,8 @@ class Review(models.Model):
         return f"Review for {self.car} by {self.user}"
 
 # UserProfile model for user profile information
+
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
@@ -153,7 +163,7 @@ class UserProfile(models.Model):
     @property
     def email(self):
         return self.user.email
-    
+
 
 class ContactFormSubmission(models.Model):
     first_name = models.CharField(max_length=100)
@@ -165,4 +175,3 @@ class ContactFormSubmission(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.subject}"
-

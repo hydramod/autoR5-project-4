@@ -22,4 +22,3 @@ urlpatterns = [
     path('account/', include('allauth.urls'), name='allauth_urls'),
     path('', include('autoR5.urls'), name='autoR5_urls'),
 ]
-

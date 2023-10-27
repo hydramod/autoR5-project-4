@@ -9,6 +9,8 @@ class RefundProcessingError(Exception):
     pass
 
 # Signal receiver to create a user profile when a new user is registered
+
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -31,7 +33,7 @@ def process_cancellation_request(sender, instance, created, **kwargs):
                 car = booking.car
                 car.is_available = True
                 car.save()
-                return 
+                return
 
             # Retrieve the payment intent associated with the payment
             payment_intent_id = payment.payment_intent

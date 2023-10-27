@@ -193,7 +193,6 @@ def book_car(request, car_id):
         # Store each booking's date range string in the dictionary
         bookedDates[booking.id] = date_range_str
 
-
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():

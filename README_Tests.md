@@ -106,6 +106,13 @@ Testing was done to make sure that all the navigation links on the website were 
 
 ![Booking Confirmation Link Test](docs/images/bookingconfirmation%20linktest.png)
 
+## Validator Tests
+
+### HTML
+
+### CSS
+![CSS Valid](docs/images/cssvalid.png)
+
 ## Automated Tests
 ![Test Structure](docs/images/testsflowexpanded.webp)
 
