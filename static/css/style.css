@@ -632,6 +632,12 @@ span {
     position: relative
 }
 
+@media (min-width: 992px){
+.col-lg-10 {
+    width: 83.33333333%;
+}
+}
+
 .item-wrapper {
     overflow: hidden
 }

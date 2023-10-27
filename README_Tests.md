@@ -42,6 +42,32 @@ Note: we get a false errors for missing links in the footer
 
 ## Weblink Test
 
+Testing was done to make sure that all the navigation links on the website were working correctly and directing to the right pages. This was tested by clicking on the links on each page and also by using a [Smalltools Link Analysis Tool.](https://smallseotools.com/website-link-analyzer-tool/)
+
+### Index
+
+![Index Link Test](docs/images/index%20linktest.png)
+
+### Car List
+
+![Car List Link Test](docs/images/carlist%20linktest.png)
+
+### Contact
+
+![Contact Link Test](docs/images/contact%20linktest.png)
+
+### Car Detail
+
+![Car Detail Link Test](docs/images/cardetail%20linktest.png)
+
+### Checkout
+
+![Checkout Link Test](docs/images/checkout%20linktest.png)
+
+### Booking Confirmation
+
+![Booking Confirmation Link Test](docs/images/bookingconfirmation%20linktest.png)
+
 ## Automated Tests
 ![Test Structure](docs/images/testsflowexpanded.webp)
 
