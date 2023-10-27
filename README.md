@@ -307,16 +307,18 @@ Once you have PostgreSQL and the requirements installed and configured, you can 
 ![Project Structure](docs/images/logout%20wireframe.png)
 
 # Technologies
-- HTML used for website structure
+- HTML with bootstrap used for website structure
 - CSS for custom styling
 - Javascript for front end functionality
 - Developed using Visual Studio Code IDE
 - Source code hosted on GitHub, deployed with Heroku
 - Git used for code management
 - Icons from Font Awesome
-- Images optimized using TinyPNG
+- Images optimized and stored on cloudinary
 - Favicon files generated using Favicon.io
 - Wireframes designed using Wirify
+- Stripe for payment simulation
+- google smtp for email feedback
 
 # Deployment
 
