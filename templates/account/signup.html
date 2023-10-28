@@ -17,13 +17,13 @@
         <form action="{% url 'account_signup' %}" method="POST" class="signup">
           {% csrf_token %}
           <div class="form-area row">
-            {% crispy form %}
+            {{ form|crispy }}
             {% if redirect_field_value %}
               <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
             {% endif %}
             <div class="col-md-auto col section-btn">
               <button type="submit" class="btn btn-primary-outline display-4">
-                <span></span>{% trans "Sign Up" %}
+                {% trans "Sign Up" %}
               </button>
             </div>
           </div>
