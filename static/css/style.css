@@ -1585,7 +1585,7 @@ strong {
 
 .manage-booking-section {
     padding-top: 5rem;
-    padding-bottom: 5rem;
+    padding-bottom: 0;
     background-color: #1b1b1b
 }
 
@@ -1681,11 +1681,12 @@ strong {
     color: #1b1b1b
 }
 
-.user-reviews-section {
+.user-reviews-section .item .item-wrapper{
     padding-top: 6rem;
     padding-bottom: 6rem;
     background-color: #1b1b1b
 }
+
 
 .user-reviews-section .section-title {
     text-align: left;

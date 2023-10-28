@@ -379,7 +379,7 @@ def leave_review(request, car_id):
 
 
 # View for the customer dashboard
-
+@login_required
 def customer_dashboard(request):
     user = request.user
     current_bookings = Booking.objects.filter(
