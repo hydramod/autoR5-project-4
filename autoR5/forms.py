@@ -57,10 +57,10 @@ class ReviewForm(forms.ModelForm):
 
 
 class ContactForm(forms.Form):
-    first_name = forms.CharField(label='FIRST NAME', max_length=100)
-    last_name = forms.CharField(label='LAST NAME', max_length=100)
-    email = forms.EmailField(label='EMAIL')
-    subject = forms.CharField(label='SUBJECT', max_length=100)
+    first_name = forms.CharField(label='First Name', max_length=100)
+    last_name = forms.CharField(label='Last Name', max_length=100)
+    email = forms.EmailField(label='Email')
+    subject = forms.CharField(label='Subject', max_length=100)
     message = forms.CharField(
         label='Message',
         widget=forms.Textarea(attrs={'rows': 5, 'cols': 40}),
