@@ -9,6 +9,9 @@ from django.contrib import messages
 
 from .models import Car, Booking, Review, UserProfile, Payment, CancellationRequest, ContactFormSubmission
 from .forms import CsvImportForm
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Geolocator for updating car locations
 
@@ -71,6 +74,17 @@ class CarAdmin(admin.ModelAdmin):
                             # Handle empty fields by converting them to None
                             if not image:
                                 image = None
+                            else:
+                                # Check if the image already exists on Cloudinary
+                                image_search_result = cloudinary.Search().expression(
+                                    f"public_id:{image}").execute()
+                                if image_search_result['total_count'] > 0:
+                                    # Use the existing public ID
+                                    image = image_search_result['resources'][0]['public_id']
+                                else:
+                                    # Upload the image to Cloudinary and get the public ID
+                                    result = cloudinary.uploader.upload(image)
+                                    image = result['public_id']
 
                             is_available = is_available.strip(' "') == "TRUE"
 
@@ -86,7 +100,7 @@ class CarAdmin(admin.ModelAdmin):
                                     'longitude': longitude,
                                     'location_city': location_city,
                                     'location_address': location_address,
-                                    'image': image,
+                                    'image': image,  # Updated with Cloudinary public ID
                                     'features': features,
                                     'car_type': car_type,
                                     'fuel_type': fuel_type,
@@ -117,10 +131,13 @@ class CarAdmin(admin.ModelAdmin):
 
         cars = Car.objects.all()
         for car in cars:
+            # Get the public ID from the CloudinaryResource object
+            public_id = car.image.public_id if car.image else ''
+
             writer.writerow([
                 car.make, car.model, car.year, car.license_plate, car.daily_rate,
                 'TRUE' if car.is_available else 'FALSE', car.latitude, car.longitude,
-                car.location_city, car.location_address, car.image, car.features, car.car_type, car.fuel_type
+                car.location_city, car.location_address, public_id, car.features, car.car_type, car.fuel_type
             ])
 
         return response

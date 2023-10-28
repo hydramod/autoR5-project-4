@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load replace %}
 {% block content %}
 
 <!--Landing Page-->
@@ -46,11 +47,11 @@
                         {% elif car_type == 'Estate' %}https://res.cloudinary.com/dufksy94v/image/upload/v1698280929/media/car_images/dxvzecptis1fmyu69qs3.webp
                         {% elif car_type == 'MPV' %}https://res.cloudinary.com/dufksy94v/image/upload/v1698281063/media/car_images/xbnoogsq2uylnivglrk1.webp
                         {% elif car_type == 'SUV' %}https://res.cloudinary.com/dufksy94v/image/upload/v1698281063/media/car_images/a60nsjqulvttuxtidq1r.webp
-                        {% elif car_type == 'Sports Car' %}https://res.cloudinary.com/dufksy94v/image/upload/v1698281063/media/car_images/h6pulxtuho7fs11clpoy.webp
+                        {% elif car_type == 'Sports_Car' %}https://res.cloudinary.com/dufksy94v/image/upload/v1698281063/media/car_images/h6pulxtuho7fs11clpoy.webp
                         {% endif %}" alt="{{ car_type }}">
                         <div class="item-content">
                             <div class="title-wrap">
-                                <h3 class="item-title display-5">{{ car_type }}</h3>
+                                <h3 class="item-title display-5">{{ car_type|replace:"_, " }}</h3>
                                 <p class="description display-7">
                                     {% if car_type == 'Hatchback' %}
                                     Ideal for daily commuting.
@@ -62,7 +63,7 @@
                                     Prioritize versatility, accommodating passengers and cargo, ideal for families.
                                     {% elif car_type == 'SUV' %}
                                     Elevated, versatile, and ideal for adventure.
-                                    {% elif car_type == 'Sports Car' %}
+                                    {% elif car_type == 'Sports_Car' %}
                                     Thrilling performance and agile handling, ideal for enthusiasts who crave an
                                     exhilarating drive.
                                     {% endif %}
