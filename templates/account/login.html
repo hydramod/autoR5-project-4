@@ -24,7 +24,7 @@
               {{ form.password|as_crispy_field }}
             </div>
             {% if redirect_field_value %}
-            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
             {% endif %}
             <div class="col-md-auto col section-btn">
               <button type="submit" class="btn btn-primary-outline display-4">
