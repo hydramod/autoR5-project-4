@@ -5,8 +5,25 @@
 {% block title %}AutoR5|Verification Sent{% endblock %}
 
 {% block content %}
-    <h1>{% trans "Verify Your Email Address" %}</h1>
 
-    <p>{% blocktrans %}We have sent an email to you for verification. Follow the link provided to finalize the signup process. If you do not see the verification email in your main inbox, check your spam folder. Please contact us if you do not receive the verification email within a few minutes.{% endblocktrans %}</p>
+        <section class="login-logout-signup fullscreen jarallax">
+            <div class="overlay"></div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12 col-lg-5">
+                        <div class="title-wrapper">
+                            <h2 class="section-title display-5">{% trans "Verify Your Email Address" %}</h2>
+                        </div>
+                        <div class="form-area row">
+                            <p class="text display-7">
+                                {% blocktrans %}We have sent an email to you for verification. Follow the link provided to finalize the signup process. 
+                                If you do not see the verification email in your main inbox, check your spam folder. 
+                                Please contact us if you do not receive the verification email within a few minutes.{% endblocktrans %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
 {% endblock content %}
