@@ -1681,6 +1681,7 @@ strong {
     color: #1b1b1b
 }
 
+
 .user-reviews-section .item .item-wrapper{
     padding-top: 6rem;
     padding-bottom: 6rem;
@@ -1699,6 +1700,7 @@ strong {
     color: #f2f2f2
 }
 
+.user-reviews-section,
 .leave-review-section {
     background-color: #1b1b1b
 }

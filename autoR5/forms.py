@@ -70,12 +70,13 @@ class ContactForm(forms.Form):
 
 
 class CancellationRequestForm(forms.ModelForm):
+    reason = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 4, 'cols': 40, 'required': True, 'id': 'unique_reason_id'}),
+    )
+
     class Meta:
         model = CancellationRequest
         fields = ['reason']
-        widgets = {
-            'reason': forms.Textarea(attrs={'rows': 4, 'cols': 40, 'required': True}),
-        }
 
 # UserProfileForm for updating user profile information
 

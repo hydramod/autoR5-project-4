@@ -1,7 +1,6 @@
 {% extends "base.html" %}
-{% load static %}
-
 {% block content %}
+{% load custom_filters %}
 
 <div class="counter-section">
 
@@ -106,9 +105,9 @@
                                 {% csrf_token %}
                                 <input type="hidden" name="booking_id" value="{{ booking.id }}">
                                 <div class="form-group">
-                                    <label for="{{ form.reason.id_for_label }}" class="control-label">Reason for Cancellation:</label>
+                                    <label for="{{ form.reason.id_for_label|add_index:forloop.counter }}" class="control-label">Reason for Cancellation:</label>
                                     <div>
-                                        <textarea id="{{ form.reason.id_for_label }}" name="{{ form.reason.name }}"
+                                        <textarea id="{{ form.reason.id_for_label|add_index:forloop.counter }}" name="{{ form.reason.name }}"
                                             class="form-control" required
                                             placeholder="Enter your reason here"></textarea>
                                         {{ form.reason.errors }}
