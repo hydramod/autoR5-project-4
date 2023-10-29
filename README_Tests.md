@@ -109,6 +109,7 @@ Testing was done to make sure that all the navigation links on the website were 
 ## Validator Tests
 
 ### HTML
+![HTML Valid](docs/images/htmlvalid.png)
 
 ### CSS
 ![CSS Valid](docs/images/cssvalid.png)

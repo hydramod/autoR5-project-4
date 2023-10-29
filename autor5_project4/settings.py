@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 import dj_database_url
 from django.contrib.messages import constants as messages
+from allauth.account.app_settings import EmailVerificationMethod
 if os.path.isfile('env.py'):
     import env
 
@@ -29,7 +30,7 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['autor5-33d529a804c5.herokuapp.com', 'localhost']
 
@@ -208,9 +209,15 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 ACCOUNT_FORMS = {'signup': 'autoR5.forms.CustomSignupForm'}
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = None
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'customer_dashboard'
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
 ACCOUNT_EMAIL_CONFIRMATION_COOLDOWN = 600
+
+PASSWORD_RESET_TIMEOUT_DAYS = 1
 
 # Stripe settings
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')

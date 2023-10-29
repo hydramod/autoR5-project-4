@@ -1,11 +1,29 @@
-{% extends "account/base.html" %}
+{% extends "base.html" %}
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Sign Up Closed" %}{% endblock head_title %}
+{% load crispy_forms_tags %}
+
+{% block title %}AutoR5|Sign Up Closed{% endblock %}
 
 {% block content %}
-<h1>{% trans "Sign Up Closed" %}</h1>
 
-<p>{% trans "We are sorry, but the sign up is currently closed." %}</p>
+
 {% endblock content %}
+
+
+<section class="login-logout-signup fullscreen jarallax">
+    <div class="overlay"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-lg-5 form">
+                <div class="title-wrapper">
+                    <h2 class="section-title display-5">{% trans "Sign Up Closed" %}</h2>
+                </div>
+                <div class="form-area row">
+                    <p>{% trans "We are sorry, but the sign up is currently closed." %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

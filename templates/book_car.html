@@ -27,7 +27,7 @@
                         {% else %}
                             <p>No booked dates for this car.</p>
                         {% endif %}
-                        {% crispy form %}
+                        {{ form|crispy }}
                         <div class="col-md-auto col section-btn">
                             <button type="submit" class="btn btn-primary-outline display-4">
                                 <span></span>Submit Booking

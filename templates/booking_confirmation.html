@@ -1,5 +1,11 @@
 {% extends "base.html" %}
-
+{% block title %}AutoR5|
+    {% if payment_status == "Pending" %}
+        Booking Pending
+    {% else %}
+        Booking Confirmed
+    {% endif %}
+{% endblock %}
 {% block content %}
 
 <section data-bs-version="5.1" class="book-confirm-section fullscreen">

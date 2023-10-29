@@ -2,10 +2,22 @@
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Account Inactive" %}{% endblock head_title %}
+{% block title %}AutoR5|Account Inactive{% endblock %}
 
 {% block content %}
-<h1>{% trans "Account Inactive" %}</h1>
 
-<p>{% trans "This account is inactive." %}</p>
+<section class="login-logout-signup fullscreen jarallax">
+    <div class="overlay"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-lg-5 form">
+                <div class="title-wrapper">
+                    <h2 class="section-title display-5">{% trans "Account Inactive" %}</h2>
+                </div>
+                <p>{% trans "This account is inactive." %}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 {% endblock content %}

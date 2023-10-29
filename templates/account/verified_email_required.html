@@ -2,22 +2,32 @@
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Verify Your Email Address" %}{% endblock head_title %}
+{% load crispy_forms_tags %}
+
+{% block title %}AutoR5|Sign Up Closed{% endblock %}
 
 {% block content %}
-<h1>{% trans "Verify Your Email Address" %}</h1>
 
-{% url 'account_email' as email_url %}
-
-<p>{% blocktrans %}This part of the site requires us to verify that
-you are who you claim to be. For this purpose, we require that you
-verify ownership of your email address. {% endblocktrans %}</p>
-
-<p>{% blocktrans %}We have sent an email to you for
-verification. Please click on the link inside that email. If you do not see the verification email in your main inbox, check your spam folder. Otherwise
-contact us if you do not receive it within a few minutes.{% endblocktrans %}</p>
-
-<p>{% blocktrans %}<strong>Note:</strong> you can still <a href="{{ email_url }}">change your email address</a>.{% endblocktrans %}</p>
-
+<section class="login-logout-signup fullscreen jarallax">
+    <div class="overlay"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-lg-5">
+                <div class="title-wrapper">
+                    <h2 class="section-title display-5">{% trans "Verify Your Email Address" %}</h2>
+                </div>
+                {% url 'account_email' as email_url %}
+                <p>{% blocktrans %}This part of the site requires us to verify that
+                    you are who you claim to be. For this purpose, we require that you
+                    verify ownership of your email address. {% endblocktrans %}</p>
+                <p>{% blocktrans %}We have sent an email to you for
+                    verification. Please click on the link inside that email. If you do not see the verification email in your main inbox, check your spam folder. Otherwise
+                    contact us if you do not receive it within a few minutes.{% endblocktrans %}</p>
+                    
+                <p>{% blocktrans %}<strong>Note:</strong> you can still <a href="{{ email_url }}">change your email address</a>.{% endblocktrans %}</p>
+            </div>
+        </div>
+    </div>
+</section>
 
 {% endblock content %}

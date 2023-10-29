@@ -112,6 +112,7 @@ Welcome to **autoR5**, a comprehensive car rental system developed for a fiction
     3. [Accessability Test](README_Tests.md#accessability)
     4. [Lighthouse Test](README_Tests.md#lighthouse-test)
     5. [Weblink Test](README_Tests.md#weblink-test)
+    6. [Validator Test](README_Tests.md#validator-tests)
     6. [Automated Tests](README_Tests.md#automated-tests)
     7. [CarModelTest - Testing Car Model](README_Tests.md#carmodeltest---testing-car-model)
     8. [BookingModelTest - Testing Booking Model](README_Tests.md#bookingmodeltest---testing-booking-model)

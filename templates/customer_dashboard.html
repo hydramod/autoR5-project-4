@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block title %}AutoR5|Your Dashboard{% endblock %}
 {% block content %}
 {% load custom_filters %}
 
@@ -98,6 +99,8 @@
                             {% if booking.status == "Pending" and booking.id not in unapproved_requests %}
                                 <a class="btn btn-primary-outline-reverse display-4" href="{% url 'booking_confirmation' booking.id %}">View Details</a>
                                 <a class="btn btn-primary-outline-reverse display-4" href="{% url 'checkout' booking.car.id booking.id %}">Pay Now</a>
+                            {% else %}
+                                <a class="btn btn-primary-outline-reverse display-4" href="{% url 'booking_confirmation' booking.id %}">View Details</a>
                             {% endif %}
                         </div>
                         {% if booking.id not in unapproved_requests %}
