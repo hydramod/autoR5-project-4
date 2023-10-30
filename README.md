@@ -255,9 +255,6 @@ Before running the **autoR5** car rental system, ensure that you have the follow
 - [**selenium** (Version 4.1.2)](https://pypi.org/project/selenium/)
   - A web testing framework that allows you to automate web browsers. It's often used for web application testing.
 
-- [**whitenoise** (Version 6.6.0)](http://whitenoise.evans.io/en/stable/)
-  - A Python library for serving static files during development and in production when using Django.
-
 Please refer to the links for more details on each package or library.
 
 To install these requirements, you can use the following command:
@@ -338,7 +335,7 @@ Once the code was successfully managed on GitHub, the next step involved deployi
 To explore the autoR5 Car Rental Service locally, you can clone the project repository from GitHub by copying the HTTPS link. Then, open an Integrated Development Environment (IDE) with Git installed, and execute the following command in the terminal:
 
   ```bash
-  git clone [copied GitHub repository link]
+  git clone [git@github.com:hydramod/autoR5-project-4.git]
   ```
 
 This will create a local copy of the project, allowing you to work with the codebase on your development environment.
@@ -347,3 +344,4 @@ This will create a local copy of the project, allowing you to work with the code
 
 - Images used from free sources on [Pixabay](https://pixabay.com/) and [TopGear](https://www.topgear.com/)
 - Csv Import tutorial found here [@Very Academy](https://www.youtube.com/watch?v=BLxCnD5-Uvc)
+- Google for everything else
