@@ -14,7 +14,7 @@
         <div class="title-wrapper">
           <h2 class="section-title display-5">{% trans "Sign In" %}</h2>
         </div>
-        <form action="{% url 'account_login' %}" method="POST" class="signup">
+        <form action="{% url 'account_login' %}" method="POST" class="login">
           {% csrf_token %}
           <div class="form-area row">
             <div class="col-lg-12 col-md-12 col-sm-12 form-group mb-3" data-for="login">

@@ -14,7 +14,6 @@ from pathlib import Path
 import os
 import dj_database_url
 from django.contrib.messages import constants as messages
-from allauth.account.app_settings import EmailVerificationMethod
 if os.path.isfile('env.py'):
     import env
 
@@ -30,7 +29,7 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['autor5-33d529a804c5.herokuapp.com', 'localhost']
 
@@ -38,6 +37,8 @@ ALLOWED_HOSTS = ['autor5-33d529a804c5.herokuapp.com', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
+    "admin_interface",
+    "colorfield",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -209,7 +210,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 ACCOUNT_FORMS = {'signup': 'autoR5.forms.CustomSignupForm'}
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
