@@ -9,6 +9,7 @@ Modules and Libraries:
 - time: Allows access to time-related functions.
 - os: Provides a portable way of using operating system-dependent
     functionality.
+- inspect: Enables runtime introspection of Python objects
 - random: Implements pseudo-random number generators.
 - string: Contains a collection of string constants.
 - io: Supports stream handling and input/output operations.
@@ -53,6 +54,7 @@ This docstring serves as an overview of the imported modules and classes in
 from decimal import Decimal
 import time
 import os
+import inspect
 import random
 import string
 from io import BytesIO
@@ -5195,7 +5197,8 @@ class JarallaxTest(LiveServerTestCase):
     the expected Jarallax effect.
     """
     def setUp(self):
-        base_dir = os.path.dirname(os.path.abspath(__file__))
+        current_file = inspect.getfile(inspect.currentframe())
+        base_dir = os.path.dirname(os.path.abspath(current_file))
 
         main_project_dir = os.path.dirname(base_dir)
 
@@ -5210,8 +5213,7 @@ class JarallaxTest(LiveServerTestCase):
         chrome_options.binary_location = chrome_binary_path
         chrome_options.add_argument('start-maximized')
 
-        self.selenium = webdriver.Chrome(
-            executable_path=custom_chromedriver_path, options=chrome_options)
+        self.selenium = webdriver.Chrome(options=chrome_options)
 
     def tearDown(self):
         self.selenium.quit()
@@ -5276,7 +5278,8 @@ class MessageAlertsTest(LiveServerTestCase):
     with a unique ID.
     """
     def setUp(self):
-        base_dir = os.path.dirname(os.path.abspath(__file__))
+        current_file = inspect.getfile(inspect.currentframe())
+        base_dir = os.path.dirname(os.path.abspath(current_file))
 
         main_project_dir = os.path.dirname(base_dir)
 
@@ -5291,8 +5294,7 @@ class MessageAlertsTest(LiveServerTestCase):
         chrome_options.binary_location = chrome_binary_path
         chrome_options.add_argument('start-maximized')
 
-        self.selenium = webdriver.Chrome(
-            executable_path=custom_chromedriver_path, options=chrome_options)
+        self.selenium = webdriver.Chrome(options=chrome_options)
 
     def tearDown(self):
         self.selenium.quit()
@@ -5385,7 +5387,8 @@ class AJAXFilterTests(LiveServerTestCase):
     the behavior of your web application.
     """
     def setUp(self):
-        base_dir = os.path.dirname(os.path.abspath(__file__))
+        current_file = inspect.getfile(inspect.currentframe())
+        base_dir = os.path.dirname(os.path.abspath(current_file))
 
         main_project_dir = os.path.dirname(base_dir)
 
@@ -5400,8 +5403,7 @@ class AJAXFilterTests(LiveServerTestCase):
         chrome_options.binary_location = chrome_binary_path
         chrome_options.add_argument('start-maximized')
 
-        self.selenium = webdriver.Chrome(
-            executable_path=custom_chromedriver_path, options=chrome_options)
+        self.selenium = webdriver.Chrome(options=chrome_options)
 
     def tearDown(self):
         self.selenium.quit()
@@ -5515,7 +5517,8 @@ class MapTest(LiveServerTestCase):
     map and markers.
     """
     def setUp(self):
-        base_dir = os.path.dirname(os.path.abspath(__file__))
+        current_file = inspect.getfile(inspect.currentframe())
+        base_dir = os.path.dirname(os.path.abspath(current_file))
 
         main_project_dir = os.path.dirname(base_dir)
 
@@ -5530,8 +5533,7 @@ class MapTest(LiveServerTestCase):
         chrome_options.binary_location = chrome_binary_path
         chrome_options.add_argument('start-maximized')
 
-        self.selenium = webdriver.Chrome(
-            executable_path=custom_chromedriver_path, options=chrome_options)
+        self.selenium = webdriver.Chrome(options=chrome_options)
 
     def tearDown(self):
         self.selenium.quit()
