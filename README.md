@@ -195,6 +195,9 @@ Before running the **autoR5** car rental system, ensure that you have the follow
 - [**Django** (Version 4.2.5)](https://www.djangoproject.com/)
   - A high-level Python web framework that encourages rapid development and clean, pragmatic design. It includes many built-in features for web development.
 
+- [**Django-admin-interface** (Version 0.26.1)](https://pypi.org/project/django-admin-interface/)
+  - A modern customizable responsive flat admin interface.
+
 - [**django-allauth** (Version 0.57.0)](https://pypi.org/project/django-allauth/)
   - An integrated set of Django applications addressing authentication, registration, account management, and more.
 
@@ -314,12 +317,14 @@ Once you have PostgreSQL and the requirements installed and configured, you can 
 - Developed using Visual Studio Code IDE
 - Source code hosted on GitHub, deployed with Heroku
 - Git used for code management
+- Git projects used for user stories and tracking development
 - Icons from Font Awesome
 - Images optimized and stored on cloudinary
 - Favicon files generated using Favicon.io
 - Wireframes designed using Wirify
 - Stripe for payment simulation
 - google smtp for email feedback
+- Autopep8, Pylint, CI Python linter we used to ensure code is up to standards
 
 # Deployment
 
