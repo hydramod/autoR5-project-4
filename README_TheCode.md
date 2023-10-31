@@ -416,9 +416,21 @@ This document provides an overview of the settings used in the Django project 'a
 - Provides a contact form for user inquiries and feedback.
 - Saves form submissions to the database and notifies the user.
 
+### Delete Booking (delete_booking)
+- Allows authenticated users to delete a booking.
+- Verifies user ownership of the booking and displays success or error messages.
+- Redirects to the customer dashboard after performing the delete operation.
+
+### Approve/Reject Cancellation Request (approve_reject_cancellation_request)
+- Intended for staff members (users with 'is_staff' privilege) to approve or reject a cancellation request.
+- 'approve' action sets the 'approved' field to True.
+- 'reject' action deletes the cancellation request.
+- Handles cancellation request not found and displays appropriate messages.
+- Redirects to the 'dashboard' view after performing the approval or rejection action.
+
 ## base.html Template Documentation
 
-The `base.html` template serves as the foundational structure for your website's pages. It includes the header, navigation menu, footer, and links to various styles and scripts.
+The `base.html` template serves as the foundational structure for this website's pages. It includes the header, navigation menu, footer, and links to various styles and scripts.
 
 ### Meta Tags and Favicon
 

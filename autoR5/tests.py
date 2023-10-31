@@ -1086,7 +1086,7 @@ class UserProfileModelTest(TestCase):
         uploaded_image = SimpleUploadedFile(
             'image.jpg', output.getvalue(), content_type='image/jpeg')
 
-        self.user_profile, UserProfile.objects.get_or_create(
+        self.user_profile, created = UserProfile.objects.get_or_create(
             user=self.user,
             defaults={
                 "phone_number": "123-456-7890",
@@ -1460,13 +1460,13 @@ class CarsListViewTest(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
-        cls.create_car(make="Honda", model="Civic", year=2023,
+        cls.create_car(make="Honda", model="Civic", year=2022,
                        car_type="Hatchback", fuel_type="Petrol",
                        location_city="Dublin")
-        cls.create_car(make="Toyota", model="Corolla", year=2023,
+        cls.create_car(make="Toyota", model="Corolla", year=2022,
                        car_type="Sedan", fuel_type="Diesel",
                        location_city="Dublin")
-        cls.create_car(make="Ford", model="Fiesta", year=2023,
+        cls.create_car(make="Ford", model="Fiesta", year=2022,
                        car_type="Hatchback", fuel_type="Petrol",
                        location_city="Dublin")
 
@@ -1620,22 +1620,22 @@ class CarsListViewTest(TestCase):
         """
 
         filter_url = reverse('cars_list') + \
-            '?make=Honda&model=Civic&year=2023&car_type=Hatchback&' \
+            '?make=Honda&model=Civic&year=2022&car_type=Hatchback&' \
             'fuel_type=Petrol&location=Dublin'
         response = self.client.get(filter_url)
 
         self.assertEqual(response.status_code, 200)
 
         content = response.content.decode("utf-8")
-        pattern = r'<h4 class="card-title display-5">\s+Honda Civic\s+</h4>'
+        pattern = r'<h3 class="card-title display-5">\s+Honda Civic\s+</h3>'
         self.assertRegex(content, pattern)
 
         content = response.content.decode("utf-8")
-        pattern = r'<h4 class="card-title display-5">\s+Toyota Corolla\s+</h4>'
+        pattern = r'<h3 class="card-title display-5">\s+Toyota Corolla\s+</h3>'
         self.assertNotRegex(content, pattern)
 
         content = response.content.decode("utf-8")
-        pattern = r'<h4 class="card-title display-5">\s+Ford Fiesta\s+</h4>'
+        pattern = r'<h3 class="card-title display-5">\s+Ford Fiesta\s+</h3>'
         self.assertNotRegex(content, pattern)
 
 
@@ -1801,13 +1801,19 @@ class BookCarViewTest(TestCase):
             username="testuser", password="testpassword")
 
         self.car = Car.objects.create(
-            make="TestMake",
-            model="TestModel",
-            year=2023,
-            license_plate="ABC123",
+            make='Test Make',
+            model='Test Model',
+            year='2023',
+            license_plate='AXY123',
             daily_rate=100.00,
-            location_city="Test Location",
+            latitude=53.349805,
+            longitude=6.206031,
+            location_city='Test City',
             is_available=True,
+            location_address="Test Address",
+            features="Test Features",
+            car_type='Hatchback',
+            fuel_type='Petrol',
         )
 
     def test_book_car_view_with_valid_data(self):
@@ -2038,11 +2044,12 @@ class BookCarViewTest(TestCase):
         This test method is part of the unit tests for the 'BookCarView'
         in the 'autoR5' Django application.
         """
-
         self.client.login(username="testuser", password="testpassword")
 
+        # Define the URL for booking the car
         url = reverse('book_car', kwargs={'car_id': self.car.id})
 
+        # Define valid booking data
         today = date.today()
         rental_date = today + timedelta(days=1)
         return_date = today + timedelta(days=5)
@@ -2051,14 +2058,19 @@ class BookCarViewTest(TestCase):
             'return_date': return_date,
         }
 
+        # Create a valid booking
         response = self.client.post(url, valid_booking_data, follow=True)
 
+        # Check if the response status code is as expected
         self.assertEqual(response.status_code, 200)
 
+        # Check if the booking is created
         self.assertTrue(Booking.objects.exists())
 
+        # Check if a Payment object is created
         self.assertTrue(Payment.objects.exists())
 
+        # Check if the booking status is 'Pending'
         booking = Booking.objects.latest('id')
         self.assertEqual(booking.status, 'Pending')
 
@@ -2070,7 +2082,7 @@ class BookCarViewTest(TestCase):
         response = self.client.post(url, conflicting_booking_data, follow=True)
 
         self.assertEqual(response.status_code, 200)
-
+        # Check if the error message is displayed in the response
         self.assertContains(
             response, 'This car is already booked for the selected dates.')
 
@@ -3507,7 +3519,321 @@ class EditProfileViewTest(TestCase):
             api.delete_resources(public_id)
 
 
-#final tests go here
+class DeleteBookingViewTest(TestCase):
+    """
+    Test case for the delete booking view.
+
+    This test case is responsible for testing the behavior of the
+    delete booking view when accessed by authenticated and unauthenticated
+    users. It also tests the handling of deleting nonexistent bookings.
+
+    Attributes:
+    - user: An authenticated user used for testing.
+    - car: A test car instance used for booking.
+    - booking: A test booking created by the user.
+    - dashboard_url: The URL of the dashboard page.
+
+    Methods:
+    - setUp(self): Set up the necessary data and objects for the tests.
+
+    -test_delete_booking_authenticated_user(self):
+    Test the scenario where an authenticated user attempts to delete a
+    booking. It checks if the booking is deleted, follows the redirect,
+    and checks for a success message in the final response content.
+
+    - test_delete_booking_unauthenticated_user(self):
+    Test the scenario where an unauthenticated user attempts to delete
+    a booking. It checks if the booking is not deleted, follows the
+    redirect, and checks for error messages in the final response content.
+
+    - test_delete_nonexistent_booking(self):
+    Test the scenario where a user attempts to delete a nonexistent
+    booking. It follows the redirect and checks for error messages in the
+    final response content.
+    """
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpassword',
+            is_staff=True
+        )
+        self.car = Car.objects.create(
+            make="TestMake",
+            model="TestModel",
+            year=2023,
+            license_plate="ABC123",
+            daily_rate=100.00,
+            latitude=53.349805,
+            longitude=6.206031,
+            location_city="Test City",
+            location_address="Test Address",
+            features="Test Features",
+            car_type="Hatchback",
+            fuel_type="Petrol",
+        )
+        self.booking = Booking.objects.create(
+            user=self.user,
+            car=self.car,
+            status='Confirmed',
+            rental_date=timezone.now() + timedelta(days=-1),
+            return_date=timezone.now() + timedelta(days=-5),
+        )
+        self.dashboard_url = reverse('dashboard')
+
+    def test_delete_booking_authenticated_user(self):
+        """
+        Test the scenario where an authenticated user attempts to delete
+        a booking.
+
+        It checks if the booking is deleted, follows the redirect, and
+        checks for a success message in the final response content.
+        """
+        # Log in the user
+        self.client.login(username='testuser', password='testpassword')
+
+        response = self.client.post(
+            reverse('delete_booking', args=[self.booking.id])
+        )
+
+        # Check if the booking is deleted
+        self.assertEqual(Booking.objects.filter(id=self.booking.id).count(), 0)
+
+        # Follow the redirect
+        self.assertEqual(response.status_code, 302)
+        redirect_url = response.url
+        response = self.client.get(redirect_url)
+
+        # Check for a success message in the final response content
+        self.assertContains(response, 'Booking deleted successfully.')
+
+    def test_delete_booking_unauthenticated_user(self):
+        """
+        Test the scenario where an unauthenticated user attempts to delete
+        a booking.
+
+        It checks if the booking is not deleted, follows the redirect,
+        and checks for error messages in the final response content.
+        """
+        response = self.client.post(
+            reverse('delete_booking', args=[self.booking.id])
+        )
+
+        # Check if the booking is not deleted
+        self.assertEqual(Booking.objects.filter(id=self.booking.id).count(), 1)
+
+        # Follow the redirect
+        self.assertEqual(response.status_code, 302)
+        redirect_url = response.url
+        response = self.client.get(redirect_url)
+
+        # Check that user is set to login
+        self.assertContains(response, '/account/login/')
+
+    def test_delete_nonexistent_booking(self):
+        """
+        Test the scenario where a user attempts to delete a nonexistent
+        booking.
+
+        It follows the redirect and checks for error messages in the final
+        response content.
+        """
+        # Log in the user
+        self.client.login(username='testuser', password='testpassword')
+
+        response = self.client.post(reverse('delete_booking', args=[999]))
+
+        # Follow the redirect
+        self.assertEqual(response.status_code, 302)
+        redirect_url = response.url
+        response = self.client.get(redirect_url)
+
+        # Check for error messages in the final response content
+        self.assertContains(response, 'Booking not found')
+
+
+class ApproveRejectCancellationRequestViewTest(TestCase):
+    """
+    Test cases for approving and rejecting cancellation
+    requests in the view.
+
+    These test cases cover the behavior of approving and
+    rejecting cancellation requests in the view. It ensures
+    that the appropriate users (staff members) have the ability to
+    perform these actions, and that they result in the
+    expected outcomes, such as database changes and redirects.
+
+    Attributes:
+    - staff_user: A user with staff privileges.
+    - normal_user: A regular user without staff privileges.
+    - car: A test car object.
+    - cancellation_request: A cancellation request associated
+    with a booking.
+
+    Methods:
+    - setUp: Set up initial test data.
+    - test_approve_cancellation_request_as_staff: Test the approval of a
+    cancellation request by a staff member.
+    - test_reject_cancellation_request_as_staff: Test the rejection of a
+    cancellation request by a staff member.
+    - test_invalid_action_as_staff: Test an invalid action (neither approve
+    nor reject) by a staff member.
+    - test_approve_cancellation_request_as_normal_user: Test the attempt to
+    approve a cancellation request by a regular user (should fail).
+    - test_reject_cancellation_request_as_normal_user: Test the attempt to
+    reject a cancellation request by a regular user (should fail).
+    """
+
+    def setUp(self):
+        self.staff_user = User.objects.create_user(
+            username='staffuser', password='staffpassword', is_staff=True)
+        self.normal_user = User.objects.create_user(
+            username='normaluser', password='normalpassword', is_staff=False)
+        self.car = Car.objects.create(
+            make="TestMake",
+            model="TestModel",
+            year=2023,
+            license_plate="ABC123",
+            daily_rate=100.00,
+            latitude=53.349805,
+            longitude=6.206031,
+            location_city="Test City",
+            location_address="Test Address",
+            features="Test Features",
+            car_type="Hatchback",
+            fuel_type="Petrol",
+        )
+
+        booking = Booking.objects.create(
+            user=self.normal_user,
+            car=self.car,
+            status='Confirmed',
+            rental_date=timezone.now() + timedelta(days=-1),
+            return_date=timezone.now() + timedelta(days=-5),
+        )
+
+        payment = Payment.objects.create(
+            user=self.normal_user,  # Updated to use the normal_user
+            booking=booking,
+            amount=Decimal('400.00'),
+            payment_method='Stripe',
+            payment_status='Paid',
+            payment_intent='test_intent'
+        )
+
+        self.cancellation_request = CancellationRequest.objects.create(
+            booking=booking, user=self.normal_user, reason='Request reason')
+
+    @patch('autoR5.signals.stripe.Refund.create',
+           return_value=Mock(status='succeeded'))
+    @patch('autoR5.signals.process_cancellation_request',
+           side_effect=process_cancellation_request)
+    def test_approve_cancel_request_as_staff(
+            self, mock_process_cancellation_request, mock_refund_create):
+        """
+        Test staff approval of a cancellation request.
+
+        This test checks whether a staff member can approve
+        a cancellationrequest. It ensures that the request is processed
+        correctly, the status is updated to 'approved',
+        and the user is redirected to the dashboard.
+        """
+        self.client.login(username='staffuser', password='staffpassword')
+
+        response = self.client.get(
+            reverse('approve_reject_cancellation_request',
+                    args=[self.cancellation_request.id, 'approve']))
+
+        self.cancellation_request.refresh_from_db()
+        self.assertTrue(self.cancellation_request.approved)
+        self.assertEqual(response.status_code, 302)  # Should redirect
+        self.assertRedirects(response, reverse('dashboard'))
+
+    @patch('autoR5.signals.process_cancellation_request',
+           side_effect=process_cancellation_request)
+    def test_reject_cancellation_request_as_staff(
+            self, mock_process_cancellation_request):
+        """
+        Test staff rejection of a cancellation request.
+
+
+        This test verifies staff members can reject a cancellation
+        request. It confirms that the request is successfully processed,
+        deleted from the database, and that the user is redirected
+        to the dashboard.
+        """
+        self.client.login(username='staffuser',
+                          password='staffpassword')
+
+        response = self.client.get(
+            reverse('approve_reject_cancellation_request',
+                    args=[self.cancellation_request.id, 'reject']))
+
+        # Check that the cancellation request has been deleted
+        with self.assertRaises(CancellationRequest.DoesNotExist):
+            CancellationRequest.objects.get(id=self.cancellation_request.id)
+
+        self.assertEqual(response.status_code, 302)  # Should redirect
+        self.assertRedirects(response, reverse('dashboard'))
+
+    def test_invalid_action_as_staff(self):
+        """
+        Test staff handling of an invalid cancellation request action.
+
+        This test ensures that staff members are presented with an
+        appropriate response when attempting an invalid action on a
+        cancellation request.
+        It checks for the correct status code, and that the request is
+        not approved.
+        """
+        self.client.login(username='staffuser', password='staffpassword')
+
+        response = self.client.post(
+            reverse('approve_reject_cancellation_request',
+                    args=[self.cancellation_request.id, 'invalid_action']))
+
+        self.assertEqual(response.status_code, 302)
+        self.cancellation_request.refresh_from_db()
+        self.assertFalse(self.cancellation_request.approved)
+
+    def test_approve_cancellation_request_as_normal_user(self):
+        """
+        Test normal user attempting to approve a cancellation request.
+
+        This test validates that a normal user is unable to perform
+        the action of approving a cancellation request, ensuring the
+        request remains unmodified. It checks for the correct status
+        code and confirms the request is unapproved.
+        """
+        self.client.login(username='normaluser', password='normalpassword')
+
+        response = self.client.get(
+            reverse('approve_reject_cancellation_request',
+                    args=[self.cancellation_request.id, 'approve']))
+
+        self.assertEqual(response.status_code, 302)
+
+        self.cancellation_request.refresh_from_db()
+        self.assertFalse(self.cancellation_request.approved)
+
+        def test_reject_cancellation_request_as_normal_user(self):
+            """
+            Test normal user attempting to reject a cancellation request.
+
+            This test confirms that a normal user is not allowed to reject a
+            cancellation request, preventing any modifications to the request.
+            It also verifies the request's approval status.
+            """
+            self.client.login(username='normaluser', password='normalpassword')
+
+        response = self.client.get(
+            reverse('approve_reject_cancellation_request',
+                    args=[self.cancellation_request.id, 'reject']))
+
+        # Check that the cancellation request has not been modified
+        self.cancellation_request.refresh_from_db()
+        self.assertFalse(self.cancellation_request.approved)
+
 
 class ContactViewTest(TestCase):
     """
@@ -4701,6 +5027,7 @@ class UpdateLocationTest(TestCase):
     stores it in the appropriate fields ('location_city' and
     'location_address') of the 'Car' model.
     """
+
     def setUp(self):
         self.user = User.objects.create_superuser(
             'admin', 'admin@example.com', 'adminpassword')
@@ -4831,6 +5158,7 @@ class TestUrls(TestCase):
     with URL routing, helping maintain consistent navigation
     within the application.
     """
+
     def test_index_url(self):
         """
         Verify the URL pattern for the 'index' view.
@@ -5198,6 +5526,7 @@ class JarallaxTest(LiveServerTestCase):
     - The CSS property checked in the assertion should match
     the expected Jarallax effect.
     """
+
     def setUp(self):
         current_file = inspect.getfile(inspect.currentframe())
         base_dir = os.path.dirname(os.path.abspath(current_file))
@@ -5279,6 +5608,7 @@ class MessageAlertsTest(LiveServerTestCase):
     - The test assumes that there is a message container element
     with a unique ID.
     """
+
     def setUp(self):
         current_file = inspect.getfile(inspect.currentframe())
         base_dir = os.path.dirname(os.path.abspath(current_file))
@@ -5338,7 +5668,7 @@ class MessageAlertsTest(LiveServerTestCase):
             By.XPATH, "//button[@type='submit']")
 
         username = 'testuser'
-        password = 'testpassword'
+        password = 'testpass123'
 
         username_input.send_keys(username)
         password_input.send_keys(password)
@@ -5388,6 +5718,7 @@ class AJAXFilterTests(LiveServerTestCase):
     - Adjust wait times based on the speed of AJAX requests and
     the behavior of your web application.
     """
+
     def setUp(self):
         current_file = inspect.getfile(inspect.currentframe())
         base_dir = os.path.dirname(os.path.abspath(current_file))
@@ -5440,60 +5771,63 @@ class AJAXFilterTests(LiveServerTestCase):
             'http://localhost:8000/cars_list/')
 
         make_dropdown = Select(
-            self.selenium.find_element_by_id('car_make'))
+            self.selenium.find_element(By.XPATH, "//*[@id='car_make']"))
         make_dropdown.select_by_value('Alfa Romeo')
 
         time.sleep(2)
 
         model_dropdown = Select(
-            self.selenium.find_element_by_id('car_model'))
+            self.selenium.find_element(By.XPATH, "//*[@id='car_model']"))
         model_dropdown.select_by_value('Giulia')
 
         time.sleep(2)
 
         year_dropdown = Select(
-            self.selenium.find_element_by_id('car_year'))
+            self.selenium.find_element(By.XPATH, "//*[@id='car_year']"))
         year_dropdown.select_by_value('2023')
 
         time.sleep(2)
 
         car_type_dropdown = Select(
-            self.selenium.find_element_by_id('car_type'))
+            self.selenium.find_element(By.XPATH, "//*[@id='car_type']"))
         car_type_dropdown.select_by_value('Saloon')
 
         time.sleep(2)
 
         fuel_type_dropdown = Select(
-            self.selenium.find_element_by_id('fuel_type'))
+            self.selenium.find_element(By.XPATH, "//*[@id='fuel_type']"))
         fuel_type_dropdown.select_by_value('Petrol')
 
         time.sleep(2)
 
         location_dropdown = Select(
-            self.selenium.find_element_by_id('car_location'))
+            self.selenium.find_element(By.XPATH, "//*[@id='car_location']"))
         location_dropdown.select_by_value('Dublin')
 
         time.sleep(2)
 
-        filter_button = login_button = self.selenium.find_element(
+        filter_button = self.selenium.find_element(
             By.XPATH, '//*[@id="filter-form"]/div/div[7]/button[1]')
         filter_button.click()
 
-        time.sleep(2)
+        time.sleep(3)
 
-        item_wrappers = self.selenium.find_elements_by_class_name(
-            'item-wrapper')
-        self.assertEqual(len(item_wrappers), 1)
+        item_wrappers = self.selenium.find_element(
+            By.CLASS_NAME, 'item-wrapper')
 
-        reset_button = self.selenium.find_element_by_id(
-            'reset-filter')
+        element = self.selenium.find_element(
+            By.CLASS_NAME, 'current-page')
+        self.assertEqual(element.text, "Page 1 of 1.")
+
+        reset_button = self.selenium.find_element(
+            By.ID, 'reset-filter')
         reset_button.click()
 
-        time.sleep(2)
+        time.sleep(3)
 
-        item_wrappers_after_reset = self.selenium.find_elements_by_class_name(
-            'item-wrapper')
-        self.assertGreater(len(item_wrappers_after_reset), 1)
+        element = self.selenium.find_element(
+            By.CLASS_NAME, 'current-page')
+        self.assertNotEqual(element.text, "Page 1 of 1.")
 
 
 class MapTest(LiveServerTestCase):
@@ -5518,6 +5852,7 @@ class MapTest(LiveServerTestCase):
     - Adjust wait times based on the rendering speed of the
     map and markers.
     """
+
     def setUp(self):
         current_file = inspect.getfile(inspect.currentframe())
         base_dir = os.path.dirname(os.path.abspath(current_file))
@@ -5564,7 +5899,7 @@ class MapTest(LiveServerTestCase):
         time.
         """
         self.selenium.get(
-            f'http://localhost:8000/booking/65/confirmation/')
+            f'http://localhost:8000/booking/1/confirmation/')
 
         username_input = self.selenium.find_element(By.NAME, "login")
         password_input = self.selenium.find_element(By.NAME, "password")
@@ -5572,14 +5907,14 @@ class MapTest(LiveServerTestCase):
             By.XPATH, "//button[@type='submit']")
 
         username_input.send_keys('testuser')
-        password_input.send_keys('testpassword')
+        password_input.send_keys('testpass123')
         login_button.click()
 
         time.sleep(3)
 
-        map_element = self.selenium.find_element_by_id('map')
+        map_element = self.selenium.find_element(By.XPATH, "//*[@id='map']")
         self.assertTrue(map_element.is_displayed())
 
-        marker_element = self.selenium.find_element_by_class_name(
-            'leaflet-marker-icon')
+        marker_element = self.selenium.find_element(
+            By.XPATH, "//*[@id='map']/div[1]/div[4]/img")
         self.assertTrue(marker_element.is_displayed())

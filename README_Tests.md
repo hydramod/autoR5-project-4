@@ -115,7 +115,7 @@ Testing was done to make sure that all the navigation links on the website were 
 ![CSS Valid](docs/images/cssvalid.png)
 
 ## Automated Tests
-![Test Structure](docs/images/testsflowexpanded.webp)
+![Test Structure](docs/images/testsflow.png)
 
 ### `CarModelTest` - Testing Car Model
 
@@ -524,7 +524,47 @@ In these tests, Selenium is used to perform end-to-end testing of the user inter
 
 These tests help ensure that the web application's JavaScript features, message alerts, AJAX-based filtering, and map displays are functioning correctly from the user's perspective.
 
+### `DeleteBookingViewTest` - Testing the Delete Booking View
+
+**1. `test_delete_booking_authenticated_user`**
+- Validates that an authenticated user can successfully delete a booking.
+- Verifies that the booking is deleted and the user is redirected to the dashboard.
+- Checks for a success message in the final response.
+
+**2. `test_delete_booking_unauthenticated_user`**
+- Ensures that an unauthenticated user is unable to delete a booking.
+- Confirms that the booking remains unaltered and the user is redirected to the login page.
+- Checks for appropriate error messages in the final response.
+
+**3. `test_delete_nonexistent_booking`**
+- Tests the scenario where a user attempts to delete a nonexistent booking.
+- Follows the redirect and verifies the presence of an error message indicating that the booking was not found.
+
+### `ApproveRejectCancellationRequestViewTest` - Testing Cancellation Request Approvals and Rejections
+
+**1. `test_approve_cancel_request_as_staff`**
+- Verifies that a staff member can successfully approve a cancellation request.
+- Ensures that the request is processed, marked as 'approved,' and the user is redirected to the dashboard view.
+
+**2. `test_reject_cancellation_request_as_staff`**
+- Confirms that a staff member can reject a cancellation request.
+- Checks if the request is successfully processed, deleted from the database, and redirects the user to the dashboard view.
+
+**3. `test_invalid_action_as_staff`**
+- Tests how staff members handle an invalid action on a cancellation request.
+- Checks for the appropriate response status code and ensures that the request remains unapproved.
+
+**4. `test_approve_cancellation_request_as_normal_user`**
+- Ensures that a normal user is prevented from approving a cancellation request.
+- Validates that the request remains unmodified and the user is redirected, expecting a specific status code.
+
+**5. `test_reject_cancellation_request_as_normal_user`**
+- Confirms that normal users are restricted from rejecting a cancellation request.
+- Verifies that the request's approval status remains unaltered and that the user is redirected as expected.
+
 ## Jest
+
+![jest test flow](docs/images/jesttests.png)
 
 The tests are written in Jest and use Puppeteer for browser automation.
 
@@ -594,7 +634,7 @@ Overall the automated test have all pass without failure with a coverage report 
 
 ```bash
 ----------------------------------------------------------------------
-Ran 102 tests in 89.524s
+Ran 109 tests in 117.562s
 
 OK
 ```

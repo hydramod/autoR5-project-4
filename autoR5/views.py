@@ -524,7 +524,7 @@ def book_car(request, car_id):
                             messages.error(
                                 request,
                                 'This car is already booked for'
-                                'the selected dates.')
+                                ' the selected dates.')
                             return redirect('book_car', car_id=car_id)
 
             booking.calculate_total_cost()
@@ -1004,7 +1004,7 @@ def contact(request):
             messages.success(
                 request,
                 'Thanks for getting in touch. One of our'
-                'representatives will contact you soon.')
+                ' representatives will contact you soon.')
 
             return redirect('contact')
     else:

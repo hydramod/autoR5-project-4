@@ -160,7 +160,7 @@ class CarAdmin(admin.ModelAdmin):
 
     import_csv.short_description = "Import CSV file"
 
-    def export_csv(self):
+    def export_csv(self, request):
         """
         Export data as a CSV file.
         """
