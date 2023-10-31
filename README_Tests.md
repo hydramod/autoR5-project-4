@@ -14,7 +14,7 @@ The AutoR5 application has been subjected to comprehensive testing to verify its
 
 4. **File Uploads with Mocking:** To ensure the correct handling of file uploads, the application employs Django's `SimpleUploadedFile` and mocking libraries. This approach verifies that the application accurately processes uploaded files while isolating external dependencies.
 
-### Frontend Testing Using Selenium:
+### Frontend Testing Using Selenium and Jest:
 
 Frontend testing focuses on evaluating the user interface and its interactive components. Selenium is utilized to automate browser interactions and evaluate the application's frontend functionality. You will need chromedriver and a test supporting browser to run the frontend tests, for more information and how to get setup see [ChromeDriver](https://chromedriver.chromium.org/home).
 
@@ -493,7 +493,9 @@ Here are the descriptions for the additional tests:
 - This set of tests ensures that the URL routing in the application correctly maps to the associated view functions.
 - Each test, such as `test_index_url`, `test_car_detail_url`, and others, uses the `reverse` function to generate URLs and the `resolve` function to check which view function is associated with the URL. It then verifies that the resolved function matches the expected view function from the `views` module. This ensures that the application's URLs are correctly configured.
 
-In these tests, you are using Selenium to perform end-to-end testing of the user interface and interactions. Here's a description of each of the Selenium tests:
+## Selenium
+
+In these tests, Selenium is used to perform end-to-end testing of the user interface and interactions. Here's a description of each of the Selenium tests:
 
 ### `JarallaxTest` - Testing Jarallax Initialization
 
@@ -522,14 +524,82 @@ In these tests, you are using Selenium to perform end-to-end testing of the user
 
 These tests help ensure that the web application's JavaScript features, message alerts, AJAX-based filtering, and map displays are functioning correctly from the user's perspective.
 
+## Jest
+
+The tests are written in Jest and use Puppeteer for browser automation.
+
+### `Webpage Loading Test` - Test webpage loads with jarallax
+
+This test verifies the successful loading of a webpage and checks the presence of a specific element with the ID "jarallax-container-0".
+
+1. **Test Description:**
+   - Test Name: Should load the webpage successfully and contain an element with ID "jarallax-container-0"
+   - Test Purpose: Ensure the target webpage loads successfully.
+   - Test Steps:
+     1. Launch a headless web browser using Puppeteer.
+     2. Navigate to the target webpage (URL specified in the test case).
+     3. Verify if an element with ID "jarallax-container-0" exists on the page.
+   - Test Timeout: 10 seconds
+
+### `Submit form and Display Message Test` - Test forms and message display
+
+This test validates the functionality of the contact form by simulating form submission and verifying the display of a success message.
+
+1. **Test Description:**
+   - Test Name: Should send a contact form and display a success message
+   - Test Purpose: Ensure the contact form submission works correctly and displays a success message.
+   - Test Steps:
+     1. Launch a headless web browser and create a new page.
+     2. Navigate to the contact form page.
+     3. Fill in the contact form with sample data.
+     4. Submit the form.
+     5. Verify the presence of a success message.
+   - Test Timeout: 10 seconds
+
+### `Filtering Options Test` - Test AJAX Filters
+
+This test case checks the behavior of filtering options on a web page. It updates dropdown options based on a selection and verifies the correctness of the updated options.
+
+1. **Test Description:**
+   - Test Name: Should update dropdown options based on selection
+   - Test Purpose: Ensure that dropdown options correctly update based on user selections.
+   - Test Steps:
+     1. Launch a headless web browser and create a new page.
+     2. Navigate to a page with filtering options.
+     3. Select a car make.
+     4. Wait for the dropdown options to update (simulating an AJAX request).
+     5. Verify the updated options for car model, year, type, fuel, and location dropdowns.
+   - Test Timeout: 10 seconds
+
+### `Login and Display Map Marker Test` - Test that Leaflet map markers are displayed
+
+This test case simulates a user login, navigation to a confirmation page, and checks for the presence of map markers.
+
+1. **Test Description:**
+   - Test Name: Should log in, navigate to the confirmation page, and check for map markers
+   - Test Purpose: Verify the user's ability to log in and see map markers on a confirmation page.
+   - Test Steps:
+     1. Launch a headless web browser and create a new page.
+     2. Navigate to the login page and log in with predefined credentials.
+     3. Navigate to the dashboard page.
+     4. Find and click the link to the booking confirmation page.
+     5. Check for the presence of map markers.
+   - Test Timeout: 10 seconds
+
 # Results:
 
-Overall the automated test have all pass without failure with a coverage report also of 95%
+Overall the automated test have all pass without failure with a coverage report of 95%
 
-![Test Structure](docs/images/coverage-report.png)
+![Unittest Reults and coverage report](docs/images/coverage-report.png)
 
 ```bash
 ----------------------------------------------------------------------
 Ran 102 tests in 89.524s
 
 OK
+```
+
+![Jest Test Results](docs/images/jesttest.png)
+
+**Note:** 
+You can customize these tests according to specific needs as these were tested offline and online where database permissions would allow.

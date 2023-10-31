@@ -321,7 +321,7 @@ Once you have PostgreSQL and the requirements installed and configured, you can 
 - Wireframes designed using Wirify
 - Stripe for payment simulation
 - google smtp for email feedback
-- Autopep8, Pylint, CI Python linter we used to ensure code is up to standards
+- Autopep8, Pylint, CI Python linter, ValidateJavascript linter were used to ensure code is up to standards
 
 # Deployment
 
