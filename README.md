@@ -136,6 +136,11 @@ Welcome to **autoR5**, a comprehensive car rental system developed for a fiction
     26. [MessageAlertsTest - Testing Message Alerts](README_Tests.md#messagealertstest---testing-message-alerts)
     27. [AJAXFilterTests - Testing AJAX-Based Filtering](README_Tests.md#ajaxfiltertests---testing-ajax-based-filtering)
     28. [MapTest - Testing Map Display](README_Tests.md#maptest---testing-map-display)
+    29. [Webpage loading test - Test webpage loads with jarallax](README_Tests.md#webpage-loading-test---test-webpage-loads-with-jarallax)
+    30. [Submit form and Display Message Test - Test forms and message display](README_Tests.md#submit-form-and-display-message-test---test-forms-and-message-display)
+    31. [Filtering Options Test - Test AJAX Filters](README_Tests.md#filtering-options-test---test-ajax-filters)
+    32. [Login and Display Map Marker Test - Test that Leaflet map markers are displayed](README_Tests.md#login-and-display-map-marker-test---test-that-leaflet-map-markers-are-displayed)
+    33. [Results](README_Tests.md#results)
 
 # Project Overview
 
