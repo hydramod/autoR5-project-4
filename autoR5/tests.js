@@ -149,7 +149,7 @@ describe("Login and Display Map Marker Test", () => {
     await page.click('button[type="submit"]');
 
     // Navigate to the dashboard
-    await page.goto(`${baseUrl}/customer_dashboard/`);
+    await page.goto(`${baseUrl}/dashboard/`);
 
     // Find the URL for the booking confirmation page
     const confirmationLink = await page.evaluate(() => {

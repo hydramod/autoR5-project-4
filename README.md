@@ -88,7 +88,7 @@ Welcome to **autoR5**, a comprehensive car rental system developed for a fiction
     10. [Checkout (checkout)](README_TheCode.md#checkout-checkout)
     11. [Booking Confirmation (booking_confirmation)](README_TheCode.md#booking-confirmation-booking_confirmation)
     12. [Leave a Review (leave_review)](README_TheCode.md#leave-a-review-leave_review)
-    13. [Customer Dashboard (customer_dashboard)](README_TheCode.md#customer-dashboard-customer_dashboard)
+    13. [Customer Dashboard (dashboard)](README_TheCode.md#customer-dashboard-dashboard)
     14. [Edit Profile (edit_profile)](README_TheCode.md#edit-profile-edit_profile)
     15. [Contact (contact)](README_TheCode.md#contact-contact)
 9. [base.html Template Documentation](README_TheCode.md#base.html-template-documentation)

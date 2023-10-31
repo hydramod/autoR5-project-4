@@ -2528,13 +2528,13 @@ class BookingConfirmationViewTest(TestCase):
         'django.core.files.storage.FileSystemStorage'
     )
 )
-class CustomerDashboardViewTest(TestCase):
+class DashboardViewTest(TestCase):
     """
-    Test the 'customer_dashboard' view in the 'autoR5' Django
+    Test the 'dashboard' view in the 'autoR5' Django
     application.
 
     This test class is responsible for testing the behavior of
-    the 'customer_dashboard' view, which displays a user's
+    the 'dashboard' view, which displays a user's
     bookings, reviews, and provides features related to
     cancellations, rebooking, and payment. It includes
     multiple test methods to verify various aspects of the
@@ -2545,7 +2545,7 @@ class CustomerDashboardViewTest(TestCase):
 
     Usage:
     This test class covers several scenarios and ensures the
-    customer_dashboard' view functions correctly. It includes
+    dashboard' view functions correctly. It includes
     the following test methods:
 
     - 'test_view_url_exists_at_desired_location': Checks if the
@@ -2592,17 +2592,17 @@ class CustomerDashboardViewTest(TestCase):
     cancellation requests without approval are correctly displayed.
 
     These test methods guarantee the functionality and behavior of the
-    'customer_dashboard' view in the 'autoR5' Django application.
+    'dashboard' view in the 'autoR5' Django application.
 
     Note:
-    This test class is part of the unit tests for the 'CustomerDashboardView'
+    This test class is part of the unit tests for the 'DashboardView'
     in the 'autoR5' Django application.
     """
 
     def setUp(self):
         self.user = User.objects.create_user(
             username='testuser', password='testpassword')
-        self.url = reverse('customer_dashboard')
+        self.url = reverse('dashboard')
 
         # Create a Car instance
         self.car = Car.objects.create(
@@ -2622,10 +2622,10 @@ class CustomerDashboardViewTest(TestCase):
 
     def test_view_url_exists_at_desired_location(self):
         """
-        Test if the 'customer_dashboard' view URL exists at
+        Test if the 'dashboard' view URL exists at
         the desired location.
 
-        This test method checks whether the 'customer_dashboard'
+        This test method checks whether the 'dashboard'
         view URL returns a status code of 200 (OK) when accessed
         by an authenticated user.
 
@@ -2634,12 +2634,12 @@ class CustomerDashboardViewTest(TestCase):
 
         Usage:
         This test method logs in a user, sends a GET request to the
-        'customer_dashboard' view, and then verifies that the response
+        'dashboard' view, and then verifies that the response
         status code is 200, indicating that the view URL exists and
         functions correctly.
 
         Note:
-        This test is part of the unit tests for the 'CustomerDashboardView'
+        This test is part of the unit tests for the 'DashboardView'
         in the 'autoR5' Django application.
         """
         self.client.login(username='testuser', password='testpassword')
@@ -2648,47 +2648,47 @@ class CustomerDashboardViewTest(TestCase):
 
     def test_view_uses_correct_template(self):
         """
-        Test if the 'customer_dashboard' view uses the correct template.
+        Test if the 'dashboard' view uses the correct template.
 
-        This test method checks whether the 'customer_dashboard' view,
+        This test method checks whether the 'dashboard' view,
         when accessed by an authenticated user, uses the
-        'customer_dashboard.html' template for rendering.
+        'dashboard.html' template for rendering.
 
         Attributes:
             self: The test case instance.
 
         Usage:
         This test method logs in a user, sends a GET request to the
-        'customer_dashboard' view, and then verifies that the response
+        'dashboard' view, and then verifies that the response
         status code is 200, indicating that the view exists and functions
-        correctly. Additionally, it checks if the 'customer_dashboard.html'
+        correctly. Additionally, it checks if the 'dashboard.html'
         template is used for rendering the view, ensuring that the correct
         template is employed.
 
         Note:
-        This test is part of the unit tests for the 'CustomerDashboardView'
+        This test is part of the unit tests for the 'DashboardView'
         in the 'autoR5' Django application.
         """
         self.client.login(username='testuser', password='testpassword')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'customer_dashboard.html')
+        self.assertTemplateUsed(response, 'dashboard.html')
 
     def test_view_with_no_login_redirects_to_login_page(self):
         """
-        Test that accessing 'customer_dashboard' view without login
+        Test that accessing 'dashboard' view without login
         redirects to the login page.
 
         This test method checks if users who are not logged in are
         correctly redirected to the login page when they try to
-        access the 'customer_dashboard' view.
+        access the 'dashboard' view.
 
         Attributes:
             self: The test case instance.
 
         Usage:
         This test method simulates an unauthenticated user by sending a
-        GET request to the 'customer_dashboard' view without logging in.
+        GET request to the 'dashboard' view without logging in.
         It then verifies that the response status code is 302, which
         indicates a redirect, and ensures that the redirect URL is the
         login page with a 'next' parameter indicating the original URL.
@@ -2696,7 +2696,7 @@ class CustomerDashboardViewTest(TestCase):
         login page when attempting to access the dashboard.
 
         Note:
-        This test is part of the unit tests for the 'CustomerDashboardView'
+        This test is part of the unit tests for the 'DashboardView'
         in the 'autoR5' Django application.
         """
         response = self.client.get(self.url)
@@ -2707,11 +2707,11 @@ class CustomerDashboardViewTest(TestCase):
 
     def test_no_current_bookings_displayed(self):
         """
-        Test that no current bookings are displayed in the 'customer_dashboard'
+        Test that no current bookings are displayed in the 'dashboard'
         view.
 
         This test method ensures that when a user with no current bookings
-        ogs into the 'customer_dashboard' view, no current bookings are
+        ogs into the 'dashboard' view, no current bookings are
         displayed.
 
         Attributes:
@@ -2719,14 +2719,14 @@ class CustomerDashboardViewTest(TestCase):
 
         Usage:
         This test method logs in a user, sends a GET request to the
-        'customer_dashboard' view, and checks whether the 'current_bookings'
+        'dashboard' view, and checks whether the 'current_bookings'
         variable exists in the view's context. It then verifies that the
         'current_bookings' list is empty, indicating that there are no current
         bookings for the user. This is to confirm that the view correctly
         handles the case when a user has no current bookings.
 
         Note:
-        This test is part of the unit tests for the 'CustomerDashboardView'
+        This test is part of the unit tests for the 'DashboardView'
         in the 'autoR5' Django application.
         """
         self.client.login(username='testuser', password='testpassword')
@@ -2736,11 +2736,11 @@ class CustomerDashboardViewTest(TestCase):
 
     def test_current_bookings_displayed(self):
         """
-        Test that current bookings are displayed in the 'customer_dashboard'
+        Test that current bookings are displayed in the 'dashboard'
         view.
 
         This test method ensures that when a user with current bookings logs
-        into the 'customer_dashboard' view, the current bookings are
+        into the 'dashboard' view, the current bookings are
         displayed.
 
         Attributes:
@@ -2749,14 +2749,14 @@ class CustomerDashboardViewTest(TestCase):
         Usage:
         This test method creates a Booking associated with the user and a Car
         instance, setting its status to 'Confirmed.' It then logs in the user,
-        sends a GET request to the 'customer_dashboard' view, and checks
+        sends a GET request to the 'dashboard' view, and checks
         whether the 'current_bookings' variable exists in the view's context.
         The method verifies that the 'current_bookings' list contains the
         expected booking instance, confirming that the view correctly displays
         current bookings for the user.
 
         Note:
-        This test is part of the unit tests for the 'CustomerDashboardView' in
+        This test is part of the unit tests for the 'DashboardView' in
         the 'autoR5' Django application.
         """
         booking = Booking.objects.create(
@@ -2773,11 +2773,11 @@ class CustomerDashboardViewTest(TestCase):
 
     def test_no_past_bookings_displayed(self):
         """
-        Test that no past bookings are displayed in the 'customer_dashboard'
+        Test that no past bookings are displayed in the 'dashboard'
         view.
 
         This test method ensures that when a user with no past bookings logs
-        into the 'customer_dashboard' view, the list of past bookings is
+        into the 'dashboard' view, the list of past bookings is
         empty.
 
         Attributes:
@@ -2785,13 +2785,13 @@ class CustomerDashboardViewTest(TestCase):
 
         Usage:
         This test method logs in the user, sends a GET request to the
-        'customer_dashboard' view, and checks whether the 'past_bookings'
+        'dashboard' view, and checks whether the 'past_bookings'
         variable exists in the view's context. It then verifies that the
         'past_bookings' list is empty, indicating that no past bookings
         are displayed for the user.
 
         Note:
-        This test is part of the unit tests for the 'CustomerDashboardView'
+        This test is part of the unit tests for the 'DashboardView'
         in the 'autoR5' Django application.
         """
         self.client.login(username='testuser', password='testpassword')
@@ -2801,11 +2801,11 @@ class CustomerDashboardViewTest(TestCase):
 
     def test_past_bookings_displayed(self):
         """
-        Test that past bookings are displayed in the 'customer_dashboard'
+        Test that past bookings are displayed in the 'dashboard'
         view.
 
         This test method ensures that when a user with past bookings logs
-        into the 'customer_dashboard' view, the list of past bookings is
+        into the 'dashboard' view, the list of past bookings is
         displayed correctly.
 
         Attributes:
@@ -2814,13 +2814,13 @@ class CustomerDashboardViewTest(TestCase):
         Usage:
         This test method creates a past booking associated with the Car
         instance, logs in the user, sends a GET request to the
-        'customer_dashboard' view, and checks whether the 'past_bookings'
+        'dashboard' view, and checks whether the 'past_bookings'
         variable exists in the view's context. It then verifies that the
         created past booking is included in the 'past_bookings' list,
         indicating that past bookings are displayed for the user.
 
         Note:
-        This test is part of the unit tests for the 'CustomerDashboardView'
+        This test is part of the unit tests for the 'DashboardView'
         in the 'autoR5' Django application.
         """
         booking = Booking.objects.create(
@@ -2837,24 +2837,24 @@ class CustomerDashboardViewTest(TestCase):
 
     def test_no_reviews_displayed(self):
         """
-        Test that no reviews are displayed in the 'customer_dashboard'
+        Test that no reviews are displayed in the 'dashboard'
         view.
 
         This test method ensures that when a user with no reviews logs
-        into the 'customer_dashboard' view, no reviews are displayed.
+        into the 'dashboard' view, no reviews are displayed.
 
         Attributes:
             self: The test case instance.
 
         Usage:
         This test method logs in the user, sends a GET request to the
-        'customer_dashboard' view, and checks whether the 'reviews'
+        'dashboard' view, and checks whether the 'reviews'
         variable exists in the view's context. It further verifies that
         the 'reviews' list is empty, indicating that no reviews are
         displayed for the user.
 
         Note:
-        This test is part of the unit tests for the 'CustomerDashboardView'
+        This test is part of the unit tests for the 'DashboardView'
         in the 'autoR5' Django application.
         """
 
@@ -2865,13 +2865,13 @@ class CustomerDashboardViewTest(TestCase):
 
     def test_reviews_displayed(self):
         """
-        Test that user reviews are displayed in the 'customer_dashboard'
+        Test that user reviews are displayed in the 'dashboard'
         view.
 
         This test method ensures that when a user with reviews logs into
-        the 'customer_dashboard' view, their reviews are displayed. It
+        the 'dashboard' view, their reviews are displayed. It
         creates a review, logs in the user, sends a GET request to the
-        'customer_dashboard' view, and checks if the user's reviews,
+        'dashboard' view, and checks if the user's reviews,
         including their ratings and comments, are visible in the
         esponse content.
 
@@ -2880,13 +2880,13 @@ class CustomerDashboardViewTest(TestCase):
 
         Usage:
         This test method creates a review for the user, logs in the user,
-        sends a GET request to the 'customer_dashboard' view, and checks
+        sends a GET request to the 'dashboard' view, and checks
         whether the 'reviews' variable exists in the view's context.
         It also verifies that the specific review data (rating and comment)
         is present in the HTML response content.
 
         Note:
-        This test is part of the unit tests for the 'CustomerDashboardView'
+        This test is part of the unit tests for the 'DashboardView'
         in the 'autoR5' Django application.
         """
         review = Review(
@@ -2909,13 +2909,13 @@ class CustomerDashboardViewTest(TestCase):
     def test_cancellation_request_form_displayed(self):
         """
         Test that the cancellation request form is displayed in the
-        'customer_dashboard' view.
+        'dashboard' view.
 
         This test method ensures that when a user has a 'Confirmed'
         booking, the cancellation request form is displayed in the
-        'customer_dashboard' view. It creates a booking with the
+        'dashboard' view. It creates a booking with the
         'Confirmed' status, logs in the user, sends a GET request
-        to the 'customer_dashboard' view, and checks if the
+        to the 'dashboard' view, and checks if the
         cancellation request form is present in the view's context
         and visible in the response content.
 
@@ -2925,13 +2925,13 @@ class CustomerDashboardViewTest(TestCase):
         Usage:
         This test method simulates a user with a 'Confirmed' booking,
         logs in the user, sends a GET request to the
-        'customer_dashboard' view, and verifies that the 'form'
+        'dashboard' view, and verifies that the 'form'
         variable exists in the view's context and that the form
         contains the text 'Enter your reason here.'
 
         Note:
         This test is part of the unit tests for the
-        'CustomerDashboardView' in the 'autoR5' Django application.
+        'DashboardView' in the 'autoR5' Django application.
         """
         booking = Booking.objects.create(
             user=self.user,
@@ -2948,13 +2948,13 @@ class CustomerDashboardViewTest(TestCase):
     def test_pending_payment_displayed(self):
         """
         Test that the 'Pay Now' button is displayed for a booking
-        with 'Pending' status in the 'customer_dashboard' view.
+        with 'Pending' status in the 'dashboard' view.
 
         This test method ensures that when a user has a booking with
         'Pending' status, the 'Pay Now' button is displayed in the
-        'customer_dashboard' view. It creates a booking with the
+        'dashboard' view. It creates a booking with the
         'Pending' status, logs in the user, sends a GET request to
-        the 'customer_dashboard' view, and checks if the 'Pay Now'
+        the 'dashboard' view, and checks if the 'Pay Now'
         button is visible in the response content.
 
         Attributes:
@@ -2963,12 +2963,12 @@ class CustomerDashboardViewTest(TestCase):
         Usage:
         This test method simulates a user with a booking in 'Pending'
         status, logs in the user, sends a GET request to the
-        'customer_dashboard' view, and verifies that the 'Pay Now'
+        'dashboard' view, and verifies that the 'Pay Now'
         button is present in the view's response content.
 
         Note:
         This test is part of the unit tests for the
-        'CustomerDashboardView' in the 'autoR5' Django application.
+        'DashboardView' in the 'autoR5' Django application.
         """
         booking = Booking.objects.create(
             user=self.user,
@@ -2984,13 +2984,13 @@ class CustomerDashboardViewTest(TestCase):
     def test_rebook_displayed(self):
         """
         Test that the 'Book Again' option is displayed for a booking
-        with 'Completed' status in the 'customer_dashboard' view.
+        with 'Completed' status in the 'dashboard' view.
 
         This test method ensures that when a user has a booking with
         'Completed' status, the 'Book Again' option is displayed in the
-        'customer_dashboard' view. It creates a booking with the
+        'dashboard' view. It creates a booking with the
         'Completed' status, logs in the user, sends a GET request to
-        the 'customer_dashboard' view, and checks if the 'Book Again'
+        the 'dashboard' view, and checks if the 'Book Again'
         option is visible in the response content.
 
         Attributes:
@@ -2999,14 +2999,14 @@ class CustomerDashboardViewTest(TestCase):
         Usage:
         This test method simulates a user with a booking in 'Completed'
         status, logs in the user, sends a GET request to the
-        'customer_dashboard' view, and verifies that the 'Book Again'
+        'dashboard' view, and verifies that the 'Book Again'
         option is present in the view's response content. The
         'Book Again' option allows users to easily rebook the same
         car for a future rental.
 
         Note:
         This test is part of the unit tests for the
-        'CustomerDashboardView' in the 'autoR5' Django application.
+        'DashboardView' in the 'autoR5' Django application.
         """
         booking = Booking.objects.create(
             user=self.user,
@@ -3026,12 +3026,12 @@ class CustomerDashboardViewTest(TestCase):
     def test_cancellation_request_with_approved_request(
             self, mock_process_cancellation_request, mock_refund_create):
         """
-        Test the customer dashboard view when a cancellation
+        Test the  dashboard view when a cancellation
         request is approved.
 
         This test method ensures that when a user has a booking
         with an approved cancellation request, the
-        'customer_dashboard' view displays the booking details
+        'dashboard' view displays the booking details
         without revealing the car's make and model, hides the
         cancellation form, shows a message indicating that the
         cancellation request is pending approval, and verifies
@@ -3049,7 +3049,7 @@ class CustomerDashboardViewTest(TestCase):
         an approved cancellation request. It creates a booking,
         payment object, and an approved cancellation request,
         logs in the user, sends a GET request to the
-        'customer_dashboard' view, and checks if the response
+        'dashboard' view, and checks if the response
         content meets the following criteria:
             - Booking details are displayed without revealing
             car make and model.
@@ -3062,7 +3062,7 @@ class CustomerDashboardViewTest(TestCase):
             - A Stripe refund is created as expected.
 
         Note:
-        This test is part of the unit tests for the 'CustomerDashboardView'
+        This test is part of the unit tests for the 'DashboardView'
         in the 'autoR5' Django application. It helps ensure that the user's
         view is consistent and displays the relevant information based on
         the status of their booking and cancellation request.
@@ -3093,7 +3093,7 @@ class CustomerDashboardViewTest(TestCase):
 
         self.client.login(username="testuser", password="testpassword")
 
-        url = reverse('customer_dashboard')
+        url = reverse('dashboard')
 
         response = self.client.get(url)
 
@@ -3110,12 +3110,12 @@ class CustomerDashboardViewTest(TestCase):
 
     def test_cancellation_request_without_approved_request(self):
         """
-        Test the customer dashboard view when a cancellation
+        Test the  dashboard view when a cancellation
         request is not approved.
 
         This test method ensures that when a user has a booking
         with an unapproved cancellation request, the
-        'customer_dashboard' view displays the booking details,
+        'dashboard' view displays the booking details,
         shows the cancellation form, and does not display a
         message indicating that the cancellation request is
         pending approval.
@@ -3127,7 +3127,7 @@ class CustomerDashboardViewTest(TestCase):
         This test method simulates a user with a booking that has
         an unapproved cancellation request. It creates a booking
         with an unapproved cancellation request, logs in the user,
-        sends a GET request to the 'customer_dashboard' view, and
+        sends a GET request to the 'dashboard' view, and
         checks if the response content meets the following criteria:
 
             - Booking details are displayed, including car make and model.
@@ -3138,7 +3138,7 @@ class CustomerDashboardViewTest(TestCase):
             is pending approval.
 
         Note:
-        This test is part of the unit tests for the 'CustomerDashboardView'
+        This test is part of the unit tests for the 'DashboardView'
         in the 'autoR5' Django application. It helps ensure that the user's
         view is consistent and displays the relevant information based on
         the status of their booking and cancellation request.
@@ -3161,7 +3161,7 @@ class CustomerDashboardViewTest(TestCase):
 
         self.client.login(username="testuser", password="testpassword")
 
-        url = reverse('customer_dashboard')
+        url = reverse('dashboard')
 
         response = self.client.get(url)
 
@@ -3506,6 +3506,8 @@ class EditProfileViewTest(TestCase):
             public_id = user_profile.profile_picture.public_id
             api.delete_resources(public_id)
 
+
+#final tests go here
 
 class ContactViewTest(TestCase):
     """
@@ -4977,26 +4979,26 @@ class TestUrls(TestCase):
         self.assertEqual(resolve(url).func,
                          views.contact)
 
-    def test_customer_dashboard_url(self):
+    def test_dashboard_url(self):
         """
-        Verify the URL pattern for the 'customer_dashboard' view.
+        Verify the URL pattern for the 'dashboard' view.
 
         Purpose:
-        Ensures that the 'customer_dashboard' URL correctly maps
-        to the 'customer_dashboard' view function.
+        Ensures that the 'dashboard' URL correctly maps
+        to the 'dashboard' view function.
 
         Usage:
-        Validates the URL pattern for the 'customer_dashboard'
+        Validates the URL pattern for the 'dashboard'
         view by comparing the resolved view function to the expected
-        'customer_dashboard' view function.
+        'dashboard' view function.
 
         Note:
-        Essential to confirm that the 'customer_dashboard' URL leads
-        to the customer dashboard.
+        Essential to confirm that the 'dashboard' URL leads
+        to the  dashboard.
         """
-        url = reverse('customer_dashboard')
+        url = reverse('dashboard')
         self.assertEqual(resolve(url).func,
-                         views.customer_dashboard)
+                         views.dashboard)
 
     def test_edit_profile_url(self):
         """

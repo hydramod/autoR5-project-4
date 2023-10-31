@@ -125,7 +125,13 @@
                                 </button>
                             </form>
                         {% else %}
-                            <p>Cancellation request pending approval</p>
+                        <p>Cancellation request pending approval</p>
+                            {% if user.is_staff %}
+                                {% for booking_id, cancellation_request in unapproved_requests.items %}
+                                    <a href="{% url 'approve_reject_cancellation_request' cancellation_request.id 'approve' %}" class="btn btn-primary-outline-reverse display-4">Approve</a>
+                                    <a href="{% url 'approve_reject_cancellation_request' cancellation_request.id 'reject' %}" class="btn btn-primary-outline-reverse display-4">Reject</a>
+                                {% endfor %}
+                            {% endif %}
                         {% endif %}
                     </div>
                 </div>
@@ -167,6 +173,10 @@
                             </h3>
                                 <a class="btn btn-primary-outline-reverse display-4" href="{% url 'booking_confirmation' booking.id %}">View Details</a>
                                 <a class="btn btn-primary-outline-reverse display-4" href="{% url 'car_detail' booking.car.id %}">Book Again</a>
+                                <form method="post" action="{% url 'delete_booking' booking.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary-outline-reverse display-4">Delete</button>
+                                </form>
                         </div>
                     </div>
                 </div>

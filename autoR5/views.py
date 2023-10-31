@@ -34,7 +34,8 @@ from datetime import date, timedelta
 from django.shortcuts import (render, redirect,
                               get_object_or_404)
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import (login_required,
+                                            user_passes_test)
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Q
@@ -42,7 +43,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.paginator import (Paginator, EmptyPage,
                                    PageNotAnInteger)
 from django.utils.translation import gettext as _
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.conf import settings
 from .models import (Car, Booking, Review,
                      CancellationRequest, Payment,
@@ -771,7 +772,7 @@ def leave_review(request, car_id):
 
 
 @login_required
-def customer_dashboard(request):
+def dashboard(request):
     """
     View for the customer dashboard.
 
@@ -785,7 +786,7 @@ def customer_dashboard(request):
     - 'request': The HTTP request object sent by the client.
 
     Returns:
-    Renders the 'customer_dashboard.html' template, providing context
+    Renders the 'dashboard.html' template, providing context
     variables including 'user', 'current_bookings', 'past_bookings',
     'reviews', 'form', and 'unapproved_requests'. The template displays
     relevant user data and booking-related information.
@@ -843,9 +844,9 @@ def customer_dashboard(request):
             cancellation_request.save()
             messages.success(
                 request, 'Cancellation request submitted successfully')
-        return redirect('customer_dashboard')
+        return redirect('dashboard')
 
-    return render(request, 'customer_dashboard.html', {
+    return render(request, 'dashboard.html', {
         'user': user,
         'current_bookings': current_bookings,
         'past_bookings': past_bookings,
@@ -1005,9 +1006,120 @@ def contact(request):
                 'Thanks for getting in touch. One of our'
                 'representatives will contact you soon.')
 
-            # Redirect back to the contact page after submission
             return redirect('contact')
     else:
         form = ContactForm()
 
     return render(request, 'contact.html', {'form': form})
+
+
+@login_required
+def delete_booking(request, booking_id):
+    """
+    Delete a booking and handle success or error messages.
+
+    This view allows an authenticated user to delete a
+    booking. The view checks if the user owns the booking.
+    If the user owns the booking, it deletes the booking
+    and displays a success message. If the booking is not
+    found, it displays an error message. If the user is not
+    authorized to delete the booking, it also displays
+    an error message.
+
+    Args:
+    - request: The HTTP request object sent by the client.
+    - booking_id: The ID of the booking to delete.
+
+    Returns:
+    Redirects to the customer dashboard after performing the
+    delete operation and displaying appropriate messages.
+
+    Usage:
+    1. An authenticated user accesses the customer dashboard.
+
+    2. The user selects a booking to delete.
+
+    3. The view checks if the user owns the booking.
+
+    4. If the user owns the booking, the booking is deleted,
+       and a success message is displayed.
+
+    5. If the booking is not found, an error message is
+    displayed.
+
+    6. If the user is not authorized to delete the booking,
+    an error message is also displayed.
+
+    7. The user is redirected to the customer dashboard.
+
+    Note:
+    - Only authenticated users can access this view.
+    """
+    try:
+        booking = Booking.objects.get(id=booking_id)
+
+        if booking.user == request.user:
+            booking.delete()
+            messages.success(request,
+                             'Booking deleted successfully.')
+        else:
+            messages.error(request,
+                           'You are not authorized to delete this booking.')
+    except Booking.DoesNotExist:
+        messages.error(request,
+                       'Booking not found.')
+
+    return redirect('dashboard')
+
+
+@user_passes_test(lambda u: u.is_staff)
+def approve_reject_cancellation_request(request, request_id, action):
+    """
+    Approve or reject a cancellation request.
+
+    This view function is intended for staff members
+    (users with 'is_staff' privilege) to approve or reject
+    a specific cancellation request. It performs the
+    following actions:
+
+    - When the 'action' parameter is 'approve', it sets the
+    'approved' field of the cancellation request to True and
+    saves the request, indicating that the cancellation
+    request has been approved.
+
+    - When the 'action' parameter is 'reject', it deletes the
+    cancellation request from the database, effectively
+    rejecting the request.
+
+    If the specified cancellation request does not exist,
+    it displays an error message.
+
+    Args:
+    - request: The HTTP request object sent by the client.
+
+    - request_id: The ID of the cancellation request to be
+    approved or rejected.
+
+    - action: A string indicating the action to perform
+    ('approve' or 'reject').
+
+    Returns:
+    Redirects to the 'dashboard' view after performing the approval
+    or rejection action.
+    """
+    try:
+        cancellation_request = CancellationRequest.objects.get(id=request_id)
+
+        if action == 'approve':
+            cancellation_request.approved = True
+            cancellation_request.save()
+            messages.success(request, 'Request approved successfully.')
+
+        elif action == 'reject':
+            cancellation_request.delete()
+            messages.success(request, 'Request rejected successfully.')
+
+    except CancellationRequest.DoesNotExist:
+        messages.error(request, 'Cancellation request not found.')
+
+    return redirect('dashboard')

@@ -243,8 +243,8 @@ The `ContactFormSubmission` model records contact form submissions. It includes 
 - Description: Allows users to contact support.
 
 ### Customer Dashboard
-- URL: `/customer_dashboard/`
-- View: `views.customer_dashboard`
+- URL: `/dashboard/`
+- View: `views.dashboard`
 - Description: Displays a dashboard for logged-in customers with booking information and cancellation requests.
 
 ### Edit Profile
@@ -405,7 +405,7 @@ This document provides an overview of the settings used in the Django project 'a
 ### Leave a Review (leave_review)
 - Enables users to leave reviews for cars.
 
-### Customer Dashboard (customer_dashboard)
+### Customer Dashboard (dashboard)
 - Provides a dashboard for registered users.
 - Lists current and past bookings, reviews, and allows cancellation requests.
 

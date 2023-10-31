@@ -304,7 +304,7 @@ Certainly! Here's the documentation for your additional tests in Markdown format
 
 **2. `test_view_uses_correct_template`**
 - This test validates that the Customer Dashboard View uses the correct template.
-- It ensures that the response status code is 200 (OK) and verifies that the correct template, 'customer_dashboard.html,' is used.
+- It ensures that the response status code is 200 (OK) and verifies that the correct template, 'dashboard.html,' is used.
 
 **3. `test_view_with_no_login_redirects_to_login_page`**
 - This test checks the behavior of the dashboard when a user is not logged in.
