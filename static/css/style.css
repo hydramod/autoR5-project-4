@@ -1205,7 +1205,7 @@ strong {
 
 .car-details-section .image-wrapper img {
     height: auto;
-    object-fit: cover
+    object-fit: fill
 }
 
 @media (max-width:992px) {
